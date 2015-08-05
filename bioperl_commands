@@ -1,0 +1,98 @@
+NOTES ON BIOPERL
+
+BioPerl is object-oriented programming.
+Using objects and methods.
+Objects are analogous to variables in regular perl, they hold data.
+
+For example,
+$seq_obj = Bio::Seq->new(-seq => "aaaatgggggggggggccccgtt",
+			 -alphabet => 'dna' );
+the variable or object $seq_obj holds the data values (or arguments) or properties -seq and -alphabet
+
+Methods are analagous to functions or subroutines. Their original source code comes from the module.
+
+General syntax:
+$object = Bio::Module->method( -argument => argument(value))
+
+Objects can call methods, like this for example:
+$seq_obj->seq()
+Here the object $seq_obj calls the method seq(), which comes from the Bio::Seq module. seq() will retrieve the sequence value (argument) of $seq_obj. So when you do
+print $seq_obj->seq()
+your code will print the sequence value from the $seq_obj object
+
+Combining objects
+$seqio_obj->write_seq($seq_obj)
+The write_seq method of Bio::SeqIO will write the data hold in $seq_obj to a new file specified in the $seqio_obj. 
+
+It is possible to apply multiple methods at the same time on a certain object.
+For example: print $seq->translate->seq, "\n";
+You can still add arguments to inbetween methods, for example
+print $seq->translate(-terminator => '-')->seq, "\n";
+
+
+METHODS 
+
+METHOD	     Bio::Seq->new()
+EXAMPLE	     $seq_obj = Bio::Seq->new()
+DESCRIPTION  Creates a new sequence object from scratch and stores in to a variable
+ARGUMENTS    -seq => "aaccggtt" aka the sequence
+	     -display_id => "#12345"
+	     -desc => "description" for exapmle "example 1"
+	     -alphabet => "dna" or "protein" or "rna"
+
+METHOD	     Bio::SeqIO->new()
+EXAMPLE	     $seqIOobject = Bio::SeqIO->new(arguments) 
+DESCRIPTION  Will read a sequence file and store it in a variable.
+ARGUMENTS    -file => "name_of_file"
+	     # The -file parameter can also process commands, for example if you want to unzip a file: 
+	     # -file => "gzip -d $infile |"
+	     -format => "fasta" or
+	     -alphabet => "dna" or "rna" or "protein"
+
+METHOD	     Bio::SeqIO->next_seq()		
+EXAMPLE	     $seq_object = $seqio_obj->next_seq()
+DESCRIPTION  Will find the first next sequence in the object and store it in a variable
+ARGUMENTS
+
+METHOD	     Bio::DB::<DB>->new()
+EXAMPLE	     $db_obj = Bio::DB::GenBank->new;
+DESCRIPTION  Creates a new database object
+ARGUMENTS    
+
+METHOD	     Bio::DB::<DB>->get_Seq_by_id()
+	     Bio::DB::<DB>->get_Seq_by_acc()
+	     Bio::DB::<DB>->get_Seq_by_version()
+EXAMPLE	     $seq_obj = $db_obj->get_Seq_by_id(2)
+DESCRIPTION  Retrieves a sequence from the database using an identifier, either using GI, accession no. or versioned accession no.
+ARGUMENTS    
+
+METHOD	     Bio::DB::Query::<DB>->new()
+EXAMPLE	     $query_obj = Bio::DB::Query::GenBank->new(arguments)
+DESCRIPTION  Creates a query object
+ARGUMENTS    -db => 'nucleotide'
+	     -query => 'enter your query here'
+
+METHOD	     Bio::DB::<DB>->get_Stream_by_query()
+EXAMPLE	     $stream_obj = $gb_obj->get_Stream_by_query($query_obj)
+DESCRIPTION  Takes query object as argument and stores every hit in the database object. Use when you expect a stream or series of sequence objects
+ARGUMENTS    Query object
+
+METHOD	     ->display_id()
+	     ->length()
+EXAMPLE	     print $seq_obj->display_id, "\t", $seq_obj->length, "\n"
+DESCRIPTION  Reads out the sequence object and returns the id and length, respectively. Display_id can also be set
+ARGUMENTS   
+
+METHOD	    ->translate
+EXAMPLE	    $translate = $seq->translate
+DESCRIPTION Translates the dna or rna sequence of a sequence object and store that object in $translate
+ARGUMENTS   -terminator => '*' 	      Change how you represent terminators
+	    -unknown    => 'X'	      Change how you represent unknown aminoacids
+	    -frame	=> 2	      Choose which frame you want to translate
+	    -complete   => 1	      Sets ->translate() to check for any problems within the sequence, for example invalid initiator / terminator codons, or multiple terminator codons within the CDS, etc
+	    -throw	=> 1	      Program will die if any of the -complete demands is not met
+	    -codontable_id => 2	      Sets translate to use a different genetic code, like e.g. mitochondria (2). Every genetic code has its own number.
+	    -orf	=> 1  	      Finds open reading frame from the first initiation codon and starts translating there.  
+NOTE	    If you have a sequence object, you can print the amino acid sequence by applying multiple methods on it at the same time like this:
+	    print $seq->translate->seq, "\n"; 
+

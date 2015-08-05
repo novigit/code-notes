@@ -1,0 +1,48 @@
+CHANGE USER TO ADMIN
+       Go to the galaxy-dist/universe_wsgi.ini
+       Find the line that starts with 'admin_users = '
+       Add your user / e-mail address
+       Uncomment the line
+       Restart GALAXY
+
+INSTALL A TOOL FROM THE TOOL-SHED
+	Go to the galaxy-dist/universe_wsgi.ini
+	Find the line that starts with 'tool_config_file ="
+	Uncomment the line
+	Restart GALAXY
+	---
+	In GALAXY, Go to Admin->Search and browse tool sheds
+	Select Galaxy main tool shed->Browse valid repositories
+	Find the tool you're interested in->Preview and install
+	Click 'Install to Galaxy' in the top right corner
+	---
+	In the 'universe_wsgi.ini' file, set the 'tool_dependency_dir'
+	to the directory galaxy-dist/tool-dependency-dir/
+	Make that directory
+	Restart GALAXY
+	---
+	After installation, the tools .xml file will be in the
+	../shed_tools/ directory and the tools' dependencies in the
+	tool-dependency-dir/ directory
+
+ADDING A NEW TOOL SECTION
+       After adding a new tool from the Tool Shed, 
+       and in addition adding a new section,
+       this section will be added to the 'shed_tool_conf.xml' file.
+       So I think, depending on the source of the sections content tools,
+       they are added to different 'conf.xml' files
+ 
+
+THE universe_wsgi.ini FILE.
+    Any change in this file comes into effect after restarting GALAXY
+
+GENERAL INFORMATION
+	The 'Tools' list in GALAXY on the left have a corresponding
+	.xml file, the 'tool_conf.xml' file
+
+EDIT A WORKFLOW
+       In the workflow design you don't specify the input and output yet.
+       You do that when you want to run the workflow.
+      
+	
+	

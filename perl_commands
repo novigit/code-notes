@@ -1,0 +1,93 @@
+PERL THINGS TO KNOW
+
+CPAN
+sudo cpan install Module::name
+
+@INC
+
+The @INC Array is a special Perl variable that is equivalent to the shell's PATH variable. Whereas PATH contains a list of directories to search for executables, @INC contains a list of directories from which Perl modules and libraries can be loaded.
+    When you do use(), require(), or do() a filename or a module, Perl gets a list of directories from the @INC variable and searches them for the file it was requested to load. If the file that you want to load is not located in one of the listed directories, then you have to tell Perl where to find the file. You can either provide a path relative to one of the directories in @INC, or you can provide the full path to the file. 
+
+LIST THE DIRECTORIES OF THE @INC ARRAY
+
+perl -e "print join(\"\n\", @INC);"
+
+ADD MODULE TO THE @INC ARRAY
+
+1. Add in the script: 
+use lib 'path/to/module';
+
+or 
+
+2. Type in the console:
+export PERL5LIB=/path/to/module
+
+or
+
+3. Add 'PERL5LIB=/path/to/module' or 'PERL5LIB=PERL5LIB:/path/to/module' to your .bashrc file. NOTE: The':' in this context means append, so each time you load your PERL5LIB it will grow. So add 'PERL5LIB=""' to your .bashrc file as well, before the 'PERL5LIB=PERL5LIB:/path/to/module' line, so it will reset it and this prevents the growth.
+EXECUTE A SHORT PERL SCRIPT DIRECTLY ON THE COMMAND LINE
+
+perl -e "SCRIPT;"
+
+#### DATASTRUCTURES ####
+
+ARRAY
+@array = ('moo', 'woof', 'miauw');
+@array = (1..10);
+
+#### FUNCTIONS ####
+
+SPRINTF
+sprintf("%03d", $count)		Print the count with up to 3 leading zeroes
+sprintf("%.3f", $count)		Round count to 3 digits after decimal point
+
+MAP
+A function that applies another function on an array. 
+Each element of the array is captured in '$_'
+Similar to foreach loop to access the array, but more efficient.
+'map{}' will calculate the function for all elements, and thén store the results, whereas
+'foreach' will calculate the function and store the result immediately.
+This makes 'map{}' faster.
+
+@results = map{ $string.$_ } @array	Concatenates $string to each element in the @array and stores it in @results
+
+## GENERAL PERL SCRIPTING ##
+
+REFERENCES
+A reference of an array or a hash does not contain the contents of an array or hash, but the 'address', which is a hexadecimal code.
+A reference is in datastructure the same as a string.
+
+ARRAY REFERENCE
+If you have the following array:
+my @array=("moo","woof","miauw")
+
+Then
+ @array  = moo, woof, miauw		Normal array
+\@array  = ARRAY(0x2c25d68)		Hexadecimal code
+[@array] = ARRAY(0x2c25d68)		Hexadecimal code
+ $array  = ARRAY(0x2c25d68)		Hexadecimal code
+
+So, \@array = [@array] = $array
+
+To retrieve the original array back, do
+@\@array  = moo, woof, miauw		Normal array
+@[@array] = moo, woof, miauw		Normal array
+ @$array  = moo, woof, miauw		Normal array
+
+Also, when you have a function that returns an array, you can reference it
+\{keys %hash} = ARRAY(0x2c25d68)
+ [keys %hash] = ARRAY(0x2c25d68)
+
+This reference thing is handy when you work with subroutines or functions:
+
+function(\@array, $foo, $bar);
+sub function {
+    my ($var, $foo2, $bar2) = @_;
+}
+because \@array is effectively a string, $var will be able to take it over.
+
+function(@array, $foo, $bar);
+sub function {
+    my ($var, $foo2, $bar2) = @_;
+}
+this will not work, because now, @array, $foo and $bar will be concatenated, and put into $var

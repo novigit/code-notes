@@ -1,0 +1,404 @@
+OVERVIEW OF SOFTWARE COMMANDS
+
+faMCL
+Discards alignments in which the query and hit lenghts are more than 60% different
+Discards alignments in which the smaller fragment is less than 80% covered by the alignment
+
+
+RAXML
+Rapid bootstrapping, ML search and bootstrapping in one command:
+-f a -x 12345 -N 100 -s [alignment.phylip] -m GTRCAT -n [outname (suffix) ]
+-f a -x 12345 -N 100 -s [alignment.phylip] -m GTRGAMMAI -n [outname (suffix) ]
+
+Example:
+raxmlHPC-PTHREADS-SSE3 -f a -x 12345 -p 12345 -N 100 -m PROTCATLG -s panorth_concat.phy -n panorth_concat -T 30
+
+Standard bootstrapping
+First do ML search, search for the best tree:
+raxmlHPC-PTHREADS-SSE3 \
+-f d \
+-p 12345 \
+-N 100 \
+-m GTRGAMMA \
+-s ../../trimal-1.4/16S_Pooled_76-trim.phylip.reduced \
+-n TEST \
+-T 30
+
+Then do the 100 bootstraps
+raxmlHPC-PTHREADS-SSE3 \
+-f d \
+-b 12345 \
+-p 12345 \
+-N 100 \
+-m GTRGAMMA \
+-s ../../trimal-1.4/16S_Pooled_76-trim.phylip.reduced \
+-n TEST \
+-T 30
+
+And map the bootstraps onto the best tree
+raxmlHPC-PTHREADS-SSE3 \
+-f b \
+-t ../MLsearch/RAxML_bestTree.TEST \
+-z ../standardBS_noBL/RAxML_bootstrap.16S_Pooled_76-trim \
+-p 12345 \
+-m GTRGAMMA \
+-n TEST \
+-T 30
+
+Flags:
+-f	This option allows you to select the type of algorithm / function you want RAxML to execute.
+a 	a rapid  Bootstrap analysis and search for the best-scoring ML tree in one single program run
+-x	Specify an integer number (random seed) and turn on rapid bootstrapping. This will invoke the novel rapid bootstrapping algorithm.
+-p	Specify a random number seed for the parsimony inferences. This allows you and others to reproduce your results (reproducible/verifiable experiments) and will help me debug the program. This option HAS NO EFFECT in the parallel MPI version
+-N or -#Specifies the number of alternative runs on distinct starting trees. In combination with -f a and -x a rapid bootstrap search and thereafter a thorough ML search on the original alignment is done.
+-m      Selects the model of nucleotide substitution or amino acid substitution to be used.
+
+Nucleotide Models: 	GTR, with in addition either GAMMA model for rate heterogeneity (with 4 discrete rate categories) and or I for estimation for proportion of invariable sites. Or in combination with the CAT model. CAT estimates substitution rates per individual site or classifies sites a number of rate categories.
+
+Amino Acid Models:	A substation matrix like BLOSUM62, WAG or DAYHOFF etc in combination with CAT, CAT-GAMMA, CAT-GAMMA-I etc.
+-s    	Name of the alignment file. Must be in relaxed PHYLIP format. Relaxed means that sequences file can be interleaved or sequential and taxon name length does not matter.
+-n 	Name of the run. Several out files which contain this file name are generated.
+-T	Specifies the amount of threads you want to run
+
+-w	Outputdirectory (absolutepath)
+
+Prohibited characters in sequence names:
+:,();[]
+
+PHYLOBAYES
+Example
+for i in 1 2 3 4; do
+    mpirun -np 7 nice -n 19 pb_mpi -d ../panorth_concat.phy -cat -poisson CAT-Poisson$i &
+    ## To stop
+    #echo 0 > $RUN$i.run
+    ## Restart
+    #mpirun -np 10 nice -n 19 pb_mpi $RUN$i &
+done
+
+To check convergence, press Enter and do the following:
+wc -l *.trace to check the amount of trees it has visited
+bpcomp -x [burnin cutoff] [integer(checks every integer's tree to calculate maxdiff and meandiff)] [CHAIN1] [CHAIN2] [CHAIN3] [etc]
+Maxdiff should be < 0.1
+
+bpcomp -x [burnin cutoff] [integer(checks every integer's tree to calculate maxdiff and meandiff)] [end point] [CHAIN1] [CHAIN2] [CHAIN3] [etc]
+
+calculates convergence not from burnin to end, but from burnin to specified point.
+For example, from 1000 to 11000 (a window of 10000 generations)
+
+To check convergence visually, make use of Lionels script:
+Rscript /home/lionel/bin/comparative/plot_pb_stats.R folder=[path] burnin=[integer] output=[out.jpg] [CHAIN1] [CHAIN2] [CHAIN3] [etc]
+
+With bpcomp it is also writing out the consensus tree up to that point.
+
+To soft-stop a chain, replace the [chainname].run file, which contains '1' if it is running, with 0:
+echo 0 > [chainname].run
+
+-o [basename]	[basename] will replace "bpcomp" in the output files.
+PhyloBayes will then finish the current cycle before exiting. It can be restarted later.
+
+To open phylobayes trees with figtree from command line. Convert the primary tree output first:
+sed -e "s/)1:/)1.0:/g" bpcomp.con.tre > pb.tree
+ 
+QUALITY CONTROL
+fastx_quality_stats
+fastx_reverse_complement
+fastx_clipper
+fastx_nucleotide_distribution_graph.sh
+fastaQual2fastq.pl
+fastax_trimmer 
+fastq_quality_boxplot_graph.sh
+fastaNamesSize.pl
+Rscript plotLengthDistribution.R
+
+SPADES-2.4
+spades.py -o <OUTPUT DIR> -1 <FW READS> -2 <RV READS> -t <THREADS> -K <K1,K2,K3,etc>  
+Optional options
+--sc FOR MDA (SINGLE-CELL) DATA
+-s <UNPAIRED READS>
+--only-error-correction RUNS THE READ CORRECTION STEP ONLY
+--only-assembler RUNS ASSEMBLY STEP ONLY
+--careful INDUCES MISMATCH CORRECTOR, THAT RUNS POST-ASSEMBLY
+
+VELVET
+shuffleSequences_fastq.pl <INPUT1.fastq> <INPUT2.fastq>
+velveth <DIRECTORYNAME> <LOWESTKMER> <HIGHESTKMER> <STEPSIZE> -fastq (or -fasta) -shortPaired1 (or -short) <SHUFFLEDINPUT1.fastq> -fastq -shortPaired2 <SHUFFLEDINPUT2.fastq> 
+velvetg auto_<KMERVALUE> -exp_cov <EXPECTEDCOVVALUE> -ins_length1 <BPLENGTH1> -ins_length2 <BPLENGTH2> 
+
+VELVET-SC
+velveth <DIRECTORYNAME> <K-SIZE> -short -fasta <SHUFFLEDINPUT 1> <SHUFFLEDINPUT 2>
+velvetg <DIRECTORYNAME> -ins_length <INSERT SIZE> -cov_cutoff <FINAL COVERAGE CUTOFF> -read_trkg yes
+If you do not turn on read tracking it will not report the amount of reads used
+In the run2.c file you can change the starting coverage cutoff, incrementing value and the maximum contig size (maximum contig size: any contig smaller than this and with coverage lower than coverage cutoff will be removed, longer contigs wont be removed (i think))
+
+QUAST
+python <PATHTOQUAST>/quast.py -o <OUTPUT DIR> <CONTIG OR SCAFFOLD FILE>
+Optional options
+-R REFERENCE GENOME
+--contig-thresholds <INT,INT,...> CONTIG LENGTH THRESHOLDS
+--gene-finding OUTPUTS AMOUNT PREDICTED GENES
+--est-ref-size PROVIDE ESTIMATED GENOME SIZE TO COMPUTE NGx VALUES
+--scaffolds IF PROVIDED FASTA ARE SCAFFOLDS
+
+TRIMMOMATIC
+Paired End Mode:
+java -classpath <path to trimmomatic jar> org.usadellab.trimmomatic.TrimmomaticPE <input 1> <input 2> <paired output 1> <unpaired output 1> <paired output 2> <unpaired output 2> <step 1> ...
+Single End Mode:
+java -classpath <path to trimmomatic jar> org.usadellab.trimmomatic.TrimmomaticSE <input> <output> <step 1> ...
+
+SELECT_PAIRED.PL
+Usage: select_paired.pl <file containing forward reads in FASTA format> <name of output file for sorted forward reads> <name of file containing reverse reads in FASTA format> <name of output file for sorted reverse reads> <singletons output file (i.e. reads present in only one of the input files>
+
+GENEMARKS
+perl gmhmmp_heuristic.pl -a -outfile <OUTPUT.faa> -s <INPUT.fasta>
+perl genemark2fasta.pl <INPUT.faa> > <OUTPUT.fa>
+
+BLASTALL
+blastall -p <PROGRAM> -i <INPUT> -d <PATH TO DATABASE> -a <NUMBEROFCORES> -e <EVALUETRHESHOLD> -F <FILTER> -o <OUTPUT>
+BLASTDATABASE
+
+formatdb -i predicted_proteome.fasta -p T
+
+makeblastdb \
+-in [sequence file] \
+-input_type [type: i.e. fasta] \
+-dbtype [nucl|prot] \
+-title [same as 'in'] \
+-out [same as 'in']
+
+To make a custom blast database in which you can easily retrieve blast hit sequences with blastdbcmd, do
+
+makeblastdb \
+	    -in [in.fasta] \
+	    -dbtype nucl|prot \
+	    -parse_seqids
+NOTE: MAKE SURE THAT FASTA HEADERS ARE FORMATTED SOMETHING LIKE THIS: >lcl|[accession no.] theawesome sequence
+
+TROUBLESHOOTING
+If it complains about delta sequences, check for non-amino acid characters in the sequences with 
+grep -v ">" *.fasta | sed "s/\(.\)/\1\n/g" | sort | uniq -c
+or check for headers that do not start at the beginning of the line.
+
+blastn \
+-query [path to query] \
+-db [database title] \
+-out [blast out file] \
+-evalue [i.e. 1e-5] \
+-perc_identity [integer] \
+-max_target_seqs [integer] \
+-num_threads [integer] \
+-outfmt [integer] (6 = tabular)
+
+psiblast \
+-in_msa [file] \
+-db [path/to/db] \
+-out [path/to/out] \
+-evalue [i.e. 1e-10] \
+-num_threads [integer] \
+-outfmt '6 std stitle staxids'
+
+Tabular format:
+queryid	subjectid %id alnLength mismatchCount gapOpenCount queryStart queryEnd subjectStart subjectEnd eVal bitScore
+
+Getting the sequences of your blast hits:
+blastdbcmd \
+-db <path/to/db> \
+-dbtype <nucl|prot> \
+-entry <comma delim string of sequence identifiers OR 'all' to get them all>
+-entry_batch <file, one entry per line>
+-out <path/to/out> \
+-outfmt %f
+
+Good fields to include on top of std in the blast tabular output:
+slen 	    subject length
+qlen	    query length
+qcovs	    query coverage compared to subject
+qcovhsp	    query coverage comparted to alignment
+
+
+MAPPING READS
+BWA
+bwa index <FASTA FILE>
+bwa aln <FASTA FILE> <FW READ FILE> (FASTQ or FASTA) > <FW OUTPUT.sai>
+bwa aln <FASTA FILE> <RV READ FILE> (FASTQ or FASTA) > <RV OUTPUT.sai>
+bwa sampe <FASTA FILE> <FW INPUT.sai> <RV INPUT.sai> <FW READ FILE> <RV READ FILE> | gzip > <OUTPUT.sam.gz>
+
+BOWTIE-2
+bowtie2-build \
+	      -f <FASTA> \
+	      <BUILD-PREFIX>
+
+bowtie2 \
+	-p <THREADS> \
+	--phred64 \
+	-t \				Print time
+	-x <BUILD-PREFIX> \
+	-1 <FW READS> \
+	-2 <RV READS> \
+	-U <UNPAIRED READS> \
+	-S <OUTPUT SAM> 
+
+SAMTOOLS
+samtools view -uS <INPUT.sam.gz> | samtools sort - <OUTPUT PREFIX>
+samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
+samtools index <INPUT.SRT.RMDUP.BAM> or <INPUT.SRT.BAM>
+samtools mpileup -f your_ref.fa your.bam > mpileup.out
+samtools view <.bam>		Will print the SAM file
+samtools view -X		Prints FLAG field in human readable format
+samtools view <.bam >-L <.bed>	Output lines in SAM file
+samtools view <.bam> <contig name1> <contig name2>     Output lines in SAM file which have these contigs 	
+
+Standard samtools pipeline
+samtools view -bS [sam] > [bam]
+samtools sort [bam] [srt.bam]
+samtools index [srt.bam] [srt.bam.bai]
+	
+Counting reads in a .bam file
+samtools view -c -F 4 test.bam		Counting mapped reads
+samtools view -c -f 4 test.bam		Counting unmapped reads
+
+
+
+MAKING A COVERAGE PLOT WITH R USING THE MPILEUP.OUT MADE WITH SAMTOOLS
+cut -f 2,4 mpileup.out > mpileup.cov
+
+data <- read.table (file="mpileup.cov", sep="\t", header=F)
+colnames(data) <- c("position", "coverage")
+depth <- mean(data[,"coverage"])
+window <- 501
+rangefrom <- 0
+rangeto <- length(data[,"position"])
+data.smoothed<-runmed(data[,"coverage"],k=window)
+png(file="coverage.png",width=1900,height=1000)
+plot(x=data[rangefrom:rangeto,"position"],y=data.smoothed[rangefrom:rangeto],pch=".", cex=1,xlab="bp position",ylab="depth",type="l")
+dev.off()
+
+ALIGNMENT_PRUNER.PL VAN JOHAN (CHI SQUARE FILTER)
+for FILE in cluster*; do alignment_pruner.pl --file $FILE --chi2_prune Half --inverse > $FILE\-high_bias; done
+for FILE in cluster_0*; do alignment_pruner.pl --file $FILE --chi2_prune Half > $FILE\-low_bias; done
+
+CONCATENATION OF ALIGNMENTS
+alignment-merger.pl -m <OUTFILE WITH COORDINATES OF BEGINNING AND END OF INDIVIDUALLY ALIGNMENT> -o <OUTFILE (THE CONCATENATION)>.afa <INDIVIDUAL ALIGNMENTS ("*" WORKS IF THE DIRECTORY CONTAINS ONLY INDIVIDUAL ALIGNMENTS)> 
+WORKS ONLY IF THE ALIGNMENTS HAVE THE SAME HEADERS
+
+There is a pipeline bash script in /SCRIPTS/BASH/align_to_relaxedphylip.sh that automatically does the alignments, site selection, concatenation and phylip conversion.
+
+KHMER
+First make a virtual environment:
+
+cd /local/jmartijn/PROGS/virtualenv-1.6.1
+python -m virtualenv env
+. env/bin/activate
+
+Then make a hashtable (set highest possible memory usage and k-size in the load-into-counting script):
+
+load-into-counting.py <OUTPUT HT FILE> <PATH TO FW FASTA FILE> <PATH TO RV FASTA FILE>
+
+Then discard reads (set in discard-high-abund.py the desired covarage (the k-coverage at k=32)
+
+discard-high-abund.py <PATH TO HT FILE> <PATH TO FW FASTA FILE> > <OUTPUT NORM FW FASTA>
+discard-high-abund.py <PATH TO HT FILE> <PATH TO RV FASTA FILE> > <OUTPUT NORM RV FASTA>
+
+MEGAN
+
+LCA = Lowest Common Ancestor
+
+PRODIGAL
+
+Predicts not only complete ORFs, but also incomplete ORFs at the edges of the contigs (thus without start codon for example at the start of a contig or without a stop codon at the end of a contig)
+faMCL has the ability to detect these when clustering and will try to not incorporate the incomplete ORFs.
+
+prodigal \
+    -i ~/one/data/assemblies/clean/step3-CrossContamination/L4_hiseq_contigs-step3.fasta \
+    -o gene_pd.gff \
+    -f gff
+
+TRIMAL
+trimal \
+-in [input alignment] \
+-out [output alignment] \
+-gt [any value between 0 and 1] \
+-[output format]
+
+UCLUST
+uclust \
+--sort [in.fasta]
+--output [out-sort.fasta]
+
+uclust \
+--input [in-sort.fasta]
+--uc [out-sort.uc]
+--id [0.97 or whatever threshold you want]
+
+uclust \
+--uc2fasta [in-sort.uc]
+--input [in-sort.fasta]
+--output [out-pruned.fasta]
+--types S
+
+In the cluster file .uc, there each sequence is classified as either...
+S  The seed sequence (the first sequence in a cluster)
+H  The hit sequence 
+C  The name of the cluster
+
+The second column is the cluster number, starting at 0.
+The third column indicates the length of the sequence in case of S or H
+The third column indicates the size of the cluster in case of C
+
+MAFFT
+
+mafft \
+--thread [integer] \
+--adjustdirection \	If nucleotide alignment, automatically detects reverse complemented sequences and corrects
+--reorder \	  	Orders the sequences in the fasta or phylip file so that the most similar ones are next to each other
+[file.fasta] > [file.aln]
+
+NEWICK UTILITIES
+
+nw_ed tree.nwk 'i & b <= 50' o > tree-out.nwk		Collapses all internal (i) nodes with bootstrap support (b)
+      	       	      	       	 			lower than 50
+
+SINA
+-i [in.fasta] \
+-o [out.aln] \
+--ptdb [taxonomicgroup.arb] (reference alignment) \
+--outtype fasta
+
+FASTTREE-2.1
+Protein
+fastTreeMP -wag [fasta-alignment] > out.nwk
+
+
+ESOM-1.1
+#	Get a reference genome as a control
+#	Make sure that all fasta files are in the same directory and have the same extension (i.e. '.fasta')
+#	Do `esomWrapper.pl -path . -ext <extension> -scripts /local/one/tools/esomScripts/` -dir <outdir> -min <minContigLength> -max <chunkSize>
+#	Check <outdir>/esom.log for suggested <rows> and <columns> and to see if everything went ok
+#	Do `esomana &`
+#	Do 'File->Load *.lrn, File->Load *.names and File->Load *.cls' and choose the corresponding files in <outdir>
+#	Do 'Robust ZT' transformation
+#	Do 'Tools->Training' and choose the <outdir>/*.lrn, and overwrite it
+#	Change Training Algorithm to "K-batch", rows and columns to suggested in the log file and start value for radius to 50
+#	Hit START. This can take a while
+#	After its done, hit CLOSE
+#	Change color scheme to "TwoMatch" and "Bone". Play around with CLIP to make borders stronger
+
+ADDING CLASSES 
+If you have some contigs and you want to know where they end up in your esom map, you can use the script
+"changeClasses.pl" to make a new class file (.cls) that will color your contigs of interest in the existing ESOM map:
+changeClasses.pl -cls <original .cls file> -names <original .names file> -list <list of contig names> -tag <name of the class you want your contigs to have> -out <new .cls file>
+then load the new .cls file onto your esom map and your contigs of interest will be labeled!
+
+If you have multiple sets of contigs to paint:
+for bin in {0..224}; 
+do
+	cls=$(echo $bin-1 | bc);
+	echo $bin $cls;
+	perl /local/one/tools/esomScripts/changeClasses.pl \	
+            -cls test.bin${cls}.cls \
+            -names min10k_max10k/Tetra_esom_10000.names \
+            -list <(grep ">" ../../../concoct-0.4/map/bins/bin_${bin}.fasta | sed -r "s/[- ]/_/g" | sed -r "s/>//") -tag bin_${bin} \
+            -out test.bin${bin}.cls
+	rm test.bin${cls}.cls
+done
+This loop iteratively writes over the previous class file that added one bin until it has written classes for all bins.
+In the '-list' option it is crucial that you change the headers so that they match with the ones in the .names file

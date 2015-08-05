@@ -1,0 +1,353 @@
+OVERVIEW OF R COMMANDS
+
+GENERAL
+?Rcommand	
+or
+help("Rcommand")	Returns help page of the Rcommand
+example(Rcommand)	Shows you examples of Rcommands
+quit() or q()		Exits R command line
+Vector 	  		An R object that holds a 1 dimensional list of values or strings
+Matrix			Table of values with rows and columns
+List			An R object that is like a scaffold. 
+			Can hold multile vectors, matrices, dataframes at the same time in the same list
+class(object)		Will return to you the what kind of object type your object is
+unclass(object)		Will break down to you how the object is build up
+ls()			At any time, will list all of your current variables
+install.packages()	Install a package
+library()		Load a package
+require("package")	Check if package is installed
+R.version		List that displays the current version of R
+
+
+DEFAULT VECTORS
+letters			List of the alphabet
+letters[2:5]		Will list b,c,d,e
+
+NAMES
+names(			Associates 'names' with vector elements
+	vector,
+) <- c('name1','name2','name3','etc')
+
+EXPORTING A PLOT
+png(
+	filename="x.png",	"your/file/location/name.png"	Set path and format to save file to 
+	width=480,		Set width of file 
+	height=480,		Set height of file
+	units="px"		Set the unit used by width and height
+)
+	
+pdf(
+	file="path/to/file.pdf"
+)
+
+Other options:
+svg()
+Then make the plot within R
+After you're done, type
+dev.off()
+
+EXPORTING A VECTOR
+write(
+	x,				The vector
+	file="",			Specifying file name
+)
+
+EXPORTING A TABLE
+write.table(
+	x,
+	sep="\t",
+	file="foo.table",
+	quote=F,			If TRUE, any character will be surrounded by double quotes
+	col.names=F,
+)
+
+IMPORTING A TABLE			Import a table into a data.frame
+df<-read.table(
+	file,				File that contains the table you want to import
+	sep="\t",			State the separator that separates the columns in the file
+	header=TRUE,			State if the table contains a header or not
+	row.names=c()			Provide vector with row    names if you want to
+	col.names=c()			Provide vector with column names if you want to
+	skip=<n>			Skips the first <n> lines before reading the data
+)
+
+DATAFRAMES
+dataframe<-read.table("path/to/table")	 Generates dataframe from file
+dataframe[rows,columns]
+For example
+dataframe[1,]				 Returns first row of dataframe
+dataframe[,1]				 Returns first column of dataframe
+dataframe$header			 Returns column with the header 'header'
+row.names=1				 If your table also contains row headers,
+					 Tells R that the first columns should be used as row names
+dataframe[,c(1,3,5)]			 Returns only columns 1, 3, and 5 of dataframe
+dataframe[ ,c(dog,cat,cow) ]		 Returns only colums with the headers 'dog', 'cat' and 'cow')
+dataframe[dataframe$col>=1,]   		 Selects all rows of the dataframe for which the value in the column 'col'
+					 is greater than or equal to 1.
+df[df$col1>=1 & df$col2<=4, ]		 Selects all rows for which both conditions return TRUE
+colnames(df)<-c("col1", "col2")		 Renames standard column names (V1 -> col1, V2 -> col2)
+data.frame(				 Create a data.frame from scratch.
+	col1=c("gras","sky","blood"),	 col1 contains values "gras", "sky" and "blood". you can rename col1 to whatever you want
+	col2=c("green","blue","red"),	 col2 contains values "green", "blue", and "red". you can rename col2 to whatever you want
+)
+
+SETDIFF
+Returns a substracted vector, where one vector is substracted from the other	      		    		 
+setdiff(
+	vector1,			The bigger vector
+	vector2,			The smaller vector, which is a subset of the bigger vector
+)
+				 
+HISTOGRAM
+hist(
+	dataframe[,1],			List of numbers for the histogram 
+	xlim=range(start,end)		X-axis range
+	breaks=number			Amount of bars in the histogram
+	main="title"			Title of the plot
+	xlab="title"			Title of x-axis			
+	col="darkgreen"			Color of the bars
+)
+
+DENSITY PLOT (similar to histogram, but no bars, just a line)
+plot(density(x))
+
+SCATTER PLOT
+plot(
+	x=dataframe[,1]			List of x-values
+	y=dataframe[,2]			List of y-values
+	xlim=c(0,2000)			Set x-axis limits (when using log scale, dont use 0 as start value)
+	ylim=c(0,5000)			Set y-axis limits
+	xlab="name"			Name your x-axis
+	ylab="name"			Name your y-axis
+	log="y"				Transform y-axis into logarithmic scale
+	log="xy"			Transforms both axes into logarithmic scale
+	las=0,1,2,3			Horizontal y-axis numbers* 
+)
+
+You can also specify x and y values before you make the plot:
+    	x <- list$x    	     	    	Pull x values into 'x'
+	y <- list$y			Pull y values into 'y'
+	plot(x,y)			Will plot x vs y  
+
+PLOT AESTHETICS
+par(
+*las=0 (default)		Vertical y-axis, horizontal x-axis numbers
+las=1  				Horizontal y, horizontal x
+las=2				Horizontal y, vertical x
+las=3				Vertical y, vertical x 
+type=".."			Type of plot
+type="p"			Points
+type="l"			Line
+type="b"			Both
+type="n"			No plotting
+pch="3"				The symbol of your datapoints. See R course documentation for different symbols
+font.lab=2			Edits the font of the axis labels.
+				1 = regular
+				2 = bold
+				3 = italics
+				4 = bold italics
+cex.axis=0.5			Scales the size of axis labeling text to provided factor on both axes
+				For example, 0.5 means that text labels will be half the size compared to default
+cex=0.3				Scales the sizes of the points in the plot to provided factor
+				For example, 0.3 means that the points will be 0.3 times the size compared to default
+mar=c(4,5,1,1)			A vector of size 4, providing the margins for the bottom left top and right
+par()$mar			Current margin settings
+xaxt="n"			Suppress the x-axis labeling
+par(new=T)			State after plot and before plotting a new plot overlaying the previous one
+lwd=1.5				Set line width
+bty="n"				Disable box for plot (only draws 2 axes instead of 4)
+)
+
+CUSTOM AXIS
+axis(
+	side,			1 (bottom-horizontal-axis) or 2 (left-vertical-axis) or 4 (right-vertical-axis)
+	at=vector,		vector containing locations of major ticks
+	labels=vector,		vector containing which locations to label
+	tcl=-0.25		for small ticks
+)
+
+ABLINE				Adds straight lines to plots
+abline(
+	v="x-value",		v for vertical
+	h="y-value",		h for horizontal
+	lty=2,			Dotted line
+	col="darkgrey",
+)
+
+GRID
+After you made the plot, you can add some stuff:
+        grid() 	   	     	        Draws a light grid in the plot	  	        
+
+MTEXT				Write text in one of the four margins of a plot
+mtext(
+	text="text",		Write "text" in the margin
+	side="1|2|3|4",		1=bottom, 2=left, 3=top, 4=right
+	line=<number>		Write "text" on the nth line, starting at 0, and increasing with 1 while going outwards
+	col="col"		Color of the text
+)
+MATRIX
+matrix(
+	data="data vector"		List of values that you want to fill the matrix with
+	nrow="number"			Desired number of rows 
+	ncol="number"			Desired number of columns
+	byrow=TRUE			If TRUE, matrix will be filled by rows
+					If FALSE, matrix will be filled by columns
+)
+row.names(matrix)<-df$COG		Give row.names to the matrix
+
+Example:
+list <- read.table("file with list of values")
+matrix(data=list[,1], nrow=16, ncol=24, byrow=TRUE)
+
+You can also assign a dataholder to the matrix:
+matrix <- matrix(data=list[,1], nrow=16, ncol=24, byrow=TRUE)
+
+Rename the column and row headers:
+colnames(matrixname) <- paste(1:24, sep="")
+rownames(matrixname) <- paste(letters[1:16], sep="")
+
+DIM()
+dim(
+	matrix				Returns the dimensions of a matrix (rows, columns)
+)
+DATA.MATRIX()
+Converting dataframe to matrix
+data.matrix(
+	matrix,
+) 
+
+NCOL(), NROW()				Returns the number of columns or number of rows of a dataframe, matrix
+
+IMAGE/CONTOUR/PERSP
+Visualization of the matrix
+image(					Creates a heatmap of the matrix (don't know how its different from heatmap)
+	matrix,
+)
+contour(				Draws contour map of matrix. Like a relief map
+	matrix,				
+)
+persp(					Draws a 3D image of the matrix
+	matrix,
+	expand=0.2,			Changes at which value you wish to center your view
+)
+	
+HEATMAP
+Plot a heatmap from a matrix
+
+heatmap(
+	matrix_name			The matrix that contains all the data for the heatmap
+	Rowv=NULL			Determines whether or not you see a dendogram for the rows
+					If NA, dendogram will be suppressed
+					If NULL, dendogram will be displayed
+	Colv=NULL			Same as Rowv, but for the columns
+)
+heatmap.2( ## Requires 'gplots' package ##
+	matrix,
+	Colv=T,
+	Rowv=T,
+	dendrogram="none",
+	breaks=c(0,0.5,1.5,2.5,3.5),	Position of the color transitions in the color key
+	col=colorpanel,			Selects color panel for the color key. Can be standards or customized
+	trace="none",			Suppresses the trace line in the heatmap
+	colsep=c(1:25),			Introduces seperator lines between the columns 1 till 25.
+	sepwidth=c(0.001,0.001),	Sets the width of the seperator lines of (rows,columns)	
+	sepcolor="black",		Sets the color of the seperator lines
+	lmat=rbind(c(2,4), c(3,1)),	Sets the layout matrix of the plot
+			   		1 = The heatmap
+					2 = Row dendrogram
+					3 = Column dendrogram
+					4 = Color Key
+	lhei=c(0.7,3),			Sets the height of the rows of the layout matrix (NOT of the heatmap rows)
+	lwid=c(0.2,1),			Sets the width of the columns of the layout matrix
+	keysize=0.01,			Sets the size of the color key
+	density.info="none",		Suppresses the histogram inside the color key
+	xlab="Taxa",			X-axis title
+	ylab="RickCOGs", 		Y-axis title
+	margins=c(5,5),			Margin sizes of column and row names, respectively
+	cexCol=0.5,			Set font size of column labels to 0.5* the default
+)
+
+COLORPANEL()
+colorpanel(
+	4,				Number of colors you want in your colorpanel
+	low="white",			Set your start color of your gradient
+	high="darkblue",		Set your end color of your gradient
+)
+Standard R colorpanels:
+	rainbow()
+	heat.colors()
+	terrain.colors()
+	topo.colors()
+	cm.colors()
+
+ORDER
+First sorts a numerical vector by ascending order. Then, in the sorted list, it will translate each element to the position in the original vector
+
+EXAMPLE:
+vector	5 52 7  13 22
+sort    5 7  13 22 52
+order   1 3  4  5  2		'5' is the 1st element in the orginal list, '7' the 3rd, '13' the 4th, etc.
+
+Very handy when you want to sort a matrix or dataframe.
+
+order(
+	vector,				The vector that you want to sort
+	decreasing=TRUE,		Whether you want to sort increasingly or decreasingly
+)
+
+Sort a dataframe example:
+df[order(df[,6],decreasing=T),]		The largest value in df[,6] get index position 1 via order(). The  
+
+FORMAT
+Can be for example be used to force non-scientific notation in a plot.
+format(c(20000,40000,60000,80000,100000),scientific=F)
+
+APPLY
+Applies a function to rows or columns of a matrix or dataframe or array
+apply(
+	df[,rick],		the dataframe or subset of dataframe
+	1,			1 = rows, 2 = columns
+	function(x)any(x>=1),	the function. Are any of the values in this particular row above 1?
+				Returns TRUE for this row if condition is met
+				Returns FALSE for this row if condition is not met
+)
+
+!apply()			Reverses FALSE and TRUE
+
+BARPLOT
+barplot(
+	matrix,			Contains the data. Columns are the categories, rows the counts within those categories
+	beside=TRUE,		TRUE -> Stacked barplot, FALSE -> Grouped barplot
+	col=c("blue","red")	Colors of the bars,
+	legend=TRUE,		Toggles legend
+)
+
+XTABS
+Build a matrix from a two-dimensional data.frame.
+For example, if data.frame is like: 
+
+lake	     sag	   count
+Spring	     B11	   105
+Spring	     J10	   239
+Spring	     L15	   163
+Summer	     B11	   500
+Summer	     J10	   1000
+Summer	     L15	   750
+
+You can build a matrix that looks like
+    Spring    Summer
+B11 105	      500
+J10 239	      1000
+L15 163	      750
+
+xtabs(
+	count~lake+sag, 
+	df
+)
+
+MERGE
+Merge two or more data.frames by common columns or row names
+merge(
+	df1,		Dataframe 1
+	df2,		Dataframe 2
+)

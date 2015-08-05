@@ -1,0 +1,19 @@
+
+MODULE
+Getopt::Long
+
+EXAMPLE CODE
+my ($domain, $node);
+GetOptions('domain=s' => \$domain
+	   'node=i'   => \$node); 
+
+Command Line:
+script.pl --domain Archaea --node 5
+
+DESCRIPTION
+'Archaea' will be assigned to $domain
+'5'       will be assigned to $node 
+
+The '=s' indicates that your argument is a string. 
+If its not added, variable will hold 1 or 0.
+The '=i' indicates that your argument is an integer

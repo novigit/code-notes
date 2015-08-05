@@ -1,0 +1,106 @@
+UPPMAX MILOU COMMANDS
+
+uquota
+Will tell you how much space you are using compared to how much was allocated for this account
+
+projinfo
+Will tell you the amount of hours that you have used compared to how much hours you are allowed to use on MILOU
+Default: 20000 hours per month
+projinfo -M halvan
+Will tell you the amount of hours that you have used compared to how much hours you are allowed to use on HALVAN
+
+jobinfo | less -S
+Will tell you about jobs that are currently running and in queue on MILOU
+jobinfo -M halvan
+Will tell you about jobs that are currently running and in queue on HALVAN
+
+projmembers <projectid>
+Will tell you accounts that are linked to a given project id
+
+THE BATCH JOB
+batch_job.sh:
+===========================
+#!/bin/bash -1
+
+#SBATCH -A b2013066
+#SBATCH -p core [core or node]
+#SBATCH -n 1 [number of cores (32 if 2 nodes, 16 if single node, etc)]
+#SBATCH -N 1 [number of nodes]
+#SBATCH -t 12:00:00
+#SBATCH -J some_job_name
+--qos=short [if job is expected to be less then 15 minutes]
+
+code...
+===========================
+Then
+sbatch batch_job.sh
+
+Alternatively, specify sbatch parameters on command line:
+sbatch \
+       --mail-user <email address> \
+       -A <project_id> \
+        -p node \
+	-n <num_cores> \
+	-t <days-hours:minutes:seconds> \
+	-J <job_name> \
+	-e <STDERR output> \
+	-o <STDOUT output>
+	<job_script> [job_script_argument1] [job_script_argument2] [etc]
+
+MONITORING JOBS
+jobinfo
+jobinfo -u joranm
+squeue
+
+MONITORING RUNNING JOBS
+column -t /sw/share/slurm/milou/uppmax_jobstats/<node>/<job_id> | less -S
+
+MONITORING STOPPED JOBS
+finishedjobinfo
+
+jobstats -p <jobid>
+Gives you a graphical overview of how much memory and processing power the job is using over time. 
+Requires graphical ssh connection. 
+View the graph with
+eog milou-<groupname>-<username>-<jobid>.png
+
+jobstats -p -A <project id>
+Shows you a history of jobs run in this project
+
+CANCELING JOBS
+scancel <jobid1> <jobid2> <etc>			Kills multiple jobs
+scancel -i -u joranm				Kills all commands, but asks if you are really sure for each of them
+scancel -u joranm --state=pending	      	Kills all jobs that are currently in queue
+scancel -u joranm -n <jobname> -t running	Kills all running jobs with the name [jobname]
+
+NODE INFORMATION
+Standard	128GB RAM, 16 cores, -> 8GB RAM per core
+Fat		512GB RAM, specify with '-C fat'. There are 17 of these nodes
+256		256GB RAM, specify with '-C mem256GB'. There are 17 of these nodes
+512		512GB RAM, specify with '-C mem512GB'. There are 17 of these nodes
+
+CPU TIME
+1 corehour	-> Running 1 core for one 'wallclock' hour
+16 corehours 	-> Running 1 node for one 'wallclock' hour
+
+DISK INFORMATION
+Also on Uppmax you have a home and your project folders.
+You have about 32 GB available on your home.
+
+RUNNING STUFF ON HALVAN
+It is more or less the same but you need to specify that you run on HALVAN.
+sbatch \
+       -A <project_id> \
+       -M halvan \
+       -p halvan \
+       -n <num_cores> \
+       -t <days-hours:minutes:seconds> \
+       -J <jobname> \
+       <job_script> [arg1] [arg2] [etc]
+
+The number of cores you set decides how much memory you demand from Halvan.
+For example, 64 demands exclusive use of Halvan and thus 2048 GB RAM, whereas 32 demands only 1024 GB RAM
+
+GENERAL TIPS
+Use "rsync" to transfer files between Uppmax and your machine
+

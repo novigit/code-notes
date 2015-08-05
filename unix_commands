@@ -1,0 +1,506 @@
+# PERMISSIONS #
+Either (r)ead, (w)rite, or e(x)ecute on 'user', 'group', 'others'
+
+Example:
+-rw-r--r--
+User can read and write, group and others can only read
+
+# GENERAL TERMINAL HOTKEYS #
+
+Ctrl-A		 Jump to the start of the line
+Ctrl-E		 Jump to the end   of the line
+Ctrl-K		 Remove everything between cursor and end   of line
+Ctrl-U		 Remove everything between cursor and start of line
+Ctrl-W		 Remove word where cursor is currently
+
+# SHELL SCRIPTING #
+
+& LOOP STUFF &
+
+IF LOOP SYNTAX
+if []; then
+   ...
+else
+   ...
+fi
+
+WHILE READ LOOP
+Read a file line by line and assign variables to the line's content.
+
+Example:
+ls -la | while read PERM USR USRGRP SIZE; do
+   echo $PERM $USR $USRGRP $SIZE;
+done
+
+LOOP CONTROL
+break	Breaks the current loop (analogous to 'next' of Perl?)
+
+LOOP OVER RANGE OF NUMBERS
+for i in {89..97..2}; do
+    echo $i
+done
+
+Will return
+89
+91
+93
+95
+97
+
+& COMPARING STUFF &
+
+COMPARE TWO STRINGS
+if [ "$S" -ge "$Q" ] ...
+
+SHELL BOOLEANS FOR INTEGERS
+-eq   Equal
+-ne   Not Equal
+-gt   Greater Than
+-lt   Lesser Than
+-ge   Greater or Equal then
+-le   Lesser or Equal then
+
+STRING COMPARISON OPERATORS
+=     Match
+!=    Does not match
+
+Example:
+Checks if the string "BACL10" is part of $alphabin
+
+if [[ "$alphabin" != *"BACL10"* ]]; then
+   echo "blastp $alphabin ..."
+fi
+
+OTHER COMPARISONS
+[-e FILE]	True if FILE exists
+[-f FILE]	True if FILE exists and is a regular file
+[-h FILE]	True if FILE exists and is a symbolic link
+
+& BASH SCRIPT STUFF &
+ARGUMENTS FOR BASH SCRIPT
+$0	  Name of the bash script
+$1	  First argument
+$2	  Second argument
+$3	  Etc etc..
+
+CASE
+Matches a variable against a range of options described in the case loop
+
+Example:
+var=apple
+case $var in
+    apple)
+	echo "variable was apple";;
+    pear)
+	echo "variable was pear";;
+    mango)
+	echo "variable was mango";;
+esac
+Will print "variable was apple"
+
+GETOPTS
+Stating options in a bash script. Only works with one letter flags.
+<take example from script>
+
+& REST STUFF &
+USING DELIMITER OTHER THAN WHITESPACE:
+grep -c ">" foo.fasta | while IFS=':' do
+     echo $FILE $SEQCOUNT;
+done
+
+STRING CONTROL
+i=teststring
+echo $i			returns "teststring"
+echo ${i}		returns "teststring"
+echo ${i%string}	returns "test"
+echo ${i%string}var	returns "testvar"
+echo ${i#test}		returns "string"
+echo ${i/string/button} returns "testbutton"
+
+
+PROCESS SUBSTITUTION
+join <(sort FILE1) <(sort FILE2) > FILE3
+<(sort FILE) obsoletes an intermediate file, it creates like a temporary file within the command.
+Otherwise you would have done:
+sort FILE1 > FILE1-sort
+sort FILE2 > FILE2-sort
+join FILE1-sort FILE2-sort > FILE3
+rm FILE1-sort
+rm FILE2-sort
+So it saves you a lot of work! Amazing!!
+
+# UNIX PROGRAMS #
+
+ALIAS
+alias		Returns all active aliases
+
+To add default aliases, write in your .bashrc or .profile files 
+alias=<cmdalias>='<cmd>'
+Example:
+alias l='ls -la'
+
+AT
+Execute a bash script at a given time
+Example:
+at -f <commands.sh> 21.00
+
+AWK
+awk '$3 >= 98 {print $0}' <file> > <out>	If the 3rd field is greater than or equals 98, print line
+awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single column
+awk -F ":" '{}'		   	 		Set : as field seperator
+awk -v i="$i" {$3 >= i}				Pass on the $i shell variable to awk
+     						(otherwise awk will think $i is the ith column)
+awk '{print $2 "\t" $1}'			Switch columns
+
+NR		= Number of total records (default => record is one line)
+FNR 		= Number of file records
+map[$1] = $2 	= awk array (like a perl hash)
+
+BASENAME
+Trims paths and extensions froms strings (opposite of DIRNAME) 
+
+Example: 
+          FASTA      returns	panorthologs/famcl00140.faa
+basename $FASTA      returns 	famcl00140.faa
+basename $FASTA .faa returns 	famcl00140
+
+BC
+Calculator
+echo "100/50" | bc		Yields 2
+echo "scale=2:100/60 | bc -l	Yields 1.67	
+    	
+CAT
+-e	Show newline characters as '$'
+
+COLUMN
+column -t [file]	Prints the file so that all columns are nicely aligned in view
+column -t [file] -s $'\t' Use TAB as separator instead of the default whitespace
+You can also type 'Ctrl-v TAB' while typing the comment. "
+
+CD
+cd -	Returns to the previous directory
+
+CHMOD
+Change rights of owner / user, group, others or all of a file to either read, write or execute.
+Example: 
+chmod u+x <file>	Adds the e(x)ecutable right for (u)ser to this <file>
+
+CHOWN
+Change ownership of a given directory
+Example:
+chown kasiazar kasia/
+-R    Recursive (any directory below will also be changed ownership)
+
+COMM
+Compares to files and lists the common lines and unique files
+Files have to be sorted first (in the same way ofcourse)
+Column1: unique to file1      	  '-1' to suppress this column
+Column2: unique to file2	  '-2' to suppress this column
+Column3: appear in both files	  '-3' to suppress this column
+
+CONVERT
+Converts between image file formats
+Example:
+convert filename.pdf filename.png
+
+CRONTAB
+-l	List all current crontabs
+-e	Edit crontab commands
+crontab command format:
+[minute] [hour] [day of the month] [week] [month] [day of the week]
+Example
+0 12 * * * *		Every day, at 12.00
+
+CUT	
+cut <flags> <file>	Remove sections from lines
+-f <number or list>	Select column <number>
+   	      		Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
+-d <delim>		Select delimiter to use to creat fields, 
+   			Example: '_' or ' '. Default is '\t' ?
+--complement		Prints all fields except those specified in -f
+
+DIRNAME
+Trims filenames from strings (opposite of BASENAME)
+
+Example:
+	 FILE	     returns	/path/to/panorthologs/famcl00140.faa
+dirname $FILE	     returns 	/path/to/panorthologs
+
+DNSDOMAINNAME
+dnsdomainname	Reveals the domain name of the current computer where you are logged in
+		Example: icm.uu.se
+
+DU					Reports disk usage of directories or files
+-h <file|directory>			Human readable numbers
+du -h . | sort -h -r | head -n 20	Nice quick command to look for the top biggest directories from current directory
+
+ECHO
+echo "$STRING"	Prints string to STDOUT
+echo $STRING	Same thing but converts tabs to spaces
+
+Options:
+-e	Enables interpretation of backslash escapes and certain characters are recognized, like \t and \n
+-n	Removes the newline character
+
+FIND
+find <PATH> -name <EXPRESSION>
+Flags
+-maxdepth <number>			The level of directories down find will try to find your attern
+Example:
+find . -name "All.htm"
+
+GREP
+grep "PATTERN" <file> OUTPUTS THE ENTIRE LINE OF WHERE IT FINDS ITS HITS
+grep -v "^$"   	      REMOVES EMPTY LINES 
+     		      (no special character, but clever use
+		      of regexp: ^ start of line, $ end of line)
+Flags:
+-i			Ignores case
+-n			REPORTS LINE NUMBER OF HITS
+-c			COUNTS HITS
+-c ""			Counts lines in the file
+-A <int>	       	PRINTS IN ADDITION TO HIT LINE ALSO int LINES AFTER HIT	
+-v 		       	PRINTS ALL LINES EXCEPT LINES WITH HITS
+-P		       	Allows for Perl regexp in PATTERN
+-f <FILE>	       	Prints all lines that have the PATTERNS listed in FILE, one per line
+-x 		        The PATTERN must encompass the entire line. Handy for speeding up grep
+--no-group-separator	Suppresses the '--' seperator when using -A, -B, or -C
+-o			If you have multiple hits in a single line, it will report all the hits on that line, seperated by newlines. 
+			It will not report the whole line, but just the match. Hence the name '-only_matching'
+--color=always		Keep coloring of match even if you pipe into a new grep command. Even less keeps color
+			Can even do 2 different colors. Example
+			echo "hello" | grep --color=always "he" | GREP_COLORS="mt=01;34" grep "lo"
+-e			Multiple search patterns at the same time. grep -e "pattern1" -e "pattern2"
+-m <NUM>		Only reports the first <NUM> lines with match			
+-H 			Always reports the filename that it found its hit in
+
+AGREP
+Grep that allows mismatching. Very handy to search sequence data still allowing sequence errors
+
+HOSTNAME
+hostname	Reveals the name of the host
+		Example: molev209
+JOBS
+Lists all 'jobs', that can either be commands, or scripts or anything like that in the background. Putting an '&' sign after the job command puts it in the background. With FG (foreground), you put the 'job' back in the foreground. Then you can kill it for example. JOBS only lists those jobs that are running in that specific terminal
+
+KILL
+Killing defunct processes. For example when Firefox crashes
+ps -e | grep firefox
+kill -9 <process_id_of_firefox>
+
+LESS
+/PATTERN
+Search for regex pattern in file from this point on forward
+?PATTERN
+Search for regex pattern in file from this point on backwards
+Press 'n' to go to the next hit
+Press 'N' to go the previous hit
+<number> then g	    Go to line <number>
+
+Flags:
+-S		Show file without line breaks
+-N		Show line numbers
+
+LN
+Symbolic links
+ln -s <source> <link name>	Places a link to another file (so prevents additional space to be used)
+ln -s <source> 	     		Automatically clips the path and only leaves the file name as the name of the link
+
+MAN
+man -l <file>	Will open the file with man
+man ./		Will open the file with man
+
+MKDIR
+mkdir -p			Create nested directories in a single command
+Example:
+mkdir -p newdir1/newdir2
+
+PASTE
+paste	Concatenate vertically
+-d	Sets delimiter, default=TAB
+
+PERL -PE (perldoc perlrun)
+As a replacement for sed. Perl -PE has a better regular expressions support
+-p   assumes the code 'while (<IN>) { ##code## } '
+-e   anything within '' will be seen as a perl script
+
+Example:
+perl -pe 's:^.+$:TEST: if /^>/' aaa_pooled-hfix.fasta
+-i   Changes input file. (Just like sed). But the -i has to be first flag for some reason
+-w   use warnings
+
+REBOOT
+reboots the system
+
+RSYNC
+rsync <option> <source> <destination>
+Options:
+-a			    Archive mode, keeps all symlinks, devices, attributes, permissions, ownerships etc. 
+-v			    Verbose mode
+-z			    Compress data during transfer	
+-h			    Human readable output
+-P		       	    --progress and --partial combined
+--partial		    If transfer breaks, you can restart it no problem later
+--progress	   	    Shows progress bars of transfer
+--log-file=<file>   	    Creates log of rsync transfer
+--delete-after		    Deletes files in the destination that are no long present in the source
+-L or --copy-links	    Rsyncs the file that the link is pointed to			    
+-p    			    Preserve permissions
+-u or --update		    Skip files that are newer on the receivre			    
+-r or --recursive	    Tells rsync to copy directories recursively
+--exclude='*.txt'	    Rsync all files except for those that end with .txt
+
+SCREEN
+screen			Open up a new screen
+screen -ls		List down the current open screens
+screen -r <screen id>  	Reattach to the screen
+screen -r 	  	If there is only one screen, it automatically will reattach to that one.
+exit   	  	  	Exit the current screen you are in 
+			(this will kill any processses in this screen?)
+SED
+sed 's/PATTERN/REPLACE/g' <file> > <outfile>
+If sed is used in a for loop with replace as $i, use double quotes:
+sed "s/PATTERN/$i/g" or "s/$i/PATTERN/g"
+Flags:
+-i	Will replace patterns in the input file. Input = output file
+sed -n '[number]'p   	      	 Prints line number [number]
+sed -n '[number1],[number2]'p 	 Prints lines in range number1-number2
+sed -n '[number],$'p		 Prints from line [number] to the end
+
+sed -r 's/(.+)\|(.+)/\2\|\1/'
+You have to escape pipes (present in the file) but not the parentheses (have a function here). + only works here with extended regexp (-r)
+'>' You dont have to escape though
+\d+ does not work with sed. you have to use [0-9]
+If you want to replace single quotes, then use double quotes for the whole sed command (so "s///" instead of 's///' ) 
+
+sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta	Negates any line that starts with '>'
+the first argument within the quotes tells sed which lines to look or not look for
+
+Flags
+-r	For extended regexp
+
+sed "s/^$/d" 	     Delete empty lines
+sed "s/\_/\t/3"	     Replaces 3rd occurrence of _ in the line with a tab
+sed "s/\_/\t/g3"     Replaces 3rd occurrence until last occurrence of _ in the line with a tab
+
+SEQ
+Creates a sequence of numbers
+seq <start> <increment> <end> -s <separator>
+
+Example:
+END=5
+seq 0 $END		Returns 0 1 2 3 4 5, separated by <separator>
+
+SORT
+sort -n -t "_" -k 2 <file>	SEPERATES BY "_", PICKS THE 2ND FIELD AND SORTS THAT NUMERICALLY
+-r   	       	    		Reverses the sort output (for example instead of large to small go from small to large)
+-u -k 1,1  			Omits lines that are copies in the first field after sorting
+-g    	   			Sort exponential values
+-h	   			Sort human readable numbers, incompatible with -n
+
+while in screen
+ctrl-a + ctrl-d		Detach from the screen while not interuppting any processes in the screen
+
+SHUTDOWN
+shutdown -r +5 "Rebooting soon, log out ASAP!"		Gives people who are logged in some time to log out.
+
+SPLIT
+Split a file by size, by lines or other things
+split -l 10000 <myfile> <prefix>				Splits up a file into multiple files with 10000 lines each
+split -d <myfile>						Makes numerical suffixes instead of alphabetical  
+split -n l/<N> <myfile>						Splits file into <N> chunks while not splitting lines
+
+SSH
+Login as root:
+Type either 'su' and then enter the root password
+or
+ssh into your own machine as root as follows:
+ssh -i .ssh/root_rsa root@molev209
+and enter the passphrase for key '.ssh/root_rsa' (not the same as the root password)
+
+SVN
+cd desired/directory
+svn checkout svn://foo DOWNLOADS REPOSITORY, THIS IS ONLY NEEDED TO DO ONCE
+Before you can add a new file to the svn, you actually need to physically copy it to the svn folder.
+svn add [new dir]
+svn add [new file]
+svn commit -m "Message to the subversion system DATE"
+svn update UDPATES YOUR LOCAL REPOSITORY WITH LATEST CHANGES ON SUBVERSION SYSTEM
+
+TAIL
+tail <file>		Shows the last 10 lines of a file
+-n <number>		Shows the last [number] lines of a file
+-n +<number>		Shows the last part of a file starting at line [number]
+-f 			Keeps updating, if the file is being appended continuously
+
+TAR
+tar -tvf	Lists the contents of the .tar
+tar -ztvf	Lists the contents of the .tar.gz
+tar -jtvf	Lists the contents of the .tar.bz2
+
+TR
+tr -s ' '			    If you have multiple white space characters in a row, it will truncate it to just a single white space
+
+tr '\t' '\n'	   	       	    Transform all tab into newlines
+tr '[abc]' '[def]' 		    Transform all a's into d's, b's into e's etc.	
+cat FILE | tr -dc '(' | wc -c	    Counts number of '(' in file 
+
+TIME
+time [cmd]	Will print out the time it takes to execute a given command
+
+VI(M)
+:x	Quit
+
+W
+Shows you who is currently logged in
+
+# BASH SCRIPTING #
+If you execute a bash script, for example
+bash script.sh string1 string2
+The string1 will be referred to in the script as $1 and string2 as $2
+
+FOR LOOPS
+for i in {<int1>..<int2>..<int3>}; do cmd1 $i; cmd2; done
+loops from ING1 to INT2 with steps INT3
+
+for i in {<word>,<word>,<word>}; do cmd1 $i; cmd2; done
+sometimes $i needs to be written as ${i}, for example when '_' follows $i directly
+
+for i in *.txt; do cmd; done
+Loops over all files that match the *.txt pattern.
+
+NESTED FOR LOOPS
+for i in {};
+do 
+    for j in {};
+    do cmd $i $j;
+    done;
+done;
+
+GIT
+Decentralized versioning system
+git config --global user.name "Joran Martijn"
+git config --global user.email joran.martijn@icm.uu.se
+git clone https://github.com/novigit/brocode	"Clone" the repository to current directory
+git status					Check what has been changed since last udpate
+git add						"Stage" files for commit
+git commit -m "commit message"			"Commit" the files to your repository
+git push origin master				"Push" changes into repository
+git log	 					Check your commit log
+git remote -v					Lists remote repositories
+git checkout [branch]				Change to a specific branch
+git pull origin master				Copy the current master branch to your local copy
+    	 					"Origin" refers to the bitbucket server
+
+##### HANDY CODES ##########
+## Replace NCBI sequence headers with an accession number with the accesion number only
+perl -pe 'if (/^>/) {my @line = split /\|/,$_; s/.+/\>$line[3]/;}' 16S_Pooled_id83-otu-0.89-pruned.fasta
+
+## Omit bootstrap values that are smaller then 70
+perl -pe 's/\)([1-9]|[1-6][0-9])\:/\)\:/g' newick > newick-edit.out
+
+## Calculate the sum of a list of numbers or column of numbers. In this example the 5th column
+cut -f 5 | tr '\t' '\+' | sed 's/+$/\n/' | bc
+
+# Calculate total number of basepairs in a fastq file
+sed -n 'n;p;n;n' <.fastq> | tr -d "\n" | wc -c 
