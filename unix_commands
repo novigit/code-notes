@@ -32,6 +32,8 @@ ls -la | while read PERM USR USRGRP SIZE; do
    echo $PERM $USR $USRGRP $SIZE;
 done
 
+Use the read '-r' flag, 'while read -r STRING' to prevent read from eating '\' in $STRING
+
 LOOP CONTROL
 break	Breaks the current loop (analogous to 'next' of Perl?)
 
@@ -171,6 +173,7 @@ echo "scale=2:100/60 | bc -l	Yields 1.67
     	
 CAT
 -e	Show newline characters as '$'
+-A	synonymous to -e ?
 
 COLUMN
 column -t [file]	Prints the file so that all columns are nicely aligned in view
@@ -349,6 +352,7 @@ Options:
 -u or --update		    Skip files that are newer on the receivre			    
 -r or --recursive	    Tells rsync to copy directories recursively
 --exclude='*.txt'	    Rsync all files except for those that end with .txt
+--include='*.txt'	    Rsync only files that end with .txt
 
 SCREEN
 screen			Open up a new screen
@@ -504,3 +508,6 @@ cut -f 5 | tr '\t' '\+' | sed 's/+$/\n/' | bc
 
 # Calculate total number of basepairs in a fastq file
 sed -n 'n;p;n;n' <.fastq> | tr -d "\n" | wc -c 
+
+# Get best blast hits out of a .blastn file
+sort -k1,1 -k12,12gr -k11,11g -k3,3gr contigs_vs_nt.blastn | sort -u -k1,1 --merge

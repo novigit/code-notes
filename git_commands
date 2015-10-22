@@ -10,34 +10,37 @@ GIT EXAMPLE
 Lets say you want to make a modification to a script.
 You don't want to disturb the master branch with faulty scripts, so therefore you make a new branch, "issue1" for example.
 While in this branch, you make the modification. And now you want to store that modification:
-      git add [modified file]
+      git add <modified file>
 After this you can choose to modify more files, or you can make a commit:
-      git commit -m "made change to [file]"
+      git commit -m "made change to <file>"
 You can make commits offline. Once you are online again, you can push the commits to bitbucket or github as follows
-      git push origin [branch]
+      git push origin <branch>
 Enter your account and password, and then it should be done!
 
 GIT COMMANDS
+git init					Initiate a local git repository
 git config --global user.name "Joran Martijn"
 git config --global user.email joran.martijn@icm.uu.se
 git config -l					Some general configuration information of account and repository
 git clone https://github.com/novigit/brocode	"Clone" the repository to current directory
 git status					Check what has been changed since last udpate
-git add						"Stage" files for commit
+git add <file|dir>				"Stage" files for commit, or "add" files to the "staging area", where files are tracked
+git diff <file>					Check the changes of a file, between when it was added and now
+    	 					Enters 'less'
 git commit -m "commit message"			"Commit" the files to your repository
 git log	 					Check your commit log
 git remote -v					Lists remote repositories
-git checkout [branch]				Change to a specific branch
+git checkout <branch>				Change to a specific branch
 git push origin master				"Push" changes into repository
 git pull origin master				Copy the current master branch to your local copy
     	 					"Origin" refers to the bitbucket server
 git branch -v					Shows the local branches and which branch you are on
 
 GENERAL COMMIT "PIPELINE"
-1. Make a modification to a [file]
-2. git add [file]
-3. git commit -m "[message]"
-4. git push origin [master|branch]
+1. Make a modification to a <file>
+2. git add <file>
+3. git commit -m "<message>"
+4. git push origin <master|branch>
 
 BITBUCKET
 Bitbucket is a repository system where people can share their code and work collectively on code at the same time using a git versioning system.
@@ -55,7 +58,7 @@ closing branches		The terminology for deleting a branch
 forking				Can be synonymous to "branching", but also it can mean to fork the entire repository.
 issues				Every time you want to make a modification to your code, you should make an "issue"
 				Each consecutive issues gets a number. Starting with issue #1, then #2 etc.
-				If you believe your issue is resolved, type "fix #[issue number]" in your commit message.
+				If you believe your issue is resolved, type "fix #<issue number>" in your commit message.
 				For example, commit -m "script is now working fix #45"
 				Then bitbucket will mark the issue as "resolved"
 

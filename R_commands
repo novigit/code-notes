@@ -1,5 +1,8 @@
 OVERVIEW OF R COMMANDS
 
+UPDATING R
+zypper update R-patched (while superuser)
+
 GENERAL
 ?Rcommand	
 or
@@ -27,6 +30,7 @@ NAMES
 names(			Associates 'names' with vector elements
 	vector,
 ) <- c('name1','name2','name3','etc')
+names(<list>)		Returns the components of a list
 
 EXPORTING A PLOT
 png(
@@ -106,6 +110,7 @@ hist(
 	main="title"			Title of the plot
 	xlab="title"			Title of x-axis			
 	col="darkgreen"			Color of the bars
+	add=T				If you want to overlay over an existing histogram
 )
 
 DENSITY PLOT (similar to histogram, but no bars, just a line)
@@ -157,6 +162,7 @@ par(new=T)			State after plot and before plotting a new plot overlaying the prev
 lwd=1.5				Set line width
 bty="n"				Disable box for plot (only draws 2 axes instead of 4)
 )
+box()				Will create a box around your plot
 
 CUSTOM AXIS
 axis(
@@ -351,3 +357,22 @@ merge(
 	df1,		Dataframe 1
 	df2,		Dataframe 2
 )
+
+INTERSECT
+Find the common elements between two vectors
+
+vector1=c(1,2,3,4,5)
+vector2=c(2,4,6,8,10)
+intersect(vector1,vector2)	Returns "2", and "4"
+
+TABLE
+as.dataframe.table(<dataframe>)		Returns a new dataframe with a count for each unique element in 
+
+SUBSET
+Subset a dataframe or vector based on certain conditions
+subset(
+	x=<dataframe|vector>,		object to be subsetted
+	subset,				logical expression indicating rows (dataframe) or elements (vector) to keep
+)
+Example:
+markers_bin_187_subBin0<-subset(markers_bin_187, scaffold %in% bin_187_subBin0$scaffolds$scaffold)

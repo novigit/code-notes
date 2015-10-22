@@ -396,9 +396,12 @@ do
 	perl /local/one/tools/esomScripts/changeClasses.pl \	
             -cls test.bin${cls}.cls \
             -names min10k_max10k/Tetra_esom_10000.names \
-            -list <(grep ">" ../../../concoct-0.4/map/bins/bin_${bin}.fasta | sed -r "s/[- ]/_/g" | sed -r "s/>//") -tag bin_${bin} \
+            -list <(grep ">" ../../../concoct-0.4/map/bins/bin_${bin}.fasta | sed -r "s/[- ]/_/g" | sed -r "s/>//") \
+	    -tag bin_${bin} \
             -out test.bin${bin}.cls
 	rm test.bin${cls}.cls
 done
 This loop iteratively writes over the previous class file that added one bin until it has written classes for all bins.
 In the '-list' option it is crucial that you change the headers so that they match with the ones in the .names file
+
+SEQTK
