@@ -1,4 +1,4 @@
-# PERMISSIONS #
+PERMISSIONS #
 Either (r)ead, (w)rite, or e(x)ecute on 'user', 'group', 'others'
 
 Example:
@@ -204,7 +204,9 @@ Column3: appear in both files	  '-3' to suppress this column
 CONVERT
 Converts between image file formats
 Example:
-convert filename.pdf filename.png
+convert                 filename.pdf filename.png
+convert -resize 200x100 filename.pdf filename.png	Resizes the image while converting
+convert -resize 200     filename.pdf filename.png	Resizes the image to 200px wide, but keeps aspect ratio for length
 
 CRONTAB
 -l	List all current crontabs
@@ -236,6 +238,7 @@ dnsdomainname	Reveals the domain name of the current computer where you are logg
 DU					Reports disk usage of directories or files
 -h <file|directory>			Human readable numbers
 du -h . | sort -h -r | head -n 20	Nice quick command to look for the top biggest directories from current directory
+du -sh <dir>  	       	       		Report total size of dir only. Will not report any nested directories or files
 
 ECHO
 echo "$STRING"	Prints string to STDOUT
@@ -283,6 +286,17 @@ Grep that allows mismatching. Very handy to search sequence data still allowing 
 HOSTNAME
 hostname	Reveals the name of the host
 		Example: molev209
+
+IDENTIFY
+Reports properties of an image file. Part of the ImageMagick suite.
+Example:
+identify filename.png
+
+Reports:
+
+filename.png PNG 200x3510 200x3510+0+0 16-bit DirectClass 1.267MB 0.000u 0:00.000
+
+
 JOBS
 Lists all 'jobs', that can either be commands, or scripts or anything like that in the background. Putting an '&' sign after the job command puts it in the background. With FG (foreground), you put the 'job' back in the foreground. Then you can kill it for example. JOBS only lists those jobs that are running in that specific terminal
 
