@@ -91,3 +91,16 @@ sub function {
     my ($var, $foo2, $bar2) = @_;
 }
 this will not work, because now, @array, $foo and $bar will be concatenated, and put into $var
+
+### Documentation
+
+perl handbook: perl best practices
+perldoc	       	    the perlstyle guide, only 15 minutes to read through
+perl.com	    	ten essential development practices
+
+lionels perl package:
+Phylogenomics::taxa, to standardize taxon names
+
+lionel newperl script
+newperl.sh	Creates a perldoc  template for a new perl script
+			  	   Template is described in perlTemplate.pl (ettemalab/templates)
