@@ -525,3 +525,4 @@ sed -n 'n;p;n;n' <.fastq> | tr -d "\n" | wc -c
 
 # Get best blast hits out of a .blastn file
 sort -k1,1 -k12,12gr -k11,11g -k3,3gr contigs_vs_nt.blastn | sort -u -k1,1 --merge
+

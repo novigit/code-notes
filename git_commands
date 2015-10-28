@@ -25,9 +25,11 @@ git config -l					Some general configuration information of account and reposito
 git clone https://github.com/novigit/brocode	"Clone" the repository to current directory
 git status					Check what has been changed since last udpate
 git add <file|dir>				"Stage" files for commit, or "add" files to the "staging area", where files are tracked
+git add .					Adds all changed files for commit
 git diff <file>					Check the changes of a file, between when it was added and now
     	 					Enters 'less'
 git commit -m "commit message"			"Commit" the files to your repository
+git commit -a -m "commit message"		Will automatically add all tracked files with changes. Will not add untracked files
 git log	 					Check your commit log
 git remote -v					Lists remote repositories
 git checkout <branch>				Change to a specific branch
@@ -35,6 +37,8 @@ git push origin master				"Push" changes into repository
 git pull origin master				Copy the current master branch to your local copy
     	 					"Origin" refers to the bitbucket server
 git branch -v					Shows the local branches and which branch you are on
+git branch <branchname>				Create new branch with <branchname>
+git --version					Shows current version of git
 
 GENERAL COMMIT "PIPELINE"
 1. Make a modification to a <file>
