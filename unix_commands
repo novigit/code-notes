@@ -462,6 +462,7 @@ tr -s ' '			    If you have multiple white space characters in a row, it will tr
 tr '\t' '\n'	   	       	    Transform all tab into newlines
 tr '[abc]' '[def]' 		    Transform all a's into d's, b's into e's etc.	
 cat FILE | tr -dc '(' | wc -c	    Counts number of '(' in file 
+tr -d ' >'    	      	   	    Deletes space ánd >
 
 TIME
 time [cmd]	Will print out the time it takes to execute a given command
