@@ -42,10 +42,7 @@ git pull origin master				Copy the current master branch to your local copy
     	 					"Origin" refers to the bitbucket server
 git branch -v					Shows the local branches and which branch you are on
 git branch <branchname>				Create new branch with <branchname>
-git branch -d <branch>				Delete <branch>
-git merge <branch>				Merge <branch> with branch you are currently on
 git --version					Shows current version of git
-
 
 GENERAL COMMIT "PIPELINE"
 1. Make a modification to a <file>
