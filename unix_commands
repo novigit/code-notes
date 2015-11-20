@@ -141,6 +141,9 @@ alias=<cmdalias>='<cmd>'
 Example:
 alias l='ls -la'
 
+UNALIAS
+unalias <alias>	Remove <alias> from alias list
+
 AT
 Execute a bash script at a given time
 Example:
@@ -331,6 +334,18 @@ MKDIR
 mkdir -p			Create nested directories in a single command
 Example:
 mkdir -p newdir1/newdir2
+
+PARALLEL
+parallel -j<n processors> "<command you want to parallelize> {}" ::: <files to process>
+
+Example:
+parallel -j8 "seqret -sequence <(zcat {}) -outseq fasta/{/.}.fasta" ::: ../../data/wgs_*.dat.gz
+
+This command will use 8 processors, so 8 seqret commands will be executed at the same time until all files have been processed.
+
+{}   holds the name of the file, including the path,           for example in this case ../../data/wgs_cevg01_env.dat.gz
+{/.} holds the basname of the file, and the extension trimmed, for example in this case wgs_cevg01_env.dat
+
 
 PASTE
 paste	Concatenate vertically
