@@ -7,6 +7,9 @@ This means that you use your username and password on your local machine to crea
 Create the ticket:
 kinit -f jmartijn@NADA.KTH.SE
 
+Create a ticket that lasts for 30 days:
+kinit -l 30d jmartijn@NADA.KTH.SE
+
 Check if ticket is valid or expired:
 klist -f
 
@@ -26,17 +29,18 @@ This space is useful for backing up stuff. But files here are can not be accesse
 To use stuff for jobs, store it at the Lustre file system:
 /cfs/klemming/scratch/j/jmartijn and
 /cfs/klemming/nobackup/j/jmartijn
+scratch is regularly wiped, so do not use this one.
 
 Check data usage:
 lfs quota -u jmartijn /cfs/klemming
 
 TRANSFERRING FILES TO KLEMMING
-Use the node 'cfs-aux-4.pdc.kth.se'.
-rsync -avzhP <file(s)_to_transfer> jmartijn@cfs-aux-4.pdc.kth.se:/cfs/klemming/scratch/path/to/location/
-# if you use cfs-aux-4.pdc.kth.se you have to include /cfs/klemming/scratch and not /cfs/scratch, because /cfs/scratch does not exist on this node. But /cfs/klemming/scratch and /cfs/scratch are essentially the same directories on the normal login node so its ok.
+Use the node 'tegner.pdc.kth.se'.
+rsync -avzhP <file(s)_to_transfer> jmartijn@tegner.kth.se:/cfs/klemming/scratch/path/to/location/
+# if you use tegner.pdc.kth.se you have to include /cfs/klemming/scratch and not /cfs/scratch, because /cfs/scratch does not exist on this node. But /cfs/klemming/scratch and /cfs/scratch are essentially the same directories on the normal login node so its ok.
 
 SETUP A PROFILE
-Create a '.bashrc' in the home and edit it the way you like it
+Create a '.profile' in the Public folder on the home and put a link in the home called '.profile' to the .profile in the /Public folder. Do not hard reset the PATH in the .profile edit it the way you like it
 
 COMMANDS
 
@@ -44,6 +48,7 @@ module avail				Lists all the software modules available on Beskow
 sbatch -e <out>				Captures the STDERR output
 sbatch -o <out>				Captures the STDOUT output
 sbatch -n <number>			Set number of cores to use
+sbatch -t <days-hours:min:seconds>	Set time limit
 scancel <jobid>				Cancels job with <jobid>
 projinfo				Summary of used hours last couple of months
 projinfo -v -d 				Detailed usage per user
@@ -58,5 +63,9 @@ Use this instead:
 #SBATCH --nodes=<number/32>
 #SBATCH --ntasks-per-node=32
 
+Unable to negotiate a key exchange method
+Simply make a new ticket and try to login again
+
 REASONS
 AssocGrpCPURunMinsLimit			Running this job would put the user’s group beyond its maximum number of CPU minutes allocated to currently running jobs
+

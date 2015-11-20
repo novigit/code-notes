@@ -34,7 +34,8 @@ git log	 					Check your commit log
 git remote -v					Lists remote repositories
 git checkout <branch>				Change to a specific branch
 git push origin master				"Push" changes into repository
-git pull origin master				Copy the current master branch to your local copy
+git fetch origin master				Downloads the latest master branch to the branch origin/master
+git pull origin master				Fetch ánd merge the current master branch with your local copy
     	 					"Origin" refers to the bitbucket server
 git branch -v					Shows the local branches and which branch you are on
 git branch <branchname>				Create new branch with <branchname>
@@ -68,7 +69,15 @@ issues				Every time you want to make a modification to your code, you should ma
 
 CREATING ISSUES
 1.	 Create an issue on the bitbucket project page and write some description of what you want to do with the code
-2.	 Create a branch on the website as well and use the "git fetch && git checkout <branchname>" command on your pc to switch to this branch
-3.	 Work on your code
+2.	 Create a branch on the website as well and use the "git fetch && git checkout <branchname>" command on your pc to switch to this branch. <branchname> should be something like 'issue<issuenumber>'
+3.	 Now you are on the branch <branchname>. Work on your code.
+4.	 Once code is done, do a 'git pull origin <branchname>' to make sure no other edits have been made that can give conflicts
+5.	 Then do 'git add' 'git commit' and 'git push'.
 
-In case you write a new code, also make a git issue. Some people might see your issue name on email and may have suggestions on how to do what you want to do in a more efficient way or if another tools is already available. Will save you a lot of time
+In case you write a new code, also make a git issue. 
+Some people might see your issue name on email and may have suggestions on how to do what you want to do in a more efficient way or if another tools is already available. 
+Will save you a lot of time
+
+6.   	  Once the issue is resolved, do a final commit that contains "Fix#<issuenumber>" in the commit message. Bitbucket will interpret this and close the issue.
+7.	  Merge with master
+8.	  Delete branch
