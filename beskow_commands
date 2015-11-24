@@ -68,4 +68,15 @@ Simply make a new ticket and try to login again
 
 REASONS
 AssocGrpCPURunMinsLimit			Running this job would put the user’s group beyond its maximum number of CPU minutes allocated to currently running jobs
+Resources				The job is waiting for resources to become available
 
+
+VIEWING IMAGE FILES
+For some reason, 'eog' does not work very nicely on beskow. Therefore, mount /cfs/klemming on local machine with sshfs. Note that this can only be done while you have a valid ticket.
+
+sshfs jmartijn@beskow.pdc.kth.se:/cfs/klemming/nobackup/j/jmartijn/ mount/
+
+Then you can access and read/view all files with programs installed on your local machine. Awesome!
+
+POST-PROCESSING OF BIG JOBS
+This should preferably be done on Tegner. Tegner has R installed, whereas Beskow has not.
