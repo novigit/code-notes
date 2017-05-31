@@ -285,6 +285,8 @@ Flags:
 
 AGREP
 Grep that allows mismatching. Very handy to search sequence data still allowing sequence errors
+--color
+-E <NUM>	Allowed <NUM> of mismatches
 
 HOSTNAME
 hostname	Reveals the name of the host
@@ -481,6 +483,12 @@ tr -d ' >'    	      	   	    Deletes space ánd >
 
 TIME
 time [cmd]	Will print out the time it takes to execute a given command
+
+UNAME
+Prints system information
+-a     Prints all information
+
+Prints among other stuff, hostname, 32-bit or 64-bit
 
 VI(M)
 :x	Quit

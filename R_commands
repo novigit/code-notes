@@ -72,6 +72,7 @@ df<-read.table(
 	header=TRUE,			State if the table contains a header or not
 	row.names=c()			Provide vector with row    names if you want to
 	col.names=c()			Provide vector with column names if you want to
+	row.names=1			If your table also contains row headers
 	skip=<n>			Skips the first <n> lines before reading the data
 )
 
@@ -376,3 +377,12 @@ subset(
 )
 Example:
 markers_bin_187_subBin0<-subset(markers_bin_187, scaffold %in% bin_187_subBin0$scaffolds$scaffold)
+
+SUM
+You can use sum to count the number of times a given value occurs in a vector.
+For example:
+v<-c(0,0,1,1,1,1,2,2,2,2,3,3,4,4,5,5,5,5,5,5)
+sum(v==0) returns 2
+sum(v==1) returns 4
+sum(v==2) returns 4
+etc

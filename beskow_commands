@@ -44,6 +44,7 @@ Create a '.profile' in the Public folder on the home and put a link in the home 
 
 COMMANDS
 
+module list				Show all currently loaded modules
 module avail				Lists all the software modules available on Beskow
 sbatch -e <out>				Captures the STDERR output
 sbatch -o <out>				Captures the STDOUT output

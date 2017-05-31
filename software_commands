@@ -172,6 +172,7 @@ makeblastdb \
 	    -dbtype nucl|prot \
 	    -parse_seqids
 NOTE: MAKE SURE THAT FASTA HEADERS ARE FORMATTED SOMETHING LIKE THIS: >lcl|[accession no.] theawesome sequence
+Also make sure that you only have one pipe in your sequence name, the one after >lcl. It will complain otherwise
 
 TROUBLESHOOTING
 If it complains about delta sequences, check for non-amino acid characters in the sequences with 
@@ -211,9 +212,9 @@ blastdbcmd \
 Good fields to include on top of std in the blast tabular output:
 slen 	    subject length
 qlen	    query length
-qcovs	    query coverage compared to subject
-qcovhsp	    query coverage comparted to alignment
-
+qcovs	    alignment length / query length * 100 (how much of query is aligned to hit? )
+	    Takes into account all HSPs
+qcovhsp	    Same as qcovs but then for each single hsp (not sure though; testing seems to verify this)
 
 MAPPING READS
 BWA
@@ -256,6 +257,8 @@ Counting reads in a .bam file
 samtools view -c -F 4 test.bam		Counting mapped reads
 samtools view -c -f 4 test.bam		Counting unmapped reads
 
+Filter out mapped reads with MAPQ quality lower than some integer
+samtools view -bq 1 <bam> > <q1.bam>
 
 
 MAKING A COVERAGE PLOT WITH R USING THE MPILEUP.OUT MADE WITH SAMTOOLS
@@ -404,4 +407,65 @@ done
 This loop iteratively writes over the previous class file that added one bin until it has written classes for all bins.
 In the '-list' option it is crucial that you change the headers so that they match with the ones in the .names file
 
+ESOM output files
+.bm -> bestmatches
+
+General format:
+% <rows_of_map> <columns_of_map>
+% <total_number_of_points>
+<pointid>	<row>	<column>
+
+So basically the coordinates of each point
+.
+lrn -> learn file
+
+General format:
+% <total_number_of_points>
+% <number_of_columns_in_data_file> (136 4-mers; not 256 (because of reverse complement and something else) )
+% <type of column> (9 for unique key; key = number of data point, and should be unique in our case)
+<key1> <freq1> <freq2> <freqn>
+<key2> <freq1> <freq2> <freqn>
+
+So basically the tetranucleotide frequencies of each point
+
+_robust.lrn -> learn file normalized with RobustZT transformation. 
+
+RobustZT = robust Z-transform
+Z-transform: take each value, substract the mean, and divide by std dev. 
+The result will be a value that describes how far that value is from the mean in factors of std deviations.
+Robust Z-transform: Estimate mean and std dev without outliers.
+
+
+General format:
+% <total_number_of_points>
+% <number_of_columns_in_data_file>
+% <type of column>
+<key1> <robustZT freq1> <robustZT freq2> 
+<key2> <robustZT freq1> <robustZT freq2>
+..
+
+.wts -> weights
+
+General format:
+# comments
+# comments
+% <rows_of_map> <columns_of_map>
+% <number_of_columns_in_data_file>
+% 
+
+This file contains a number of lines equal to columns times rows.
+Thus, each line corresponds to a single point in the map.
+I think each point represents a profile of tetramer frequencies.
+
+This file thus represents a grid where each point is a tetramer profile.
+You then load your contig(splits) on this grid and figure out which point your contig fits best to.
+In other words, the "best match".
+
 SEQTK
+
+IQTREE
+iqtree-omp -s <.phylip> -m TESTONLY -mset LG -madd C20,C30,C40,C50,C60 -mredo -nt 30
+Tests the LG model and the mixture models C20 to C60 for a given alignment.
+It seems that mixture models can only be tested with the -madd option.
+-m TESTONLY invokes the model tests, but it will only do model tests, no tree inference
+-m TEST     invokes the model tests, but it will also do tree inference with the best model according to BIC
