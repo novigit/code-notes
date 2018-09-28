@@ -29,6 +29,31 @@ EXECUTE A SHORT PERL SCRIPT DIRECTLY ON THE COMMAND LINE
 
 perl -e "SCRIPT;"
 
+4. perl -I /path/to/lib <script>
+
+
+#### MODULES AND LIBRARIES ####
+
+Installed modules can usually be found under
+/usr/lib/perl5/site_perl/5.16.0/
+Different directory levels within modules are separated by :: when calling modules
+
+For example,
+Bio::SeqIO can be found in
+/usr/lib/perl5/site_perl/5.16.0/Bio/SeqIO
+
+Find out where a module is installed:
+perldoc -l Bio::SeqIO
+returns
+/usr/lib/perl5/site_perl/5.16.0/Bio/SeqIO.pm
+
+#### PERL DEBUGGING ####
+
+Check script functionality line by line
+
+perl -d script.pl -a flag1 -b flag2 etc..
+Then, in the prompt, if you hit 'c' and then Enter, it will execute the script until it breaks
+
 #### DATASTRUCTURES ####
 
 ARRAY
@@ -92,8 +117,7 @@ sub function {
 }
 this will not work, because now, @array, $foo and $bar will be concatenated, and put into $var
 
-### Documentation
-
+DOCUMENTATION
 perl handbook: perl best practices
 perldoc	       	    the perlstyle guide, only 15 minutes to read through
 perl.com	    	ten essential development practices
@@ -104,3 +128,28 @@ Phylogenomics::taxa, to standardize taxon names
 lionel newperl script
 newperl.sh	Creates a perldoc  template for a new perl script
 			  	   Template is described in perlTemplate.pl (ettemalab/templates)
+
+POD2USAGE
+pod2usage(-exitval => 1, -verbose => 2) if $help;
+
+-exitval 1   
+If $help is called, pod2usage will exit the script with exit status 1.
+Exit status can be whatever number that you like. When checking the exit status of the script, it can tell you why the script failed.
+
+-verbose 2
+Verbose level is 2, meaning the whole perldocumentation in the script is printed
+
+-message => "Message\n"
+Message printed to screen when script exits through pod2usage
+
+-msg => "Message\n"
+Same as -message
+
+## GetOptions() ##
+GetOptions eats the @ARGV; So each stated option reduces @ARGV by 1
+
+GetOptions(
+	"t|threads=i"     => \$threads,     # =i states that argument has to be an integer
+	"f|file=s"        => \$file,        # =s states that argument has to be a  string
+	"p|probability=f  => \$prob,        # =f states that argument has to be a  float
+);

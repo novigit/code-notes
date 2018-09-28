@@ -260,6 +260,8 @@ samtools view -c -f 4 test.bam		Counting unmapped reads
 Filter out mapped reads with MAPQ quality lower than some integer
 samtools view -bq 1 <bam> > <q1.bam>
 
+Subset set of contigs from a bam file
+samtools view -bh test.bam $(cat mycontigs.list | tr '\n' ' ')
 
 MAKING A COVERAGE PLOT WITH R USING THE MPILEUP.OUT MADE WITH SAMTOOLS
 cut -f 2,4 mpileup.out > mpileup.cov
@@ -359,6 +361,8 @@ NEWICK UTILITIES
 
 nw_ed tree.nwk 'i & b <= 50' o > tree-out.nwk		Collapses all internal (i) nodes with bootstrap support (b)
       	       	      	       	 			lower than 50
+nw_labels -I tree.nwk					Prints the labels of the tree. -I suppresses inner labels
+nw_labels -L tree.nwk					Prints the labels of the tree. -L suppresses leafs
 
 SINA
 -i [in.fasta] \
@@ -469,3 +473,12 @@ Tests the LG model and the mixture models C20 to C60 for a given alignment.
 It seems that mixture models can only be tested with the -madd option.
 -m TESTONLY invokes the model tests, but it will only do model tests, no tree inference
 -m TEST     invokes the model tests, but it will also do tree inference with the best model according to BIC
+
+SEAVIEW
+Select taxa of interest
+Ctrl-C Ctrl-V then makes a new alignment of the selected taxa
+
+Select taxa of interest
+Hit the middle mouse button at position of interest to move 'em to that position
+
+Also possible to call a consensus with seaview, at different thresholds

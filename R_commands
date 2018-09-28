@@ -386,3 +386,20 @@ sum(v==0) returns 2
 sum(v==1) returns 4
 sum(v==2) returns 4
 etc
+
+PCA plot
+library(ggplot2)
+
+# convert to frequencies
+df.freqs<-df.s[,2:21] / df.s$sum
+
+# PCA plot
+df.data contains the values that are used for PCA
+df      contains more information, can be used to color points by group
+
+autoplot(prcomp(df.data), data=df, colour="clade")
++ scale_color_manual(values=c("blue","red","orange","grey")
+
++ scale_color_manual is a general ggplot2 function you can use to manually provide your own colors
+
+autoplot() is from the ggfortify package. Use the latest github version, it will show the explained variance.

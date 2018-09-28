@@ -5,6 +5,16 @@ Example:
 -rw-r--r--
 User can read and write, group and others can only read
 
+# WILDCARD #
+The '*' can be used as a wildcard:
+
+ls *.fasta
+List anything that ends with .fasta
+
+But this also works:
+ls *[0-9].fasta
+List anything that ends with number.fasta
+
 # GENERAL TERMINAL HOTKEYS #
 
 Ctrl-A		 Jump to the start of the line
@@ -12,6 +22,8 @@ Ctrl-E		 Jump to the end   of the line
 Ctrl-K		 Remove everything between cursor and end   of line
 Ctrl-U		 Remove everything between cursor and start of line
 Ctrl-W		 Remove word where cursor is currently
+Ctrl-L		 Same as 'clear'
+Ctrl-D		 Same as 'exit'
 
 # SHELL SCRIPTING #
 
@@ -102,7 +114,21 @@ Will print "variable was apple"
 
 GETOPTS
 Stating options in a bash script. Only works with one letter flags.
-<take example from script>
+
+while getopts ":s:m:z:n:t:g:" opt; do
+    case $opt in
+        s) alignment=${OPTARG};;
+        m) model=${OPTARG};;
+        z) treelist=${OPTARG};;
+        n) treenames=${OPTARG};;
+        t) threads=${OPTARG};;
+        g) guidetree=${OPTARG};;
+        *) usage;;
+    esac
+done
+
+The : after the single letter in the getopts line, states that it expects an argument after the flag. I.e. -s bladiebla.aln
+The first : in that line prevents 'verbose error handling'
 
 & REST STUFF &
 USING DELIMITER OTHER THAN WHITESPACE:
@@ -227,6 +253,22 @@ cut <flags> <file>	Remove sections from lines
    			Example: '_' or ' '. Default is '\t' ?
 --complement		Prints all fields except those specified in -f
 
+DATAMASH
+datamash -s -g 1 collapse 2
+A 1
+A 2
+B 3
+C 4
+D 5
+D 6
+
+into 
+
+A 1,2
+B 3
+C 4
+D 5,6
+
 DIRNAME
 Trims filenames from strings (opposite of BASENAME)
 
@@ -252,11 +294,20 @@ Options:
 -n	Removes the newline character
 
 FIND
-find <PATH> -name <EXPRESSION>
-Flags
--maxdepth <number>			The level of directories down find will try to find your attern
+find <PATH> <flags> \;
+-name <EXPRESSION>
+-maxdepth <number>		The level of directories down find will try to find your attern
+-size 0
+-exec <cmd> {}			{} refers to each file that was found	
+-xtype l    			Find broken symlinks
+
 Example:
 find . -name "All.htm"
+find . -size 0 -exec rm {} \;	Remove empty files
+find . -xtype l -exec rm {} \;	Remove broken symlinks
+
+FG
+Bring back jobs that are running in the background, into the "foreground". Jobs that are running in the background can be displayed with "jobs"
 
 GREP
 grep "PATTERN" <file> OUTPUTS THE ENTIRE LINE OF WHERE IT FINDS ITS HITS
@@ -304,6 +355,11 @@ filename.png PNG 200x3510 200x3510+0+0 16-bit DirectClass 1.267MB 0.000u 0:00.00
 
 JOBS
 Lists all 'jobs', that can either be commands, or scripts or anything like that in the background. Putting an '&' sign after the job command puts it in the background. With FG (foreground), you put the 'job' back in the foreground. Then you can kill it for example. JOBS only lists those jobs that are running in that specific terminal
+
+JOIN
+Join two files based on a common field between two files to create a new, merged file
+
+
 
 KILL
 Killing defunct processes. For example when Firefox crashes
@@ -363,6 +419,15 @@ perl -pe 's:^.+$:TEST: if /^>/' aaa_pooled-hfix.fasta
 -i   Changes input file. (Just like sed). But the -i has to be first flag for some reason
 -w   use warnings
 
+READLINK
+
+readlink -f <file.txt>	Returns the absolute path of the file
+If realpath is not available
+
+REALPATH
+
+realpath <file.txt>	Returns the absolute path of the file
+
 REBOOT
 reboots the system
 
@@ -418,6 +483,11 @@ sed "s/^$/d" 	     Delete empty lines
 sed "s/\_/\t/3"	     Replaces 3rd occurrence of _ in the line with a tab
 sed "s/\_/\t/g3"     Replaces 3rd occurrence until last occurrence of _ in the line with a tab
 
+Tricks
+sed -i -r "/^>/ s/_R_// ; s/,/_/" Do two replacements at once
+
+sed -i -r "/^>/! y/acgt/ACGT/" y/// means that each character is replaced separately, kind of like tr (?)
+
 SEQ
 Creates a sequence of numbers
 seq <start> <increment> <end> -s <separator>
@@ -432,6 +502,9 @@ sort -n -t "_" -k 2 <file>	SEPERATES BY "_", PICKS THE 2ND FIELD AND SORTS THAT 
 -u -k 1,1  			Omits lines that are copies in the first field after sorting
 -g    	   			Sort exponential values
 -h	   			Sort human readable numbers, incompatible with -n
+-k 1				All fields from field 1 until the last field
+-k 1,1				Just field 1
+
 
 while in screen
 ctrl-a + ctrl-d		Detach from the screen while not interuppting any processes in the screen
@@ -541,6 +614,9 @@ perl -pe 'if (/^>/) {my @line = split /\|/,$_; s/.+/\>$line[3]/;}' 16S_Pooled_id
 ## Omit bootstrap values that are smaller then 70
 perl -pe 's/\)([1-9]|[1-6][0-9])\:/\)\:/g' newick > newick-edit.out
 
+## Remove tree bootstrap support values
+perl -pe "s/\)\d+:/\):/g" newick > newick-edit.out
+
 ## Calculate the sum of a list of numbers or column of numbers. In this example the 5th column
 cut -f 5 | tr '\t' '\+' | sed 's/+$/\n/' | bc
 
@@ -549,4 +625,7 @@ sed -n 'n;p;n;n' <.fastq> | tr -d "\n" | wc -c
 
 # Get best blast hits out of a .blastn file
 sort -k1,1 -k12,12gr -k11,11g -k3,3gr contigs_vs_nt.blastn | sort -u -k1,1 --merge
-
+1,1 query name
+12,12 bit score
+11,11 evalue
+3,3 id

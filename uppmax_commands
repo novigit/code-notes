@@ -29,6 +29,7 @@ batch_job.sh:
 #SBATCH -t 12:00:00
 #SBATCH -J some_job_name
 --qos=short [if job is expected to be less then 15 minutes]
+if specifying --qos=short, provide -t with less than 15 minutes
 
 code...
 ===========================
@@ -47,10 +48,24 @@ sbatch \
 	-o <STDOUT output>
 	<job_script> [job_script_argument1] [job_script_argument2] [etc]
 
+LOADING MODULES
+module avail				List available software
+module spider <software>	     	Search for particular software
+module load <software>/<version>	Load the software
+module unload <software>		Unload the software
+module help   				Find more information about module commands
+
 MONITORING JOBS
 jobinfo
 jobinfo -u joranm
 squeue
+squeue -u joranm
+
+SQUEUE SCREEN
+The 'ST' field refers to the STate of the process
+   'CG' = Job is in the process of completing
+   'R'  = Job is running
+   'PD' = Job is pending
 
 MONITORING RUNNING JOBS
 column -t /sw/share/slurm/milou/uppmax_jobstats/<node>/<job_id> | less -S
@@ -79,6 +94,32 @@ Fat		512GB RAM, specify with '-C fat'. There are 17 of these nodes
 256		256GB RAM, specify with '-C mem256GB'. There are 17 of these nodes
 512		512GB RAM, specify with '-C mem512GB'. There are 17 of these nodes
 
+WRITING JOB OUTPUT TO LOCAL DISK, NOT TO PICA
+By default, a job will write output directly to the pica filesystem.
+This requires a network connection, which may slow down the entire network, if used too much.
+The admins therefore recommend you to write output to the disk of the node that your job is running on instead.
+Thus, no network connection is required, and it will be faster as well.
+
+You can use the special bash variable $SNIC_TMP in your job submission script to figure out on what node the job is done on.
+For example, if you submit a job, and once it has started, it has be assigned to node m84, the $SNIC_TMP=m84.
+
+Thus, in your job submission script:
+PICADIR=$(pwd)
+cp <input_files> $SNIC_TMP
+<analysis_software_command> <input_files> > <output_files>
+cp <output_files> $PICADIR
+
+The output files on m84 or $SNIC_TMP will be wiped after a while
+
+LOGGING IN TO WORKNODES
+Sometimes you may want to check whether your local node analysis are producing any output before the job is finished.
+To do that, simply check the node that your job is running on, and the jobid, with squeue, and then login to that node:
+
+ssh joranm@m84
+cd /scratch/<jobid>/
+
+note: you can only login to nodes on which you have active jobs running
+
 CPU TIME
 1 corehour	-> Running 1 core for one 'wallclock' hour
 16 corehours 	-> Running 1 node for one 'wallclock' hour
@@ -104,3 +145,5 @@ For example, 64 demands exclusive use of Halvan and thus 2048 GB RAM, whereas 32
 GENERAL TIPS
 Use "rsync" to transfer files between Uppmax and your machine
 
+POTENTIAL ISSUES
+If a job runs, but generates output files of size 0, you might be over space quota. Clean your disks to create space
