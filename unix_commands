@@ -1,4 +1,4 @@
-PERMISSIONS #
+# PERMISSIONS #
 Either (r)ead, (w)rite, or e(x)ecute on 'user', 'group', 'others'
 
 Example:
@@ -36,6 +36,22 @@ else
    ...
 fi
 
+NESTED FOR LOOPS
+for i in {};
+do
+    for j in {};
+    do cmd $i $j;
+    done;
+done;
+
+FOR LOOPS
+
+for i in {<word>,<word>,<word>}; do cmd1 $i; cmd2; done
+sometimes $i needs to be written as ${i}, for example when '_' follows $i directly
+
+for i in *.txt; do cmd; done
+Loops over all files that match the *.txt pattern.
+
 WHILE READ LOOP
 Read a file line by line and assign variables to the line's content.
 
@@ -53,6 +69,8 @@ LOOP OVER RANGE OF NUMBERS
 for i in {89..97..2}; do
     echo $i
 done
+
+loops from 89 to 97 with steps of 2
 
 Will return
 89
@@ -162,7 +180,7 @@ So it saves you a lot of work! Amazing!!
 ALIAS
 alias		Returns all active aliases
 
-To add default aliases, write in your .bashrc or .profile files 
+To add default aliases, write in your .bashrc or .profile files
 alias=<cmdalias>='<cmd>'
 Example:
 alias l='ls -la'
@@ -176,21 +194,20 @@ Example:
 at -f <commands.sh> 21.00
 
 AWK
-awk '$3 >= 98 {print $0}' <file> > <out>	If the 3rd field is greater than or equals 98, print line
-awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single column
-awk -F ":" '{}'		   	 		Set : as field seperator
-awk -v i="$i" {$3 >= i}				Pass on the $i shell variable to awk
-     						(otherwise awk will think $i is the ith column)
-awk '{print $2 "\t" $1}'			Switch columns
+awk '$3 >= 98 {print $0}' <file> > <out>	   If the 3rd field is greater than or equals 98, print line
+awk '{ for(i=1;i<=NF;i++){ print $i}}'		   Merge multiple columns into single column
+awk -F ":" '{}'		   	 		                   Set : as field seperator
+awk -v i="$i" {$3 >= i}				               Pass on the $i shell variable to awk (otherwise awk will think $i is the ith column)
+awk '{print $2 "\t" $1}'		                 Switch columns
 
-NR		= Number of total records (default => record is one line)
+NR		  = Number of total records (default => record is one line)
 FNR 		= Number of file records
 map[$1] = $2 	= awk array (like a perl hash)
 
 BASENAME
-Trims paths and extensions froms strings (opposite of DIRNAME) 
+Trims paths and extensions froms strings (opposite of DIRNAME)
 
-Example: 
+Example:
           FASTA      returns	panorthologs/famcl00140.faa
 basename $FASTA      returns 	famcl00140.faa
 basename $FASTA .faa returns 	famcl00140
@@ -198,8 +215,8 @@ basename $FASTA .faa returns 	famcl00140
 BC
 Calculator
 echo "100/50" | bc		Yields 2
-echo "scale=2:100/60 | bc -l	Yields 1.67	
-    	
+echo "scale=2:100/60 | bc -l	Yields 1.67
+
 CAT
 -e	Show newline characters as '$'
 -A	synonymous to -e ?
@@ -214,7 +231,7 @@ cd -	Returns to the previous directory
 
 CHMOD
 Change rights of owner / user, group, others or all of a file to either read, write or execute.
-Example: 
+Example:
 chmod u+x <file>	Adds the e(x)ecutable right for (u)ser to this <file>
 
 CHOWN
@@ -245,13 +262,13 @@ crontab command format:
 Example
 0 12 * * * *		Every day, at 12.00
 
-CUT	
+CUT
 cut <flags> <file>	Remove sections from lines
 -f <number or list>	Select column <number>
-   	      		Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
--d <delim>		Select delimiter to use to creat fields, 
-   			Example: '_' or ' '. Default is '\t' ?
---complement		Prints all fields except those specified in -f
+   	      		      Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
+-d <delim>		      Select delimiter to use to creat fields,
+   			            Example: '_' or ' '. Default is '\t' ?
+--complement		    Prints all fields except those specified in -f
 
 DATAMASH
 datamash -s -g 1 collapse 2
@@ -262,7 +279,7 @@ C 4
 D 5
 D 6
 
-into 
+into
 
 A 1,2
 B 3
@@ -298,7 +315,7 @@ find <PATH> <flags> \;
 -name <EXPRESSION>
 -maxdepth <number>		The level of directories down find will try to find your attern
 -size 0
--exec <cmd> {}			{} refers to each file that was found	
+-exec <cmd> {}			{} refers to each file that was found
 -xtype l    			Find broken symlinks
 
 Example:
@@ -311,7 +328,7 @@ Bring back jobs that are running in the background, into the "foreground". Jobs 
 
 GREP
 grep "PATTERN" <file> OUTPUTS THE ENTIRE LINE OF WHERE IT FINDS ITS HITS
-grep -v "^$"   	      REMOVES EMPTY LINES 
+grep -v "^$"   	      REMOVES EMPTY LINES
      		      (no special character, but clever use
 		      of regexp: ^ start of line, $ end of line)
 Flags:
@@ -319,19 +336,19 @@ Flags:
 -n			REPORTS LINE NUMBER OF HITS
 -c			COUNTS HITS
 -c ""			Counts lines in the file
--A <int>	       	PRINTS IN ADDITION TO HIT LINE ALSO int LINES AFTER HIT	
+-A <int>	       	PRINTS IN ADDITION TO HIT LINE ALSO int LINES AFTER HIT
 -v 		       	PRINTS ALL LINES EXCEPT LINES WITH HITS
 -P		       	Allows for Perl regexp in PATTERN
 -f <FILE>	       	Prints all lines that have the PATTERNS listed in FILE, one per line
 -x 		        The PATTERN must encompass the entire line. Handy for speeding up grep
 --no-group-separator	Suppresses the '--' seperator when using -A, -B, or -C
--o			If you have multiple hits in a single line, it will report all the hits on that line, seperated by newlines. 
+-o			If you have multiple hits in a single line, it will report all the hits on that line, seperated by newlines.
 			It will not report the whole line, but just the match. Hence the name '-only_matching'
 --color=always		Keep coloring of match even if you pipe into a new grep command. Even less keeps color
 			Can even do 2 different colors. Example
 			echo "hello" | grep --color=always "he" | GREP_COLORS="mt=01;34" grep "lo"
 -e			Multiple search patterns at the same time. grep -e "pattern1" -e "pattern2"
--m <NUM>		Only reports the first <NUM> lines with match			
+-m <NUM>		Only reports the first <NUM> lines with match
 -H 			Always reports the filename that it found its hit in
 
 AGREP
@@ -352,14 +369,11 @@ Reports:
 
 filename.png PNG 200x3510 200x3510+0+0 16-bit DirectClass 1.267MB 0.000u 0:00.000
 
-
 JOBS
 Lists all 'jobs', that can either be commands, or scripts or anything like that in the background. Putting an '&' sign after the job command puts it in the background. With FG (foreground), you put the 'job' back in the foreground. Then you can kill it for example. JOBS only lists those jobs that are running in that specific terminal
 
 JOIN
 Join two files based on a common field between two files to create a new, merged file
-
-
 
 KILL
 Killing defunct processes. For example when Firefox crashes
@@ -434,18 +448,18 @@ reboots the system
 RSYNC
 rsync <option> <source> <destination>
 Options:
--a			    Archive mode, keeps all symlinks, devices, attributes, permissions, ownerships etc. 
+-a			    Archive mode, keeps all symlinks, devices, attributes, permissions, ownerships etc.
 -v			    Verbose mode
--z			    Compress data during transfer	
+-z			    Compress data during transfer
 -h			    Human readable output
 -P		       	    --progress and --partial combined
 --partial		    If transfer breaks, you can restart it no problem later
 --progress	   	    Shows progress bars of transfer
 --log-file=<file>   	    Creates log of rsync transfer
 --delete-after		    Deletes files in the destination that are no long present in the source
--L or --copy-links	    Rsyncs the file that the link is pointed to			    
+-L or --copy-links	    Rsyncs the file that the link is pointed to
 -p    			    Preserve permissions
--u or --update		    Skip files that are newer on the receivre			    
+-u or --update		    Skip files that are newer on the receivre
 -r or --recursive	    Tells rsync to copy directories recursively
 --exclude='*.txt'	    Rsync all files except for those that end with .txt
 --include='*.txt'	    Rsync only files that end with .txt
@@ -455,8 +469,12 @@ screen			Open up a new screen
 screen -ls		List down the current open screens
 screen -r <screen id>  	Reattach to the screen
 screen -r 	  	If there is only one screen, it automatically will reattach to that one.
-exit   	  	  	Exit the current screen you are in 
+exit   	  	  	Exit the current screen you are in
 			(this will kill any processses in this screen?)
+
+while in screen
+ctrl-a + ctrl-d		Detach from the screen while not interuppting any processes in the screen
+
 SED
 sed 's/PATTERN/REPLACE/g' <file> > <outfile>
 If sed is used in a for loop with replace as $i, use double quotes:
@@ -471,7 +489,7 @@ sed -r 's/(.+)\|(.+)/\2\|\1/'
 You have to escape pipes (present in the file) but not the parentheses (have a function here). + only works here with extended regexp (-r)
 '>' You dont have to escape though
 \d+ does not work with sed. you have to use [0-9]
-If you want to replace single quotes, then use double quotes for the whole sed command (so "s///" instead of 's///' ) 
+If you want to replace single quotes, then use double quotes for the whole sed command (so "s///" instead of 's///' )
 
 sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta	Negates any line that starts with '>'
 the first argument within the quotes tells sed which lines to look or not look for
@@ -505,17 +523,13 @@ sort -n -t "_" -k 2 <file>	SEPERATES BY "_", PICKS THE 2ND FIELD AND SORTS THAT 
 -k 1				All fields from field 1 until the last field
 -k 1,1				Just field 1
 
-
-while in screen
-ctrl-a + ctrl-d		Detach from the screen while not interuppting any processes in the screen
-
 SHUTDOWN
 shutdown -r +5 "Rebooting soon, log out ASAP!"		Gives people who are logged in some time to log out.
 
 SPLIT
 Split a file by size, by lines or other things
 split -l 10000 <myfile> <prefix>				Splits up a file into multiple files with 10000 lines each
-split -d <myfile>						Makes numerical suffixes instead of alphabetical  
+split -d <myfile>						Makes numerical suffixes instead of alphabetical
 split -n l/<N> <myfile>						Splits file into <N> chunks while not splitting lines
 
 SSH
@@ -550,8 +564,8 @@ TR
 tr -s ' '			    If you have multiple white space characters in a row, it will truncate it to just a single white space
 
 tr '\t' '\n'	   	       	    Transform all tab into newlines
-tr '[abc]' '[def]' 		    Transform all a's into d's, b's into e's etc.	
-cat FILE | tr -dc '(' | wc -c	    Counts number of '(' in file 
+tr '[abc]' '[def]' 		    Transform all a's into d's, b's into e's etc.
+cat FILE | tr -dc '(' | wc -c	    Counts number of '(' in file
 tr -d ' >'    	      	   	    Deletes space ánd >
 
 TIME
@@ -569,44 +583,6 @@ VI(M)
 W
 Shows you who is currently logged in
 
-# BASH SCRIPTING #
-If you execute a bash script, for example
-bash script.sh string1 string2
-The string1 will be referred to in the script as $1 and string2 as $2
-
-FOR LOOPS
-for i in {<int1>..<int2>..<int3>}; do cmd1 $i; cmd2; done
-loops from ING1 to INT2 with steps INT3
-
-for i in {<word>,<word>,<word>}; do cmd1 $i; cmd2; done
-sometimes $i needs to be written as ${i}, for example when '_' follows $i directly
-
-for i in *.txt; do cmd; done
-Loops over all files that match the *.txt pattern.
-
-NESTED FOR LOOPS
-for i in {};
-do 
-    for j in {};
-    do cmd $i $j;
-    done;
-done;
-
-GIT
-Decentralized versioning system
-git config --global user.name "Joran Martijn"
-git config --global user.email joran.martijn@icm.uu.se
-git clone https://github.com/novigit/brocode	"Clone" the repository to current directory
-git status					Check what has been changed since last udpate
-git add						"Stage" files for commit
-git commit -m "commit message"			"Commit" the files to your repository
-git push origin master				"Push" changes into repository
-git log	 					Check your commit log
-git remote -v					Lists remote repositories
-git checkout [branch]				Change to a specific branch
-git pull origin master				Copy the current master branch to your local copy
-    	 					"Origin" refers to the bitbucket server
-
 ##### HANDY CODES ##########
 ## Replace NCBI sequence headers with an accession number with the accesion number only
 perl -pe 'if (/^>/) {my @line = split /\|/,$_; s/.+/\>$line[3]/;}' 16S_Pooled_id83-otu-0.89-pruned.fasta
@@ -621,7 +597,7 @@ perl -pe "s/\)\d+:/\):/g" newick > newick-edit.out
 cut -f 5 | tr '\t' '\+' | sed 's/+$/\n/' | bc
 
 # Calculate total number of basepairs in a fastq file
-sed -n 'n;p;n;n' <.fastq> | tr -d "\n" | wc -c 
+sed -n 'n;p;n;n' <.fastq> | tr -d "\n" | wc -c
 
 # Get best blast hits out of a .blastn file
 sort -k1,1 -k12,12gr -k11,11g -k3,3gr contigs_vs_nt.blastn | sort -u -k1,1 --merge
