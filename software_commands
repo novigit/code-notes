@@ -89,13 +89,115 @@ bwa aln <FASTA FILE> <FW READ FILE> (FASTQ or FASTA) > <FW OUTPUT.sai>
 bwa aln <FASTA FILE> <RV READ FILE> (FASTQ or FASTA) > <RV OUTPUT.sai>
 bwa sampe <FASTA FILE> <FW INPUT.sai> <RV INPUT.sai> <FW READ FILE> <RV READ FILE> | gzip > <OUTPUT.sam.gz>
 
+# ESOM-1.1 #
+
+#	Get a reference genome as a control
+#	Make sure that all fasta files are in the same directory and have the same extension (i.e. '.fasta')
+#	Do `esomWrapper.pl -path . -ext <extension> -scripts /local/one/tools/esomScripts/` -dir <outdir> -min <minContigLength> -max <chunkSize>
+#	Check <outdir>/esom.log for suggested <rows> and <columns> and to see if everything went ok
+#	Do `esomana &`
+#	Do 'File->Load *.lrn, File->Load *.names and File->Load *.cls' and choose the corresponding files in <outdir>
+#	Do 'Robust ZT' transformation
+#	Do 'Tools->Training' and choose the <outdir>/*.lrn, and overwrite it
+#	Change Training Algorithm to "K-batch", rows and columns to suggested in the log file and start value for radius to 50
+#	Hit START. This can take a while
+#	After its done, hit CLOSE
+#	Change color scheme to "TwoMatch" and "Bone". Play around with CLIP to make borders stronger
+
+ADDING CLASSES
+If you have some contigs and you want to know where they end up in your esom map, you can use the script
+"changeClasses.pl" to make a new class file (.cls) that will color your contigs of interest in the existing ESOM map:
+changeClasses.pl -cls <original .cls file> -names <original .names file> -list <list of contig names> -tag <name of the class you want your contigs to have> -out <new .cls file>
+then load the new .cls file onto your esom map and your contigs of interest will be labeled!
+
+If you have multiple sets of contigs to paint:
+for bin in {0..224};
+do
+	cls=$(echo $bin-1 | bc);
+	echo $bin $cls;
+	perl /local/one/tools/esomScripts/changeClasses.pl \
+            -cls test.bin${cls}.cls \
+            -names min10k_max10k/Tetra_esom_10000.names \
+            -list <(grep ">" ../../../concoct-0.4/map/bins/bin_${bin}.fasta | sed -r "s/[- ]/_/g" | sed -r "s/>//") \
+	    -tag bin_${bin} \
+            -out test.bin${bin}.cls
+	rm test.bin${cls}.cls
+done
+This loop iteratively writes over the previous class file that added one bin until it has written classes for all bins.
+In the '-list' option it is crucial that you change the headers so that they match with the ones in the .names file
+
+ESOM output files
+.bm -> bestmatches
+
+General format:
+% <rows_of_map> <columns_of_map>
+% <total_number_of_points>
+<pointid>	<row>	<column>
+
+So basically the coordinates of each point
+.
+lrn -> learn file
+
+General format:
+% <total_number_of_points>
+% <number_of_columns_in_data_file> (136 4-mers; not 256 (because of reverse complement and something else) )
+% <type of column> (9 for unique key; key = number of data point, and should be unique in our case)
+<key1> <freq1> <freq2> <freqn>
+<key2> <freq1> <freq2> <freqn>
+
+So basically the tetranucleotide frequencies of each point
+
+_robust.lrn -> learn file normalized with RobustZT transformation.
+
+RobustZT = robust Z-transform
+Z-transform: take each value, substract the mean, and divide by std dev.
+The result will be a value that describes how far that value is from the mean in factors of std deviations.
+Robust Z-transform: Estimate mean and std dev without outliers.
+
+
+General format:
+% <total_number_of_points>
+% <number_of_columns_in_data_file>
+% <type of column>
+<key1> <robustZT freq1> <robustZT freq2>
+<key2> <robustZT freq1> <robustZT freq2>
+..
+
+.wts -> weights
+
+General format:
+# comments
+# comments
+% <rows_of_map> <columns_of_map>
+% <number_of_columns_in_data_file>
+%
+
+This file contains a number of lines equal to columns times rows.
+Thus, each line corresponds to a single point in the map.
+I think each point represents a profile of tetramer frequencies.
+
+This file thus represents a grid where each point is a tetramer profile.
+You then load your contig(splits) on this grid and figure out which point your contig fits best to.
+In other words, the "best match".
+
 # FAMCL #
 Discards alignments in which the query and hit lenghts are more than 60% different
 Discards alignments in which the smaller fragment is less than 80% covered by the alignment
 
-GENEMARKS
+# FASTTREE-2.1 #
+Protein
+fastTreeMP -wag [fasta-alignment] > out.nwk
+
+# GENEMARKS #
 perl gmhmmp_heuristic.pl -a -outfile <OUTPUT.faa> -s <INPUT.fasta>
 perl genemark2fasta.pl <INPUT.faa> > <OUTPUT.fa>
+
+# IQTREE #
+iqtree-omp -s <.phylip> -m TESTONLY -mset LG -madd C20,C30,C40,C50,C60 -mredo -nt 30
+Tests the LG model and the mixture models C20 to C60 for a given alignment.
+It seems that mixture models can only be tested with the -madd option.
+-m TESTONLY invokes the model tests, but it will only do model tests, no tree inference
+-m TEST     invokes the model tests, but it will also do tree inference with the best model according to BIC
 
 # KHMER #
 First make a virtual environment:
@@ -112,6 +214,21 @@ Then discard reads (set in discard-high-abund.py the desired covarage (the k-cov
 
 discard-high-abund.py <PATH TO HT FILE> <PATH TO FW FASTA FILE> > <OUTPUT NORM FW FASTA>
 discard-high-abund.py <PATH TO HT FILE> <PATH TO RV FASTA FILE> > <OUTPUT NORM RV FASTA>
+
+# MAFFT #
+
+mafft \
+--thread [integer] \
+--adjustdirection \	If nucleotide alignment, automatically detects reverse complemented sequences and corrects
+--reorder \	  	Orders the sequences in the fasta or phylip file so that the most similar ones are next to each other
+[file.fasta] > [file.aln]
+
+# NEWICK UTILITIES #
+
+nw_ed tree.nwk 'i & b <= 50' o > tree-out.nwk		Collapses all internal (i) nodes with bootstrap support (b)
+      	       	      	       	 			lower than 50
+nw_labels -I tree.nwk					Prints the labels of the tree. -I suppresses inner labels
+nw_labels -L tree.nwk					Prints the labels of the tree. -L suppresses leafs
 
 # PHYLOBAYES #
 Example
@@ -146,6 +263,15 @@ PhyloBayes will then finish the current cycle before exiting. It can be restarte
 
 To open phylobayes trees with figtree from command line. Convert the primary tree output first:
 sed -e "s/)1:/)1.0:/g" bpcomp.con.tre > pb.tree
+
+# PRODIGAL #
+Predicts not only complete ORFs, but also incomplete ORFs at the edges of the contigs (thus without start codon for example at the start of a contig or without a stop codon at the end of a contig)
+faMCL has the ability to detect these when clustering and will try to not incorporate the incomplete ORFs.
+
+prodigal \
+    -i ~/one/data/assemblies/clean/step3-CrossContamination/L4_hiseq_contigs-step3.fasta \
+    -o gene_pd.gff \
+    -f gff
 
 # QUAST #
 python <PATHTOQUAST>/quast.py -o <OUTPUT DIR> <CONTIG OR SCAFFOLD FILE>
@@ -256,8 +382,23 @@ png(file="coverage.png",width=1900,height=1000)
 plot(x=data[rangefrom:rangeto,"position"],y=data.smoothed[rangefrom:rangeto],pch=".", cex=1,xlab="bp position",ylab="depth",type="l")
 dev.off()
 
-SELECT_PAIRED.PL
+# SEAVIEW #
+Select taxa of interest
+Ctrl-C Ctrl-V then makes a new alignment of the selected taxa
+
+Select taxa of interest
+Hit the middle mouse button at position of interest to move 'em to that position
+
+Also possible to call a consensus with seaview, at different thresholds
+
+# SELECT_PAIRED.PL #
 Usage: select_paired.pl <file containing forward reads in FASTA format> <name of output file for sorted forward reads> <name of file containing reverse reads in FASTA format> <name of output file for sorted reverse reads> <singletons output file (i.e. reads present in only one of the input files>
+
+# SINA #
+-i [in.fasta] \
+-o [out.aln] \
+--ptdb [taxonomicgroup.arb] (reference alignment) \
+--outtype fasta
 
 # SPADES #
 spades.py -o <OUTPUT DIR> -1 <FW READS> -2 <RV READS> -t <THREADS> -K <K1,K2,K3,etc>
@@ -268,46 +409,20 @@ Optional options
 --only-assembler RUNS ASSEMBLY STEP ONLY
 --careful INDUCES MISMATCH CORRECTOR, THAT RUNS POST-ASSEMBLY
 
-# TRIMMOMATIC #
-Paired End Mode:
-java -classpath <path to trimmomatic jar> org.usadellab.trimmomatic.TrimmomaticPE <input 1> <input 2> <paired output 1> <unpaired output 1> <paired output 2> <unpaired output 2> <step 1> ...
-Single End Mode:
-java -classpath <path to trimmomatic jar> org.usadellab.trimmomatic.TrimmomaticSE <input> <output> <step 1> ...
-
-# VELVET #
-shuffleSequences_fastq.pl <INPUT1.fastq> <INPUT2.fastq>
-velveth <DIRECTORYNAME> <LOWESTKMER> <HIGHESTKMER> <STEPSIZE> -fastq (or -fasta) -shortPaired1 (or -short) <SHUFFLEDINPUT1.fastq> -fastq -shortPaired2 <SHUFFLEDINPUT2.fastq>
-velvetg auto_<KMERVALUE> -exp_cov <EXPECTEDCOVVALUE> -ins_length1 <BPLENGTH1> -ins_length2 <BPLENGTH2>
-
-# VELVET-SC #
-velveth <DIRECTORYNAME> <K-SIZE> -short -fasta <SHUFFLEDINPUT 1> <SHUFFLEDINPUT 2>
-velvetg <DIRECTORYNAME> -ins_length <INSERT SIZE> -cov_cutoff <FINAL COVERAGE CUTOFF> -read_trkg yes
-If you do not turn on read tracking it will not report the amount of reads used
-In the run2.c file you can change the starting coverage cutoff, incrementing value and the maximum contig size (maximum contig size: any contig smaller than this and with coverage lower than coverage cutoff will be removed, longer contigs wont be removed (i think))
-
-
-MEGAN
-
-LCA = Lowest Common Ancestor
-
-PRODIGAL
-
-Predicts not only complete ORFs, but also incomplete ORFs at the edges of the contigs (thus without start codon for example at the start of a contig or without a stop codon at the end of a contig)
-faMCL has the ability to detect these when clustering and will try to not incorporate the incomplete ORFs.
-
-prodigal \
-    -i ~/one/data/assemblies/clean/step3-CrossContamination/L4_hiseq_contigs-step3.fasta \
-    -o gene_pd.gff \
-    -f gff
-
-TRIMAL
+# TRIMAL #
 trimal \
 -in [input alignment] \
 -out [output alignment] \
 -gt [any value between 0 and 1] \
 -[output format]
 
-UCLUST
+# TRIMMOMATIC #
+Paired End Mode:
+java -classpath <path to trimmomatic jar> org.usadellab.trimmomatic.TrimmomaticPE <input 1> <input 2> <paired output 1> <unpaired output 1> <paired output 2> <unpaired output 2> <step 1> ...
+Single End Mode:
+java -classpath <path to trimmomatic jar> org.usadellab.trimmomatic.TrimmomaticSE <input> <output> <step 1> ...
+
+# UCLUST #
 uclust \
 --sort [in.fasta]
 --output [out-sort.fasta]
@@ -332,136 +447,13 @@ The second column is the cluster number, starting at 0.
 The third column indicates the length of the sequence in case of S or H
 The third column indicates the size of the cluster in case of C
 
-MAFFT
+# VELVET #
+shuffleSequences_fastq.pl <INPUT1.fastq> <INPUT2.fastq>
+velveth <DIRECTORYNAME> <LOWESTKMER> <HIGHESTKMER> <STEPSIZE> -fastq (or -fasta) -shortPaired1 (or -short) <SHUFFLEDINPUT1.fastq> -fastq -shortPaired2 <SHUFFLEDINPUT2.fastq>
+velvetg auto_<KMERVALUE> -exp_cov <EXPECTEDCOVVALUE> -ins_length1 <BPLENGTH1> -ins_length2 <BPLENGTH2>
 
-mafft \
---thread [integer] \
---adjustdirection \	If nucleotide alignment, automatically detects reverse complemented sequences and corrects
---reorder \	  	Orders the sequences in the fasta or phylip file so that the most similar ones are next to each other
-[file.fasta] > [file.aln]
-
-NEWICK UTILITIES
-
-nw_ed tree.nwk 'i & b <= 50' o > tree-out.nwk		Collapses all internal (i) nodes with bootstrap support (b)
-      	       	      	       	 			lower than 50
-nw_labels -I tree.nwk					Prints the labels of the tree. -I suppresses inner labels
-nw_labels -L tree.nwk					Prints the labels of the tree. -L suppresses leafs
-
-SINA
--i [in.fasta] \
--o [out.aln] \
---ptdb [taxonomicgroup.arb] (reference alignment) \
---outtype fasta
-
-FASTTREE-2.1
-Protein
-fastTreeMP -wag [fasta-alignment] > out.nwk
-
-
-ESOM-1.1
-#	Get a reference genome as a control
-#	Make sure that all fasta files are in the same directory and have the same extension (i.e. '.fasta')
-#	Do `esomWrapper.pl -path . -ext <extension> -scripts /local/one/tools/esomScripts/` -dir <outdir> -min <minContigLength> -max <chunkSize>
-#	Check <outdir>/esom.log for suggested <rows> and <columns> and to see if everything went ok
-#	Do `esomana &`
-#	Do 'File->Load *.lrn, File->Load *.names and File->Load *.cls' and choose the corresponding files in <outdir>
-#	Do 'Robust ZT' transformation
-#	Do 'Tools->Training' and choose the <outdir>/*.lrn, and overwrite it
-#	Change Training Algorithm to "K-batch", rows and columns to suggested in the log file and start value for radius to 50
-#	Hit START. This can take a while
-#	After its done, hit CLOSE
-#	Change color scheme to "TwoMatch" and "Bone". Play around with CLIP to make borders stronger
-
-ADDING CLASSES
-If you have some contigs and you want to know where they end up in your esom map, you can use the script
-"changeClasses.pl" to make a new class file (.cls) that will color your contigs of interest in the existing ESOM map:
-changeClasses.pl -cls <original .cls file> -names <original .names file> -list <list of contig names> -tag <name of the class you want your contigs to have> -out <new .cls file>
-then load the new .cls file onto your esom map and your contigs of interest will be labeled!
-
-If you have multiple sets of contigs to paint:
-for bin in {0..224};
-do
-	cls=$(echo $bin-1 | bc);
-	echo $bin $cls;
-	perl /local/one/tools/esomScripts/changeClasses.pl \
-            -cls test.bin${cls}.cls \
-            -names min10k_max10k/Tetra_esom_10000.names \
-            -list <(grep ">" ../../../concoct-0.4/map/bins/bin_${bin}.fasta | sed -r "s/[- ]/_/g" | sed -r "s/>//") \
-	    -tag bin_${bin} \
-            -out test.bin${bin}.cls
-	rm test.bin${cls}.cls
-done
-This loop iteratively writes over the previous class file that added one bin until it has written classes for all bins.
-In the '-list' option it is crucial that you change the headers so that they match with the ones in the .names file
-
-ESOM output files
-.bm -> bestmatches
-
-General format:
-% <rows_of_map> <columns_of_map>
-% <total_number_of_points>
-<pointid>	<row>	<column>
-
-So basically the coordinates of each point
-.
-lrn -> learn file
-
-General format:
-% <total_number_of_points>
-% <number_of_columns_in_data_file> (136 4-mers; not 256 (because of reverse complement and something else) )
-% <type of column> (9 for unique key; key = number of data point, and should be unique in our case)
-<key1> <freq1> <freq2> <freqn>
-<key2> <freq1> <freq2> <freqn>
-
-So basically the tetranucleotide frequencies of each point
-
-_robust.lrn -> learn file normalized with RobustZT transformation.
-
-RobustZT = robust Z-transform
-Z-transform: take each value, substract the mean, and divide by std dev.
-The result will be a value that describes how far that value is from the mean in factors of std deviations.
-Robust Z-transform: Estimate mean and std dev without outliers.
-
-
-General format:
-% <total_number_of_points>
-% <number_of_columns_in_data_file>
-% <type of column>
-<key1> <robustZT freq1> <robustZT freq2>
-<key2> <robustZT freq1> <robustZT freq2>
-..
-
-.wts -> weights
-
-General format:
-# comments
-# comments
-% <rows_of_map> <columns_of_map>
-% <number_of_columns_in_data_file>
-%
-
-This file contains a number of lines equal to columns times rows.
-Thus, each line corresponds to a single point in the map.
-I think each point represents a profile of tetramer frequencies.
-
-This file thus represents a grid where each point is a tetramer profile.
-You then load your contig(splits) on this grid and figure out which point your contig fits best to.
-In other words, the "best match".
-
-SEQTK
-
-IQTREE
-iqtree-omp -s <.phylip> -m TESTONLY -mset LG -madd C20,C30,C40,C50,C60 -mredo -nt 30
-Tests the LG model and the mixture models C20 to C60 for a given alignment.
-It seems that mixture models can only be tested with the -madd option.
--m TESTONLY invokes the model tests, but it will only do model tests, no tree inference
--m TEST     invokes the model tests, but it will also do tree inference with the best model according to BIC
-
-SEAVIEW
-Select taxa of interest
-Ctrl-C Ctrl-V then makes a new alignment of the selected taxa
-
-Select taxa of interest
-Hit the middle mouse button at position of interest to move 'em to that position
-
-Also possible to call a consensus with seaview, at different thresholds
+# VELVET-SC #
+velveth <DIRECTORYNAME> <K-SIZE> -short -fasta <SHUFFLEDINPUT 1> <SHUFFLEDINPUT 2>
+velvetg <DIRECTORYNAME> -ins_length <INSERT SIZE> -cov_cutoff <FINAL COVERAGE CUTOFF> -read_trkg yes
+If you do not turn on read tracking it will not report the amount of reads used
+In the run2.c file you can change the starting coverage cutoff, incrementing value and the maximum contig size (maximum contig size: any contig smaller than this and with coverage lower than coverage cutoff will be removed, longer contigs wont be removed (i think))
