@@ -41,7 +41,8 @@ png(
 )
 	
 pdf(
-	file="path/to/file.pdf"
+	file="path/to/file.pdf",
+	paper="a4"
 )
 
 Other options:
@@ -287,6 +288,16 @@ Standard R colorpanels:
 	topo.colors()
 	cm.colors()
 
+RCOLORBREWER
+library(RColorBrewer)
+# Create a palette of 7 greens
+# "Greens" and "Oranges" are preloaded palettes that come with RColorBrewer
+my_palette<-brewer.pal(n=7, name="Greens")
+# Create a palette of 7 greens, a grey, and 9 oranges
+my_palette<-c(rev(brewer.pal(n=7, name="Greens")), "#D3D3D3", rev(brewer.pal(n=9, name="Oranges"))
+# View all colorblind friendly palettes preloaded with RColorBrewer
+display.brewer.all(colorblindFriendly=T)
+
 ORDER
 First sorts a numerical vector by ascending order. Then, in the sorted list, it will translate each element to the position in the original vector
 
@@ -403,3 +414,39 @@ autoplot(prcomp(df.data), data=df, colour="clade")
 + scale_color_manual is a general ggplot2 function you can use to manually provide your own colors
 
 autoplot() is from the ggfortify package. Use the latest github version, it will show the explained variance.
+
+GGPLOT2
+gglot(data=dataframe, aes(x=column, y=column) + geom_point() + xlab() + ylab() + ggtitle()
+
+# put multiple plots in a single page
+require(gridExtra)
+plot1 <- qplot(1)
+plot2 <- qplot(1)
+grid.arrange(plot1, plot2, ncol=2)
+
+ggsave(filename="boxplot.pdf", plot=p, device=cairo_pdf, width=190, height=130, units="mm"
+RESHAPE2
+d:
+    am18_f050 am18_untr am24_f050 am24_stat am24_untr nucl29_untr
+1     47.29     71.51     73.92     10.32    115.45      346.89
+2     83.06    146.21    185.82      8.74    231.87      110.61
+3    104.56    179.87     82.42      5.96    127.96       50.89
+4     41.08     64.16     53.86      1.94     91.73      207.82
+5     63.15    144.22     35.58      5.65     45.68       57.38
+6     37.20     49.67     32.20      5.94     40.48       43.00
+
+melt(d, na.rm=T, variable.name="alignment", value.name="x2score")
+
+alignment x2score
+1 am18_f050   47.29
+2 am18_f050   83.06
+3 am18_f050  104.56
+4 am18_f050   41.08
+5 am18_f050   63.15
+6 am18_f050   37.20
+7 am18_untr   71.51
+8 am18_untr   146.21
+9 am18_untr   179.87
+10 am18_untr  64.16
+11 am18_untr  144.22
+etc etc

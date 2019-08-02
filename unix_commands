@@ -12,8 +12,8 @@ ls *.fasta
 List anything that ends with .fasta
 
 But this also works:
-ls *[0-9].fasta
-List anything that ends with number.fasta
+ls *[0-9].fasta		List anything that ends with number.fasta
+ls *[3-5][5]0.fasta	List anything that ends with 350, 450, 550
 
 # GENERAL TERMINAL HOTKEYS #
 
@@ -145,6 +145,16 @@ echo ${i%string}var	returns "testvar"
 echo ${i#test}		returns "string"
 echo ${i/string/button} returns "testbutton"
 
+BASH ARRAYS
+declare -A arr				Declare a new array arr
+arr=()	   				Empty/reset arr
+arr=( ["moo"]="cow" ["woof"]="dog")	Create a dictionary/hash. Supported since bash v4. Make sure to use #!/bin/bash and not #!/bin/sh
+while read -r one two;
+do
+	arr[$one]="$two"
+done < input_file			Fill up an array/dictionary/hash by reading in a file. It seems critical to have the file read in like this: done < input_file
+echo "${!arr[@]}"			Return the KEYS of the dictionary
+echo "${arr[@]}"			Return the VALUES of the dictionary
 
 PROCESS SUBSTITUTION
 join <(sort FILE1) <(sort FILE2) > FILE3
@@ -156,6 +166,12 @@ join FILE1-sort FILE2-sort > FILE3
 rm FILE1-sort
 rm FILE2-sort
 So it saves you a lot of work! Amazing!!
+
+REDIRECT OUTPUT
+
+cmd > file.txt		Write STDOUT to file.txt
+cmd >> file.txt	 	Append file.txt with STDOUT 
+cmd &> file.txt		Write STDOUT and STDERR to file.txt
 
 # UNIX PROGRAMS #
 
@@ -179,8 +195,13 @@ AWK
 awk '$3 >= 98 {print $0}' <file> > <out>	If the 3rd field is greater than or equals 98, print line
 awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single column
 awk -F ":" '{}'		   	 		Set : as field seperator
-awk -v i="$i" {$3 >= i}				Pass on the $i shell variable to awk
-     						(otherwise awk will think $i is the ith column)
+
+awk -v i="$i" -v j="$j" '$3 >= i {print $0, "\t", j}'	
+Pass on the shell variables $i and $j to awk
+(otherwise awk will think $i is the ith column)
+NOTE: within the '{}' part of the awk statement, do not use $i, but simply 'i'
+
+
 awk '{print $2 "\t" $1}'			Switch columns
 
 NR		= Number of total records (default => record is one line)
@@ -246,12 +267,13 @@ Example
 0 12 * * * *		Every day, at 12.00
 
 CUT	
-cut <flags> <file>	Remove sections from lines
--f <number or list>	Select column <number>
-   	      		Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
--d <delim>		Select delimiter to use to creat fields, 
-   			Example: '_' or ' '. Default is '\t' ?
---complement		Prints all fields except those specified in -f
+cut <flags> <file>		Remove sections from lines
+-f <number or list>	       	Select column <number>
+   	      		       	Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
+-d <delim>		       	Select delimiter to use to creat fields, 
+   			       	Example: '_' or ' '. Default is '\t' ?
+--complement		       	Prints all fields except those specified in -f
+cmd | rev | cut -f 1 | rev	Trick to print the last column. Be ware: you may need to put cut -f 2 instead.
 
 DATAMASH
 datamash -s -g 1 collapse 2
@@ -359,7 +381,14 @@ Lists all 'jobs', that can either be commands, or scripts or anything like that 
 JOIN
 Join two files based on a common field between two files to create a new, merged file
 
+join -a 1 -a 2 -e '0' -1 2 -2 2 -o '1.1,2.1,0' -t $'\t' FILE1 FILE2 > FILE3
 
+-a 1 -a 2      	  Switch to print unpairable fields of FILE1 and FILE2
+-e '0'	       	  Replace missing fields with 0 (if a column value exists in FILE1 and not in FILE2 or vice versa)
+-1 2		  Join using the 2nd field in file 1
+-2 2		  Join using the 2nd field in file 2
+-o '1.1,2.1,0'	  Print the field 1 of file 1, field 1 of file 2, and the field used to join them (0 special meaning)
+-t $'\t'	  Set field delimiter. Tab is default, but by setting this explicitly, Tab becomes the delimiter in the output too
 
 KILL
 Killing defunct processes. For example when Firefox crashes
@@ -383,6 +412,9 @@ LN
 Symbolic links
 ln -s <source> <link name>	Places a link to another file (so prevents additional space to be used)
 ln -s <source> 	     		Automatically clips the path and only leaves the file name as the name of the link
+
+LS
+ll -Sh		Sorts all files in directory by size and displays human readable file sizes
 
 MAN
 man -l <file>	Will open the file with man
@@ -408,6 +440,7 @@ This command will use 8 processors, so 8 seqret commands will be executed at the
 PASTE
 paste	Concatenate vertically
 -d	Sets delimiter, default=TAB
+cat <list> | paste -sd+ | bc	easy code to get the sum of column
 
 PERL -PE (perldoc perlrun)
 As a replacement for sed. Perl -PE has a better regular expressions support
@@ -418,6 +451,10 @@ Example:
 perl -pe 's:^.+$:TEST: if /^>/' aaa_pooled-hfix.fasta
 -i   Changes input file. (Just like sed). But the -i has to be first flag for some reason
 -w   use warnings
+
+PDFUNITE
+Concatenate PDFs
+pdfunite *.pdf out.pdf
 
 READLINK
 
@@ -449,6 +486,11 @@ Options:
 -r or --recursive	    Tells rsync to copy directories recursively
 --exclude='*.txt'	    Rsync all files except for those that end with .txt
 --include='*.txt'	    Rsync only files that end with .txt
+--files-from=files.txt	    Rsync only the files that are listed in 'files.txt'. 
+			    Example: rsync --files-from=files.list jmartijn@molev-32-72.icm.uu.se:/path/of/destination/ .
+			    Where files.list contained only file names, no paths or slashes etc.
+--exclude-from=files.txt    Rsync all files except those listed in files.txt
+			    Make sure the filenames in files.txt are relative to <source>, not necessarily from where you execute the command!
 
 SCREEN
 screen			Open up a new screen
@@ -459,8 +501,13 @@ exit   	  	  	Exit the current screen you are in
 			(this will kill any processses in this screen?)
 SED
 sed 's/PATTERN/REPLACE/g' <file> > <outfile>
+sed 's|PATTERN|REPLACE|g' <file> > <outfile> # any character works as delimiter in sed
+
+If you want to replace a PATTERN expressed as a $STRING, and the $STRING contains '/', use a different delimiter instead.
+
 If sed is used in a for loop with replace as $i, use double quotes:
 sed "s/PATTERN/$i/g" or "s/$i/PATTERN/g"
+
 Flags:
 -i	Will replace patterns in the input file. Input = output file
 sed -n '[number]'p   	      	 Prints line number [number]
@@ -476,12 +523,15 @@ If you want to replace single quotes, then use double quotes for the whole sed c
 sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta	Negates any line that starts with '>'
 the first argument within the quotes tells sed which lines to look or not look for
 
+
 Flags
 -r	For extended regexp
 
 sed "s/^$/d" 	     Delete empty lines
 sed "s/\_/\t/3"	     Replaces 3rd occurrence of _ in the line with a tab
 sed "s/\_/\t/g3"     Replaces 3rd occurrence until last occurrence of _ in the line with a tab
+
+sed "1s/^/foo\n/"    Introduce a new first line that contains "foo"
 
 Tricks
 sed -i -r "/^>/ s/_R_// ; s/,/_/" Do two replacements at once
@@ -525,6 +575,8 @@ or
 ssh into your own machine as root as follows:
 ssh -i .ssh/root_rsa root@molev209
 and enter the passphrase for key '.ssh/root_rsa' (not the same as the root password)
+ssh -X	  enable X11-forwarding
+ssh -Y	  enable trusted X11-forwarding
 
 SVN
 cd desired/directory
@@ -629,3 +681,6 @@ sort -k1,1 -k12,12gr -k11,11g -k3,3gr contigs_vs_nt.blastn | sort -u -k1,1 --mer
 12,12 bit score
 11,11 evalue
 3,3 id
+
+# Remove decimals from alrt support values, so that figtree can open the tree from command line
+sed -i -r "s/\)([0-9]{1,2})\.[0-9]\:/)\1:/g" <tree>

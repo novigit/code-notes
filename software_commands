@@ -158,6 +158,7 @@ BLASTDATABASE
 
 formatdb -i predicted_proteome.fasta -p T
 
+NCBI BLAST
 makeblastdb \
 -in [sequence file] \
 -input_type [type: i.e. fasta] \
@@ -189,6 +190,10 @@ blastn \
 -num_threads [integer] \
 -outfmt [integer] (6 = tabular)
 
+note: -max_target_seqs 1 does not necessarily yield the top hit! It just means that it will stop searching after finding 1 hit.
+
+note: blastn has preset modes or 'tasks'. An interesting one is 'blastn-short', which is invoked with the flag -task blastn-short. It has a shorter word-length (7 instead of 11), a smaller reward for a nucleotide match (1 instead of 2), compared to standard blastn. This is a good mode when blasting primers against genomes or loci. Setting the E-value to 10 could also be useful to detect primers with mismatches.
+
 psiblast \
 -in_msa [file] \
 -db [path/to/db] \
@@ -208,6 +213,9 @@ blastdbcmd \
 -entry_batch <file, one entry per line>
 -out <path/to/out> \
 -outfmt %f
+-target_only
+
+-target_only will force blastdbcmd to only retrieve the primary hits in case of MULTISPECIES entries. Currently bugs because it fails on entries from PIR (Protein Information Resource, a db in NR). When it fails it quits prematurely rather than skipping the entry. Thus, your file will NOT contain all sequences, but only those up until the PIR hit.
 
 Good fields to include on top of std in the blast tabular output:
 slen 	    subject length
@@ -363,6 +371,7 @@ nw_ed tree.nwk 'i & b <= 50' o > tree-out.nwk		Collapses all internal (i) nodes 
       	       	      	       	 			lower than 50
 nw_labels -I tree.nwk					Prints the labels of the tree. -I suppresses inner labels
 nw_labels -L tree.nwk					Prints the labels of the tree. -L suppresses leafs
+nw_clade tree.nwk taxa1 taxa3				Returns the tree of all descendants of the LCA of taxa1 and taxa3
 
 SINA
 -i [in.fasta] \

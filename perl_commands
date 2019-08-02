@@ -60,6 +60,13 @@ ARRAY
 @array = ('moo', 'woof', 'miauw');
 @array = (1..10);
 
+#Return length of an array
+my $length = @array;
+
+HASH
+# sort keys of a hash numerically
+sort {$a<=>$b} keys
+
 #### FUNCTIONS ####
 
 SPRINTF
@@ -130,6 +137,8 @@ newperl.sh	Creates a perldoc  template for a new perl script
 			  	   Template is described in perlTemplate.pl (ettemalab/templates)
 
 POD2USAGE
+use Pod::Usage;
+
 pod2usage(-exitval => 1, -verbose => 2) if $help;
 
 -exitval 1   
@@ -145,7 +154,9 @@ Message printed to screen when script exits through pod2usage
 -msg => "Message\n"
 Same as -message
 
-## GetOptions() ##
+GETOPT
+use Getopt::Long;
+
 GetOptions eats the @ARGV; So each stated option reduces @ARGV by 1
 
 GetOptions(
@@ -153,3 +164,37 @@ GetOptions(
 	"f|file=s"        => \$file,        # =s states that argument has to be a  string
 	"p|probability=f  => \$prob,        # =f states that argument has to be a  float
 );
+
+BIO::ALIGNIO
+use Bio::AlignIO;
+
+Module for parsing alignments and doing stuff with them
+Some useful methods and code:
+
+my ($fasta) = @ARGV;
+my $alnio  = Bio::AlignIO->new(-format => 'fasta',
+   	     		       -file   => $fasta);
+my $aln = $alnio->next_aln;
+
+BIO::SIMPLEALIGN
+use Bio::SimpleAlign;
+
+Module for parsing alignments and doing stuff with them
+Some useful methods and code:
+
+I think you need to read in an AlignIO object (see above)
+
+my $col = $aln->slice(10,10,1); 
+# here $aln is the aln object parsed from the AlignIO object
+# slice() slices a range of sites from the alignments to create a new alignment object
+# (10,10,1) Start at 10, End at 10, keep gap-only sites if 1, remove gap-only sites if 0
+
+foreach my $seq ($col->each_seq) {
+	$colseq .= $seq->seq;
+}
+# each_seq() parses the alignment object $col, sequence by sequence
+# in this example, $col is a single site, so the sequence is the character at that site
+# this code creates $colseq, which contains all the characters of that site
+
+$aln->length()
+# returns the length of the alignment
