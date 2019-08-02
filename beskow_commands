@@ -46,6 +46,9 @@ COMMANDS
 
 module list				Show all currently loaded modules
 module avail				Lists all the software modules available on Beskow
+module load <module>			Load module
+module unload <module>			Unload module
+module purge  				Unload all loaded modules
 sbatch -e <out>				Captures the STDERR output
 sbatch -o <out>				Captures the STDOUT output
 sbatch -n <number>			Set number of cores to use

@@ -53,6 +53,7 @@ module avail				List available software
 module spider <software>	     	Search for particular software
 module load <software>/<version>	Load the software
 module unload <software>		Unload the software
+module purge  				Unload all loaded softwares
 module help   				Find more information about module commands
 
 MONITORING JOBS
