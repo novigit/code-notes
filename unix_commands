@@ -212,7 +212,8 @@ at -f <commands.sh> 21.00
 AWK
 awk '$3 >= 98 {print $0}' <file> > <out>	If the 3rd field is greater than or equals 98, print line
 awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single column
-awk -F ":" '{}'		   	 		Set : as field seperator
+awk -F ":" '{}'		   	 		Set : as field seperator. Default FS (Field Separator) space and tab characters
+awk -F "\t"					Sets only tab as field separator
 
 awk -v i="$i" -v j="$j" '$3 >= i {print $0, "\t", j}'	
 Pass on the shell variables $i and $j to awk
@@ -241,7 +242,7 @@ echo "scale=2:100/60 | bc -l	Yields 1.67
 
 CAT
 -e	Show newline characters as '$'
--A	synonymous to -e ?
+-A	Show tabs (^I), newline characters ($) and other non-printing characters (^ + ascii char)
 
 COLUMN
 column -t [file]	Prints the file so that all columns are nicely aligned in view
