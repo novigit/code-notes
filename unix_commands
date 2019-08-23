@@ -188,8 +188,13 @@ So it saves you a lot of work! Amazing!!
 REDIRECT OUTPUT
 
 cmd > file.txt		Write STDOUT to file.txt
-cmd >> file.txt	 	Append file.txt with STDOUT 
+cmd >> file.txt	 	Append file.txt with STDOUT
 cmd &> file.txt		Write STDOUT and STDERR to file.txt
+
+# ENVIRONMENT STUFF #
+
+export VARIABLE="FOO"  # set "FOO" as environment variable VARIABLE
+unset VARIABLE         # remove variable VARIABLE from environment
 
 # UNIX PROGRAMS #
 
@@ -215,7 +220,7 @@ awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single colum
 awk -F ":" '{}'		   	 		Set : as field seperator. Default FS (Field Separator) space and tab characters
 awk -F "\t"					Sets only tab as field separator
 
-awk -v i="$i" -v j="$j" '$3 >= i {print $0, "\t", j}'	
+awk -v i="$i" -v j="$j" '$3 >= i {print $0, "\t", j}'
 Pass on the shell variables $i and $j to awk
 (otherwise awk will think $i is the ith column)
 NOTE: within the '{}' part of the awk statement, do not use $i, but simply 'i'
@@ -285,11 +290,11 @@ crontab command format:
 Example
 0 12 * * * *		Every day, at 12.00
 
-CUT	
+CUT
 cut <flags> <file>		Remove sections from lines
 -f <number or list>	       	Select column <number>
    	      		       	Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
--d <delim>		       	Select delimiter to use to creat fields, 
+-d <delim>		       	Select delimiter to use to creat fields,
    			       	Example: '_' or ' '. Default is '\t' ?
 --complement		       	Prints all fields except those specified in -f
 cmd | rev | cut -f 1 | rev	Trick to print the last column. Be ware: you may need to put cut -f 2 instead.
@@ -504,7 +509,7 @@ Options:
 -r or --recursive	    Tells rsync to copy directories recursively
 --exclude='*.txt'	    Rsync all files except for those that end with .txt
 --include='*.txt'	    Rsync only files that end with .txt
---files-from=files.txt	    Rsync only the files that are listed in 'files.txt'. 
+--files-from=files.txt	    Rsync only the files that are listed in 'files.txt'.
 			    Example: rsync --files-from=files.list jmartijn@molev-32-72.icm.uu.se:/path/of/destination/ .
 			    Where files.list contained only file names, no paths or slashes etc.
 --exclude-from=files.txt    Rsync all files except those listed in files.txt
