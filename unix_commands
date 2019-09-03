@@ -108,6 +108,9 @@ OTHER COMPARISONS
 [-f FILE]	True if FILE exists and is a regular file
 [-h FILE]	True if FILE exists and is a symbolic link
 
+Alternatively
+if ls *.orig.tsv 1> /dev/null 2>&1; then ... ; fi
+
 & BASH SCRIPT STUFF &
 ARGUMENTS FOR BASH SCRIPT
 $0	  Name of the bash script
@@ -217,14 +220,18 @@ at -f <commands.sh> 21.00
 AWK
 awk '$3 >= 98 {print $0}' <file> > <out>	If the 3rd field is greater than or equals 98, print line
 awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single column
-awk -F ":" '{}'		   	 		Set : as field seperator. Default FS (Field Separator) space and tab characters
+awk -F ":" '{}'		   	 		Set : as field seperator. Default FS (Field Separator) space and tab characters. Does not work with single quotes.
 awk -F "\t"					Sets only tab as field separator
+awk 'OFS="\t" {print $3,$1,$2}'			Sets Output Field Separator to tab. In print statement use commas!
+awk '$3 >= 0.3 && $5 >= 0.3 {print $0}'		Requires that the 3rd AND the 5th field are above 0.3
+
 
 awk -v i="$i" -v j="$j" '$3 >= i {print $0, "\t", j}'
 Pass on the shell variables $i and $j to awk
 (otherwise awk will think $i is the ith column)
 NOTE: within the '{}' part of the awk statement, do not use $i, but simply 'i'
 
+NOTE: When filtering columns for fractions, i.e. $7 > 0.3, make sure that the input files decimal separators are DOTS, not COMMAS !!
 
 awk '{print $2 "\t" $1}'			Switch columns
 
@@ -247,7 +254,8 @@ echo "scale=2:100/60 | bc -l	Yields 1.67
 
 CAT
 -e	Show newline characters as '$'
--A	Show tabs (^I), newline characters ($) and other non-printing characters (^ + ascii char)
+-A	Show tabs (^I), newline characters ($) and other non-printing characters (^ + ascii char). Option does not exist in macOS
+-t	Show tabs (^I), newline characters ($) in macOS.
 
 COLUMN
 column -t [file]	Prints the file so that all columns are nicely aligned in view
@@ -412,6 +420,8 @@ join -a 1 -a 2 -e '0' -1 2 -2 2 -o '1.1,2.1,0' -t $'\t' FILE1 FILE2 > FILE3
 -2 2		  Join using the 2nd field in file 2
 -o '1.1,2.1,0'	  Print the field 1 of file 1, field 1 of file 2, and the field used to join them (0 special meaning)
 -t $'\t'	  Set field delimiter. Tab is default, but by setting this explicitly, Tab becomes the delimiter in the output too
+
+NOTE: FILE1 and FILE2 need to be sorted (on their common field) prior to attempting to join!
 
 KILL
 Killing defunct processes. For example when Firefox crashes
