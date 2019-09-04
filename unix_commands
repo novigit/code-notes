@@ -5,6 +5,11 @@ Example:
 -rw-r--r--
 User can read and write, group and others can only read
 
+The first column can either be
+- regular file
+d directory
+l symlink
+
 # WILDCARD #
 The '*' can be used as a wildcard:
 
@@ -26,6 +31,13 @@ Ctrl-L		 Same as 'clear'
 Ctrl-D		 Same as 'exit'
 
 # SHELL SCRIPTING #
+
+& REDIRECTING &
+
+program 2> file.e   Redirect STDERR to file.e
+program 1> file.o   Redirect STDOUT to file.o
+program 1> file.o 2> file.e Redirect STDOUT to file.o and STDERR to file.e
+program 2>/dev/null   Redirect output to /dev/null , where data is gone forever
 
 & LOOP STUFF &
 
@@ -218,12 +230,15 @@ Example:
 at -f <commands.sh> 21.00
 
 AWK
+awk 'PREDICATE {CODEBLOCK}'
+
 awk '$3 >= 98 {print $0}' <file> > <out>	If the 3rd field is greater than or equals 98, print line
 awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single column
 awk -F ":" '{}'		   	 		Set : as field seperator. Default FS (Field Separator) space and tab characters. Does not work with single quotes.
 awk -F "\t"					Sets only tab as field separator
 awk 'OFS="\t" {print $3,$1,$2}'			Sets Output Field Separator to tab. In print statement use commas!
 awk '$3 >= 0.3 && $5 >= 0.3 {print $0}'		Requires that the 3rd AND the 5th field are above 0.3
+awk 'NR>2'  NR = Number of Records
 
 
 awk -v i="$i" -v j="$j" '$3 >= i {print $0, "\t", j}'
@@ -269,6 +284,10 @@ CHMOD
 Change rights of owner / user, group, others or all of a file to either read, write or execute.
 Example:
 chmod u+x <file>	Adds the e(x)ecutable right for (u)ser to this <file>
+chmod ug+x <file> Add executable rights to user and group
+chmod u-x <file>  Remove executable rights for user
+chmod 755 <file>  7=4+2+1=r+w+x for user. 7=4+2+1=r+w+x for group. 5=4+1=r+x for others
+chmod 600 <file>  6=4+2=r+w for user, 0=--- for group, 0=--- for others
 
 CHOWN
 Change ownership of a given directory
@@ -627,6 +646,7 @@ tail <file>		Shows the last 10 lines of a file
 -f 			Keeps updating, if the file is being appended continuously
 
 TAR
+tar is short for "tape archive"
 tar -tvf	Lists the contents of the .tar
 tar -ztvf	Lists the contents of the .tar.gz
 tar -jtvf	Lists the contents of the .tar.bz2
