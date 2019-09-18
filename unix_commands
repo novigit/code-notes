@@ -30,7 +30,31 @@ Ctrl-W		 Remove word where cursor is currently
 Ctrl-L		 Same as 'clear'
 Ctrl-D		 Same as 'exit'
 
+!$		 Bang-Dollar. Wildcard for the last argument of the previous command
+
 # SHELL SCRIPTING #
+
+sh, bash, Perl, Python, Ruby etc are scripting languages in which the "program" is a regular file containing plain text that is interpreted into MACHINE CODE at the time you run it. Other languages like c++, java, haskell, rust have a separate 
+COMPILATION step to turn their regular text source file into a BINARY EXECUTABLE.
+
+A script from sh, bash, Perl, Python, Ruby etc become EXECUTABLE simply by turning on the executable permission.
+
+& SHEBANG &
+
+#!/bin/bash		Allows the script interpreter to recognize that the file should be executed with bash
+#!/usr/bin/env bash	Same, but now the script is portable. I.e., different systems will recognize it as a bash script
+	       		The env program will find the bash that is found in your environment
+#!/usr/bin/env python3	Use the python3 that is found by the environment
+
+& VARIABLES &
+
+Everything in UNIX is case sensitive. So $NAME ne $name ne $Name
+Probably a good idea to use lower case variable names in scripts, so not to accidentally overwrite environment variables
+
+& SET -U &
+
+Analogous to 'use warnings' in perl? 
+Write 'set -u' on top of your shell script
 
 & REDIRECTING &
 
@@ -211,6 +235,8 @@ cmd &> file.txt		Write STDOUT and STDERR to file.txt
 export VARIABLE="FOO"  # set "FOO" as environment variable VARIABLE
 unset VARIABLE         # remove variable VARIABLE from environment
 
+All environment variables are uppercase !
+
 # UNIX PROGRAMS #
 
 ALIAS
@@ -271,6 +297,7 @@ CAT
 -e	Show newline characters as '$'
 -A	Show tabs (^I), newline characters ($) and other non-printing characters (^ + ascii char). Option does not exist in macOS
 -t	Show tabs (^I), newline characters ($) in macOS.
+-n	Print line numbers
 
 COLUMN
 column -t [file]	Prints the file so that all columns are nicely aligned in view
