@@ -505,10 +505,6 @@ Example:
 mkdir -p newdir1/newdir2
 mkdir -m 777	Create directory with these permissions ??
 
-MORE
-more <file>
-Opens the file for reading. Can for some files display colors, underlines and bold text
-
 PARALLEL
 parallel -j<n processors> "<command you want to parallelize> {}" ::: <files to process>
 
@@ -705,19 +701,6 @@ VI(M)
 
 W
 Shows you who is currently logged in
-
-WHATIS 
-whatis <command>
-Gives a oneline summary of what the <command> is
-
-WHEREIS
-whereis <command>
-Searches standard unix/linux locations, like /usr/local/bin, /usr/bin, /bin/ etc for <command>
-
-WHICH
-which <command>
-Searches your $PATH for the executable that is <command>
-
 
 ##### HANDY CODES ##########
 ## Replace NCBI sequence headers with an accession number with the accesion number only
