@@ -588,6 +588,13 @@ Options:
 --exclude-from=files.txt    Rsync all files except those listed in files.txt
 			    Make sure the filenames in files.txt are relative to <source>, not necessarily from where you execute the command!
 --dry-run		    Do a dry-run. Execute a test operation without making any changes
+--inplace		    Update destination files in-place. Update file without creating a new file.
+			    Without --inplace, rsync would create a new tmp file, copy the updated parts onto it, swap with destination file, delete old copy of destination file
+--append		    Append data onto shorter files
+			    Append assumes that the destination file is a shorter version of the source file, meaning the destination file is identical to the start of the source file
+
+For updating chain backups, this command is really useful
+rsync -avP --inplace --append chain*.* chain_backup/
 
 SCREEN
 screen			Open up a new screen

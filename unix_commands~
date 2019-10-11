@@ -1,4 +1,4 @@
-# PERMISSIONS #
+PERMISSIONS #
 Either (r)ead, (w)rite, or e(x)ecute on 'user', 'group', 'others'
 
 Example:
@@ -193,7 +193,7 @@ grep -c ">" foo.fasta | while IFS=':' do
      echo $FILE $SEQCOUNT;
 done
 
-STRING CONTROL
+& STRING CONTROL &
 i=teststring
 echo $i			returns "teststring"
 echo ${i}		returns "teststring"
@@ -202,7 +202,7 @@ echo ${i%string}var	returns "testvar"
 echo ${i#test}		returns "string"
 echo ${i/string/button} returns "testbutton"
 
-BASH ARRAYS
+& BASH ARRAYS &
 declare -A arr				Declare a new array arr
 arr=()	   				Empty/reset arr
 arr=( ["moo"]="cow" ["woof"]="dog")	Create a dictionary/hash. Supported since bash v4. Make sure to use #!/bin/bash and not #!/bin/sh
@@ -213,7 +213,7 @@ done < input_file			Fill up an array/dictionary/hash by reading in a file. It se
 echo "${!arr[@]}"			Return the KEYS of the dictionary
 echo "${arr[@]}"			Return the VALUES of the dictionary
 
-PROCESS SUBSTITUTION
+& PROCESS SUBSTITUTION &
 join <(sort FILE1) <(sort FILE2) > FILE3
 <(sort FILE) obsoletes an intermediate file, it creates like a temporary file within the command.
 Otherwise you would have done:
@@ -224,11 +224,20 @@ rm FILE1-sort
 rm FILE2-sort
 So it saves you a lot of work! Amazing!!
 
-REDIRECT OUTPUT
+& REDIRECT OUTPUT &
 
 cmd > file.txt		Write STDOUT to file.txt
 cmd >> file.txt	 	Append file.txt with STDOUT
 cmd &> file.txt		Write STDOUT and STDERR to file.txt
+
+& EXIT STATUS &
+
+Every command in Unix returns an exit status. A successfull exit status returns 0, an un-succesfull one returns a non-zero value. The last command executed determines the exit status.
+Within a script, when exiting, you can pass on a custom exit status through
+exit <nnn>, where nnn is an integer between 0 and 255
+
+The special variable $? holds the exit status.
+echo $? to check it
 
 # ENVIRONMENT STUFF #
 
@@ -393,6 +402,9 @@ Options:
 -e	Enables interpretation of backslash escapes and certain characters are recognized, like \t and \n
 -n	Removes the newline character
 
+EVAL
+Takes a string as an argument and evaluates it as if you'd typed that string on a command line
+
 FIND
 find <PATH> <flags> \;
 -name <EXPRESSION>
@@ -505,6 +517,10 @@ Example:
 mkdir -p newdir1/newdir2
 mkdir -m 777	Create directory with these permissions ??
 
+MORE
+more <file>
+Opens the file for reading. Can for some files display colors, underlines and bold text
+
 PARALLEL
 parallel -j<n processors> "<command you want to parallelize> {}" ::: <files to process>
 
@@ -561,8 +577,8 @@ Options:
 --log-file=<file>   	    Creates log of rsync transfer
 --delete-after		    Deletes files in the destination that are no long present in the source
 -L or --copy-links	    Rsyncs the file that the link is pointed to
--p    			    Preserve permissions
--u or --update		    Skip files that are newer on the receivre
+-p    			    Preserve permissionsÎ
+-u or --update		    Skip files that are newer on the receiver
 -r or --recursive	    Tells rsync to copy directories recursively
 --exclude='*.txt'	    Rsync all files except for those that end with .txt
 --include='*.txt'	    Rsync only files that end with .txt
@@ -571,6 +587,7 @@ Options:
 			    Where files.list contained only file names, no paths or slashes etc.
 --exclude-from=files.txt    Rsync all files except those listed in files.txt
 			    Make sure the filenames in files.txt are relative to <source>, not necessarily from where you execute the command!
+--dry-run		    Do a dry-run. Execute a test operation without making any changes
 
 SCREEN
 screen			Open up a new screen
@@ -701,6 +718,19 @@ VI(M)
 
 W
 Shows you who is currently logged in
+
+WHATIS 
+whatis <command>
+Gives a oneline summary of what the <command> is
+
+WHEREIS
+whereis <command>
+Searches standard unix/linux locations, like /usr/local/bin, /usr/bin, /bin/ etc for <command>
+
+WHICH
+which <command>
+Searches your $PATH for the executable that is <command>
+
 
 ##### HANDY CODES ##########
 ## Replace NCBI sequence headers with an accession number with the accesion number only
