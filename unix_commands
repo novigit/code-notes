@@ -472,6 +472,8 @@ perl -pe 's:^.+$:TEST: if /^>/' aaa_pooled-hfix.fasta
 PDFUNITE
 Concatenate PDFs
 pdfunite *.pdf out.pdf
+or
+pdftk *.pdf cat output <new.pdf>
 
 READLINK
 

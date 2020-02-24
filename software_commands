@@ -236,6 +236,8 @@ nw_ed tree.nwk 'i & b <= 50' o > tree-out.nwk		Collapses all internal (i) nodes 
       	       	      	       	 			lower than 50
 nw_labels -I tree.nwk					Prints the labels of the tree. -I suppresses inner labels
 nw_labels -L tree.nwk					Prints the labels of the tree. -L suppresses leafs
+nw_reroot <tree> <label1> <label2>			Reroot the tree on the branch that is the LCA of <label1> and <label2>
+nw_clade <tree> <label1> <label2>			Print the subtree that is the LCA of <label1> and <label2>
 
 # PHYLOBAYES #
 Example
