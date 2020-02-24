@@ -46,6 +46,9 @@ COMMANDS
 
 module list				Show all currently loaded modules
 module avail				Lists all the software modules available on Beskow
+module load <module>			Load module
+module unload <module>			Unload module
+module purge  				Unload all loaded modules
 sbatch -e <out>				Captures the STDERR output
 sbatch -o <out>				Captures the STDOUT output
 sbatch -n <number>			Set number of cores to use
@@ -56,6 +59,8 @@ projinfo -v -d 				Detailed usage per user
 kpasswd	    			 	Change password
 squeue -u jmartijn		       	Check the job queue and estimated start time of your jobs or how long it has been running
 squeue -u jmartijn -O "reason:40"	Check the reason why your job has not started running yet
+sacct  	  	      			Alternative to squeue, more clearly states status of submitted jobs (CANCELLED and PENDING)
+sacct --format "JobID,JobName%30"	Prints up to 30 characters of your submitted jobnames
 
 COMMON ERRORS
 sbatch: error: Batch job submission failed: Requested node configuration is not available

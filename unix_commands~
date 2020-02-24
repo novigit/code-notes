@@ -246,15 +246,6 @@ unset VARIABLE         # remove variable VARIABLE from environment
 
 All environment variables are uppercase !
 
-& SPECIAL VARIABLES &
-
-$PATH	Contains all directories that contain executables that can be directly invoked from the command line
-$HOME	Contains the absolute home directory
-$PWD	Contains current absolute directory
-$USER	The username
-$SHELL	The program running the current shell
-
-
 # UNIX PROGRAMS #
 
 ALIAS
@@ -316,12 +307,6 @@ CAT
 -A	Show tabs (^I), newline characters ($) and other non-printing characters (^ + ascii char). Option does not exist in macOS
 -t	Show tabs (^I), newline characters ($) in macOS.
 -n	Print line numbers
-
-Neat trick:
-cat > new_file
-Then type whatever texts you want to type
-End with Ctrl-D
-You now have a new file with the typed content!
 
 COLUMN
 column -t [file]	Prints the file so that all columns are nicely aligned in view
@@ -435,7 +420,6 @@ find . -xtype l -exec rm {} \;	Remove broken symlinks
 
 FG
 Bring back jobs that are running in the background, into the "foreground". Jobs that are running in the background can be displayed with "jobs"
-Ctrl-Z to put current windown in the background. Then you can use 'fg' to put it back to the foreground
 
 GREP
 grep "PATTERN" <file> OUTPUTS THE ENTIRE LINE OF WHERE IT FINDS ITS HITS
@@ -567,15 +551,6 @@ perl -pe 's:^.+$:TEST: if /^>/' aaa_pooled-hfix.fasta
 PDFUNITE
 Concatenate PDFs
 pdfunite *.pdf out.pdf
-or
-pdftk *.pdf cat output <new.pdf>
-
-PS
-ps		Shows a list of active processes with process IDs (PIDs) and the command used to start these processes
-ps -fu $USER  	Shows all actives processes invoked by $USER
-
-PPID: Parent Process ID
-
 
 READLINK
 
@@ -761,7 +736,8 @@ Searches standard unix/linux locations, like /usr/local/bin, /usr/bin, /bin/ etc
 
 WHICH
 which <command>
-Searches your $PATH for the executable that is <command> and returns the directori(es) in your $PATH that have said <command>
+Searches your $PATH for the executable that is <command>
+
 
 ##### HANDY CODES ##########
 ## Replace NCBI sequence headers with an accession number with the accesion number only
