@@ -622,6 +622,8 @@ perl -pe 's:^.+$:TEST: if /^>/' aaa_pooled-hfix.fasta
 PDFUNITE
 Concatenate PDFs
 pdfunite *.pdf out.pdf
+or
+pdftk *.pdf cat output <new.pdf>
 
 PS
 ps		Shows a list of active processes with process IDs (PIDs) and the command used to start these processes
