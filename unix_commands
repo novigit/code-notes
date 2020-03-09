@@ -96,10 +96,15 @@ ls -la | while read PERM USR USRGRP SIZE; do
    echo $PERM $USR $USRGRP $SIZE;
 done
 
+while read -r LINE; do
+      echo "$LINE"
+done < "$FILE"
+
 Use the read '-r' flag, 'while read -r STRING' to prevent read from eating '\' in $STRING
 
 LOOP CONTROL
-break	Breaks the current loop (analogous to 'next' of Perl?)
+break		Breaks and leaves the loop 
+continue	Skip to the next iteration of the loop (definitely analogous to next of Perl)
 
 LOOP OVER RANGE OF NUMBERS
 for i in {89..97..2}; do
@@ -140,19 +145,38 @@ if [[ "$alphabin" != *"BACL10"* ]]; then
 fi
 
 OTHER COMPARISONS
-[-e FILE]	True if FILE exists
-[-f FILE]	True if FILE exists and is a regular file
-[-h FILE]	True if FILE exists and is a symbolic link
+[[ -e FILE ]]	     True if FILE exists
+[[ -f FILE ]]	     True if FILE exists and is a regular file
+[[ -h FILE ]]	     True if FILE exists and is a symbolic link
+[[ -s FILE ]]	     True if FILE is non-empty
+[[ -d DIR ]]	     True if DIR exists
+[[ -z $STRING ]]     True if $STRING is null (doesn't exist)
+
+&& is used to chain commands together, such that the command after the && is only run when the command prior to the && is run without any errors
+&& is also used to mean AND in comparisons that return True/False
+
+Example
+[[ ! -d "$OUT_DIR" ]] && mkdir -p "$OUT_DIR"
+if $OUT_DIR does not exist is TRUE, create $OUT_DIR
+
 
 Alternatively
 if ls *.orig.tsv 1> /dev/null 2>&1; then ... ; fi
 
 & BASH SCRIPT STUFF &
-ARGUMENTS FOR BASH SCRIPT
+POSITIONAL ARGUMENTS FOR BASH SCRIPT
 $0	  Name of the bash script
 $1	  First argument
 $2	  Second argument
 $3	  Etc etc..
+$@	  All the arguments in a single string
+$#	  The number of positional arguments (not including the name of the script)
+
+If multiple words on the command line are flanked by quotes, whatever is within the quotes is one positional argument
+./script.sh ONE TWO "THREE PIGS"
+$1 -> ONE
+$2 -> TWO
+$3 -> THREE PIGS
 
 CASE
 Matches a variable against a range of options described in the case loop
@@ -181,11 +205,15 @@ while getopts ":s:m:z:n:t:g:" opt; do
         t) threads=${OPTARG};;
         g) guidetree=${OPTARG};;
         *) usage;;
+	:) echo "Option -${OPTARG}" requires an argument; exit 1;; 
+	\?) echo "Error: Invalid option: -${OPTARG:-""}; exit 1"
     esac
 done
 
 The : after the single letter in the getopts line, states that it expects an argument after the flag. I.e. -s bladiebla.aln
 The first : in that line prevents 'verbose error handling'
+:)  gets activated when an option/flag that needs an argument is called without an argument
+\?) gets activated when an option/flag that is not specified in the code is called.
 
 & REST STUFF &
 USING DELIMITER OTHER THAN WHITESPACE:
@@ -202,6 +230,17 @@ echo ${i%string}var	returns "testvar"
 echo ${i#test}		returns "string"
 echo ${i/string/button} returns "testbutton"
 
+& SOME OTHER STRING SYNTAX &
+
+string=${var:-default}	$string gets value $var if $var is set previously. Otherwise, $string gets set to the text "default"
+arg=${1:-'srr.txt'}	Sets arg to $1 (the positional argument) if $1 is set. Otherwise, arg gets set to the text 'srr.txt'
+
+& ARITHMATIC &
+
+sum=$((1+1))	$((1+1)) returns to 2, prior to assigning sum the value 2	
+let sum=1+1	$sum is assigned the value 2 through simple arithmetic evaluation 
+$i=$(($i + 1)) is synonymous to let i++
+
 & BASH ARRAYS &
 declare -A arr				Declare a new array arr
 arr=()	   				Empty/reset arr
@@ -212,7 +251,6 @@ do
 done < input_file			Fill up an array/dictionary/hash by reading in a file. It seems critical to have the file read in like this: done < input_file
 echo "${!arr[@]}"			Return the KEYS of the dictionary
 echo "${arr[@]}"			Return the VALUES of the dictionary
-
 & PROCESS SUBSTITUTION &
 join <(sort FILE1) <(sort FILE2) > FILE3
 <(sort FILE) obsoletes an intermediate file, it creates like a temporary file within the command.
@@ -282,8 +320,10 @@ awk -F ":" '{}'		   	 		Set : as field seperator. Default FS (Field Separator) s
 awk -F "\t"					Sets only tab as field separator
 awk 'OFS="\t" {print $3,$1,$2}'			Sets Output Field Separator to tab. In print statement use commas!
 awk '$3 >= 0.3 && $5 >= 0.3 {print $0}'		Requires that the 3rd AND the 5th field are above 0.3
-awk 'NR>2'  NR = Number of Records
+awk 'NR>2'  NR = Number of Record  		By default, NR is the line number
 
+# Only print line numbers (Number Records) 3 and higher
+l | awk 'NR>2'
 
 awk -v i="$i" -v j="$j" '$3 >= i {print $0, "\t", j}'
 Pass on the shell variables $i and $j to awk
@@ -305,6 +345,8 @@ Example:
           FASTA      returns	panorthologs/famcl00140.faa
 basename $FASTA      returns 	famcl00140.faa
 basename $FASTA .faa returns 	famcl00140
+
+see also DIRNAME
 
 BC
 Calculator
@@ -420,6 +462,9 @@ Options:
 EVAL
 Takes a string as an argument and evaluates it as if you'd typed that string on a command line
 
+EXIT
+exit <n>	Exit with an exit code. Any non-zero exit code will be interpreted as exited with an error.
+
 FIND
 find <PATH> <flags> \;
 -name <EXPRESSION>
@@ -528,10 +573,14 @@ man -l <file>	Will open the file with man
 man ./		Will open the file with man
 
 MKDIR
-mkdir -p			Create nested directories in a single command
+mkdir -p			Create nested directories in a single command. 'p' stands for parent directory
 Example:
 mkdir -p newdir1/newdir2
 mkdir -m 777	Create directory with these permissions ??
+
+MKTEMP
+tmp=$(mktemp)		mktemp returns a random temporary file name and creates that file
+tmp_dir=$(mktemp -d)	mktemp -d returns a random temporary directory name and creates that directory 
 
 MORE
 more <file>
@@ -547,6 +596,12 @@ This command will use 8 processors, so 8 seqret commands will be executed at the
 
 {}   holds the name of the file, including the path,           for example in this case ../../data/wgs_cevg01_env.dat.gz
 {/.} holds the basname of the file, and the extension trimmed, for example in this case wgs_cevg01_env.dat
+If you don't provide a number of processors, parallel will take ALL available processors
+
+parallel -j2 < $(JOBS) 	      	    	    	      Where $(JOBS) holds a list of commands to be executed independently
+parallel -j2 --halt soon,fail=1 < $(JOBS)	      --halt will prevent any new jobs from being invoked when an error is returned by one of the jobs.
+	     	    		  		      Currently running jobs are still finished properly
+ 
 
 
 PASTE
@@ -733,6 +788,7 @@ tr '\t' '\n'	   	       	    Transform all tab into newlines
 tr '[abc]' '[def]' 		    Transform all a's into d's, b's into e's etc.
 cat FILE | tr -dc '(' | wc -c	    Counts number of '(' in file
 tr -d ' >'    	      	   	    Deletes space ánd >
+tr -d '\n'						Removes all newline characters
 
 TIME
 time [cmd]	Will print out the time it takes to execute a given command
@@ -748,6 +804,9 @@ VI(M)
 
 W
 Shows you who is currently logged in
+
+WC 
+wc -m 			Prints the number of characters in the entire file
 
 WHATIS 
 whatis <command>

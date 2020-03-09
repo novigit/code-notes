@@ -62,9 +62,6 @@ squeue -u jmartijn -O "reason:40"	Check the reason why your job has not started 
 sacct  	  	      			Alternative to squeue, more clearly states status of submitted jobs (CANCELLED and PENDING)
 sacct --format "JobID,JobName%30"	Prints up to 30 characters of your submitted jobnames
 
-PRINT JOB HISTORY
-sacct -S YYYY-MM-DD -u jmartijn --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist
-
 COMMON ERRORS
 sbatch: error: Batch job submission failed: Requested node configuration is not available
 Some users experience this error when using "#SBATCH -n <number>".
