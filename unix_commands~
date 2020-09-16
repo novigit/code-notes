@@ -682,14 +682,17 @@ rsync -avP --inplace --append chain*.* chain_backup/
 
 SCREEN
 screen			Open up a new screen
+screen -S <sessionname>	Create a new screen with <sessionname>
 screen -ls		List down the current open screens
 screen -r <screen id>  	Reattach to the screen
+screen -r <sessionname>	Reattach to screen with the set sessionname
 screen -r 	  	If there is only one screen, it automatically will reattach to that one.
 exit   	  	  	Exit the current screen you are in
 			(this will kill any processses in this screen?)
 
-while in screen
-ctrl-a + ctrl-d		Detach from the screen while not interuppting any processes in the screen
+WHILE IN SCREEN
+ctrl-a + ctrl-d						Detach from the screen while not interuppting any processes in the screen
+ctrl-a + ':' + sessionname <SESSIONNAME> + Enter	Rename a session to something easy to remember
 
 SED
 sed 's/PATTERN/REPLACE/g' <file> > <outfile>

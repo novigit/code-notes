@@ -682,6 +682,7 @@ rsync -avP --inplace --append chain*.* chain_backup/
 
 SCREEN
 screen			Open up a new screen
+screen -S <sessionname>	Create a new screen with <sessionname>
 screen -ls		List down the current open screens
 screen -r <screen id>  	Reattach to the screen
 screen -r <sessionname>	Reattach to screen with the set sessionname
@@ -788,6 +789,7 @@ tar is short for "tape archive"
 tar -tvf	Lists the contents of the .tar
 tar -ztvf	Lists the contents of the .tar.gz
 tar -jtvf	Lists the contents of the .tar.bz2
+tar -czvf <new archive name>.tar.gz /path/to/dir-or-file>	(Create) an archive with g(Z)ip, with (V)erbose and specify (F)ilename
 
 TR
 tr -s ' '			    If you have multiple white space characters in a row, it will truncate it to just a single white space
