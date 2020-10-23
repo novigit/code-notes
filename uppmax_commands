@@ -17,6 +17,13 @@ Will tell you about jobs that are currently running and in queue on HALVAN
 projmembers <projectid>
 Will tell you accounts that are linked to a given project id
 
+GET AN INTERACTIVE NODE
+To get an interactive node, enter 
+interactive -A <project_id>
+You can always check your project_id with projinfo
+If you want to use an interactive node just to test some things quickly you can apply for a short session with high priority
+interactive -A <project_id> --qos=short
+
 THE BATCH JOB
 batch_job.sh:
 ===========================
