@@ -1,0 +1,71 @@
+SLURM COMMANDS
+
+DIFFERENT COMPUTER CLUSTERS
+Be aware that different clusters can run different versions of SLURM.
+Beskow runs 19.05.7, while Graham runs 20.02.4
+
+MODULE
+module list				Show all currently loaded modules
+module avail				Lists all the software modules available on Beskow
+module load <module>			Load module
+module unload <module>			Unload module
+module purge  				Unload all loaded modules
+module keyword <word>			Search all module descriptions for keyword <word>
+
+SBATCH
+sbatch -e <out>				Captures the STDERR output
+sbatch -o <out>				Captures the STDOUT output
+sbatch -n <number>			Set number of cores to use
+sbatch -t <days-hours:min:seconds>	Set time limit
+sbatch -VALUES				Check sbatch version
+
+SCANCEL
+scancel <jobid>				Cancels job with <jobid>
+
+SQUEUE
+squeue -u jmartijn			Check the job queue and estimated start time of your jobs or how long it has been running
+squeue -u jmartijn -O "reason:40"	Check the reason why your job has not started running yet
+
+SACCT
+sacct					Alternative to squeue, more clearly states status of submitted jobs (CANCELLED and PENDING)
+sacct --format "JobID,JobName%30"	Prints up to 30 characters of your submitted jobnames
+
+VIEW COMPLETED JOBS HISTORY
+sacct -S YYYY-MM-DD -u jmartijn --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist
+-S / --starttime
+-E / --endtime
+
+sacct -e				Printout of all the different fields you can use in --format=FIELD
+
+User				The user name of the user who ran the job
+JobID				Identification number of the job
+JobName				The name of the job
+State				Job status. 
+						P or PENDING
+						R or RUNNING
+						F or FAILED
+						CD or COMPLETED
+						CA or CANCELLED
+						OOM or OUT_OF_MEMORY
+Timelimit			The requested time limit of the job
+Start				The timepoint that the job started
+End					The timepoint that the job ended
+Elapsed				The wall-clock time / real-life time of the job
+MaxRSS				Maximum resident set size of the job. Equal to maximum occupied memory used not in swap or filesystem
+AveRSS				Average resident set size of the job. Equal to average occupied memory used not in swap or filesystem
+
+
+SEFF
+seff <jobid>			Shows amongst others runtime, CPU efficiency, memory utilized etc
+
+COMMON ERRORS
+sbatch: error: Batch job submission failed: Requested node configuration is not available
+Some users experience this error when using "#SBATCH -n <number>".
+Use this instead:
+#SBATCH --nodes=<number/32>
+#SBATCH --ntasks-per-node=32
+
+REASONS
+AssocGrpCPURunMinsLimit			Running this job would put the user’s group beyond its maximum number of CPU minutes allocated to currently running jobs
+Resources				The job is waiting for resources to become available
+
