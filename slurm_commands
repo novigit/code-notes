@@ -58,6 +58,14 @@ AveRSS				Average resident set size of the job. Equal to average occupied memory
 SEFF
 seff <jobid>			Shows amongst others runtime, CPU efficiency, memory utilized etc
 
+SSHARE
+-a					Display usage and shares for everyone in the project
+-A					Project ID
+-l					Display additional fields
+
+Top line: Usage/Shares of project relative to all other projects
+Other lines: Usage/Shares of project members relative to other members
+
 COMMON ERRORS
 sbatch: error: Batch job submission failed: Requested node configuration is not available
 Some users experience this error when using "#SBATCH -n <number>".
