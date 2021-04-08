@@ -16,6 +16,9 @@ klist -f
 If expired:
 kinit --renew
 
+Delete current tickets:
+kdestroy
+
 Login:
 ssh jmartijn@beskow.pdc.kth.se
 
@@ -42,28 +45,33 @@ rsync -avzhP <file(s)_to_transfer> jmartijn@tegner.kth.se:/cfs/klemming/scratch/
 SETUP A PROFILE
 Create a '.profile' in the Public folder on the home and put a link in the home called '.profile' to the .profile in the /Public folder. Do not hard reset the PATH in the .profile edit it the way you like it
 
-COMMANDS
+SLURM COMMANDS
 
 module list				Show all currently loaded modules
 module avail				Lists all the software modules available on Beskow
 module load <module>			Load module
 module unload <module>			Unload module
 module purge  				Unload all loaded modules
+module keyword <word>       Search all module descriptions for keyword <word>
 sbatch -e <out>				Captures the STDERR output
 sbatch -o <out>				Captures the STDOUT output
 sbatch -n <number>			Set number of cores to use
 sbatch -t <days-hours:min:seconds>	Set time limit
+sbatch -VALUES              Check sbatch version
 scancel <jobid>				Cancels job with <jobid>
 projinfo				Summary of used hours last couple of months
 projinfo -v -d 				Detailed usage per user
-kpasswd	    			 	Change password
+kpasswd	    			 	Change password 
 squeue -u jmartijn		       	Check the job queue and estimated start time of your jobs or how long it has been running
 squeue -u jmartijn -O "reason:40"	Check the reason why your job has not started running yet
 sacct  	  	      			Alternative to squeue, more clearly states status of submitted jobs (CANCELLED and PENDING)
 sacct --format "JobID,JobName%30"	Prints up to 30 characters of your submitted jobnames
+seff <jobid>                Shows amongst others runtime, CPU efficiency, memory utilized etc
 
 PRINT JOB HISTORY
 sacct -S YYYY-MM-DD -u jmartijn --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist
+-S / --starttime
+-E / --endtime
 
 COMMON ERRORS
 sbatch: error: Batch job submission failed: Requested node configuration is not available
@@ -79,6 +87,9 @@ REASONS
 AssocGrpCPURunMinsLimit			Running this job would put the user’s group beyond its maximum number of CPU minutes allocated to currently running jobs
 Resources				The job is waiting for resources to become available
 
+DIFFERENT COMPUTER CLUSTERS
+Be aware that different clusters can run different versions of SLURM.
+Beskow runs 19.05.7, while Graham runs 20.02.4
 
 VIEWING IMAGE FILES
 For some reason, 'eog' does not work very nicely on beskow. Therefore, mount /cfs/klemming on local machine with sshfs. Note that this can only be done while you have a valid ticket.

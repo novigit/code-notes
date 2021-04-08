@@ -96,6 +96,19 @@ bwa aln <FASTA FILE> <FW READ FILE> (FASTQ or FASTA) > <FW OUTPUT.sai>
 bwa aln <FASTA FILE> <RV READ FILE> (FASTQ or FASTA) > <RV OUTPUT.sai>
 bwa sampe <FASTA FILE> <FW INPUT.sai> <RV INPUT.sai> <FW READ FILE> <RV READ FILE> | gzip > <OUTPUT.sam.gz>
 
+# EDIRECT AND E-UTILITIES FROM NCBI #
+
+# download all protein fastas from a particular genome accession
+# sometimes it will fail because ncbi will deny your download request, for example if you access the database too frequently
+esearch -query PTLE00000000 -db nuccore | elink -target protein -name nuccore_protein_wgs | efetch -format fasta
+# downloading all proteins from a particular nucleotide accession
+esearch -query NC_035978.1 -db nuccore | elink -target protein | efetch -format fasta > Calypogenia_arguta.mitoencoded.protein.fasta
+# downloading a genbank file of a particular protein
+esearch -query ABC21121.1 -db protein | efetch -format gb
+epost -input mystery_accessions.list -db protein | efetch -format gb
+
+
+
 # ESOM-1.1 #
 
 #	Get a reference genome as a control
@@ -232,6 +245,7 @@ mafft \
 
 # NEWICK UTILITIES #
 
+nw_display <tree>
 nw_ed tree.nwk 'i & b <= 50' o > tree-out.nwk		Collapses all internal (i) nodes with bootstrap support (b)
       	       	      	       	 			lower than 50
 nw_labels -I tree.nwk					Prints the labels of the tree. -I suppresses inner labels

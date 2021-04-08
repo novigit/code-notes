@@ -165,7 +165,12 @@ if $OUT_DIR does not exist is TRUE, create $OUT_DIR
 
 
 Alternatively
+
+# if file with orig.tsv extension exists
 if ls *.orig.tsv 1> /dev/null 2>&1; then ... ; fi
+
+# if pattern does NOT exist in file.list
+if ! grep -q $pattern file.list; then ... ; fi
 
 & BASH SCRIPT STUFF &
 POSITIONAL ARGUMENTS FOR BASH SCRIPT
@@ -255,6 +260,7 @@ do
 done < input_file			Fill up an array/dictionary/hash by reading in a file. It seems critical to have the file read in like this: done < input_file
 echo "${!arr[@]}"			Return the KEYS of the dictionary
 echo "${arr[@]}"			Return the VALUES of the dictionary
+
 & PROCESS SUBSTITUTION &
 join <(sort FILE1) <(sort FILE2) > FILE3
 <(sort FILE) obsoletes an intermediate file, it creates like a temporary file within the command.
@@ -399,6 +405,9 @@ Column1: unique to file1      	  '-1' to suppress this column
 Column2: unique to file2	  '-2' to suppress this column
 Column3: appear in both files	  '-3' to suppress this column
 
+CP
+cp -P	Copy a symbolic link
+
 CONVERT
 Converts between image file formats
 Example:
@@ -420,6 +429,7 @@ cut <flags> <file>		Remove sections from lines
    	      		       	Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
 -d <delim>		       	Select delimiter to use to creat fields,
    			       	Example: '_' or ' '. Default is '\t' ?
+-d\'					Set literal single tick as delimiter
 --complement		       	Prints all fields except those specified in -f
 cmd | rev | cut -f 1 | rev	Trick to print the last column. Be ware: you may need to put cut -f 2 instead.
 
@@ -510,6 +520,7 @@ Flags:
 -e			Multiple search patterns at the same time. grep -e "pattern1" -e "pattern2"
 -m <NUM>		Only reports the first <NUM> lines with match
 -H 			Always reports the filename that it found its hit in
+-q			Quiet mode
 
 AGREP
 Grep that allows mismatching. Very handy to search sequence data still allowing sequence errors
@@ -694,7 +705,7 @@ WHILE IN SCREEN
 ctrl-a + ctrl-d						Detach from the screen while not interuppting any processes in the screen
 ctrl-a + ':' + sessionname <SESSIONNAME> + Enter	Rename a session to something easy to remember
 
-SED
+SED (ON UNIX)
 sed 's/PATTERN/REPLACE/g' <file> > <outfile>
 sed 's|PATTERN|REPLACE|g' <file> > <outfile> # any character works as delimiter in sed
 
@@ -718,9 +729,9 @@ If you want to replace single quotes, then use double quotes for the whole sed c
 sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta	Negates any line that starts with '>'
 the first argument within the quotes tells sed which lines to look or not look for
 
-
 Flags
 -r	For extended regexp
+-E	For extended regexp
 
 sed "s/^$/d" 	     Delete empty lines
 sed "s/\_/\t/3"	     Replaces 3rd occurrence of _ in the line with a tab
@@ -730,16 +741,43 @@ sed "1s/^/foo\n/"    Introduce a new first line that contains "foo"
 
 Tricks
 sed -i -r "/^>/ s/_R_// ; s/,/_/" Do two replacements at once
+sed -i -r -e "/^>/ s/_R_//" -e "s/,/_/" Same as above
 
 sed -i -r "/^>/! y/acgt/ACGT/" y/// means that each character is replaced separately, kind of like tr (?)
+
+SED (ON MAC OS)
+On the Mac there are two flavors of REs for sed. Basic Regular Expressions (BRE) and Extended Regular Expressions (ERE).
+But in addition, there is also 'Enhanced BRE' and 'Enhanced ERE'. It's a total mess, this RE world ...
+Enhanced allows REs like \s \S \d \D \w \W etc . But apparently these enhanced do not work with Mac OS sed
+
+\s  [[:space:]]
+\S  [^[:space:]]
+
+Also quantifiers like + do not work. * Does work.
+PCRE = Perl Compatible Regular Expressions
+
+Replace with newlines in MacOS
+sed -E 's/£££/\'$'\n/g'
+It's important to use single quotes around the entire expression!
+
 
 SEQ
 Creates a sequence of numbers
 seq <start> <increment> <end> -s <separator>
+seq -w 000 050 500 returns 000 050 100 150 etc. -w ensures that all numbers have the same digit length.
 
 Example:
 END=5
 seq 0 $END		Returns 0 1 2 3 4 5, separated by <separator>
+
+SIPS
+Rotate png / jpg images a certain number of degrees
+sips \
+	-r <degrees_rotating_clockwise>
+	--padColor <color_of_resulting_deadspace> (FFFFFF = white)
+	--out <out_file>
+If you want to rotate counter clockwise e.g. 10 degrees, simply rotate clockwise 360-10=350 degrees.
+
 
 SORT
 sort -n -t "_" -k 2 <file>	SEPERATES BY "_", PICKS THE 2ND FIELD AND SORTS THAT NUMERICALLY
@@ -790,6 +828,7 @@ tar -tvf	Lists the contents of the .tar
 tar -ztvf	Lists the contents of the .tar.gz
 tar -jtvf	Lists the contents of the .tar.bz2
 tar -czvf <new archive name>.tar.gz /path/to/dir-or-file>	(Create) an archive with g(Z)ip, with (V)erbose and specify (F)ilename
+tar xzf <tar_ball> -C <output_dir>
 
 TR
 tr -s ' '			    If you have multiple white space characters in a row, it will truncate it to just a single white space
@@ -814,6 +853,10 @@ VI(M)
 
 W
 Shows you who is currently logged in
+
+WGET
+wget <source_url> -P <out_dir>
+
 
 WC 
 wc -m 			Prints the number of characters in the entire file
