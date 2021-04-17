@@ -24,13 +24,22 @@ ls *[3-5][5]0.fasta	List anything that ends with 350, 450, 550
 
 Ctrl-A		 Jump to the start of the line
 Ctrl-E		 Jump to the end   of the line
-Ctrl-K		 Remove everything between cursor and end   of line
+Ctrl-K		 Remove everything between cursor and end   of line (K is for KILL)
 Ctrl-U		 Remove everything between cursor and start of line
-Ctrl-W		 Remove word where cursor is currently
+Ctrl-W		 Remove word where cursor is currently (W is for WORD)
+Ctrl-Y		 Paste the last thing you removed with Ctrl-K or Ctrl-W or Ctrl-U (Y is for YANK)
 Ctrl-L		 Same as 'clear'
 Ctrl-D		 Same as 'exit'
+Ctrl-x-e 	 Open up in-terminal editor (emacs / vim) and write multi line command.
+			 Exiting the editor will then execute the command
 
-!$		 Bang-Dollar. Wildcard for the last argument of the previous command
+!$			Bang-Dollar. Wildcard for the last argument of the previous command
+Esc-.		Will return the last argument of the previous command
+			Esc could be Alt in other systems
+Esc-Bksp	Remove everything between special character (_./\) and cursor
+Esc-F		Move forward   one word in the command line
+Esc-B		Move backwards one word in the command line
+
 
 # SYSTEM #
 
@@ -574,6 +583,7 @@ Press 'N' to go the previous hit
 Flags:
 -S		Show file without line breaks
 -N		Show line numbers
++F 		
 
 LN
 Symbolic links

@@ -384,6 +384,12 @@ Counting reads in a .bam file
 samtools view -c -F 4 test.bam		Counting mapped reads
 samtools view -c -f 4 test.bam		Counting unmapped reads
 
+Report length and number of mapped reads per contig
+samtools idxstats <bam>
+
+Report per-position read depth
+samtools depth <bam>
+
 Filter out mapped reads with MAPQ quality lower than some integer
 samtools view -bq 1 <bam> > <q1.bam>
 

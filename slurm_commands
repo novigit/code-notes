@@ -59,9 +59,9 @@ SEFF
 seff <jobid>			Shows amongst others runtime, CPU efficiency, memory utilized etc
 
 SSHARE
--a					Display usage and shares for everyone in the project
--A					Project ID
--l					Display additional fields
+sshare -a					Display usage and shares for everyone in the project
+sshare -A					Project ID
+sshare -l					Display additional fields
 
 Top line: Usage/Shares of project relative to all other projects
 Other lines: Usage/Shares of project members relative to other members
