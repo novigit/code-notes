@@ -653,6 +653,9 @@ pdftk *.pdf cat output <new.pdf>
 PS
 ps		Shows a list of active processes with process IDs (PIDs) and the command used to start these processes
 ps -fu $USER  	Shows all actives processes invoked by $USER
+ps -o <field1,field2,etc> Show process key fields. Example:
+ps -o user,uid,comm,pid,pcpu,tty
+ps -r 			Sort by pcpu (%CPU)
 
 PPID: Parent Process ID
 

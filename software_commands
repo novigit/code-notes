@@ -39,9 +39,11 @@ blastn \
 -perc_identity [integer] \
 -max_target_seqs [integer] \
 -num_threads [integer] \
--outfmt [integer] (6 = tabular)
+-outfmt [integer] (6 = tabular) \
+-max_hsps [integer]
 
 note: -max_target_seqs 1 does not necessarily yield the top hit! It just means that it will stop searching after finding 1 hit.
+
 
 note: blastn has preset modes or 'tasks'. An interesting one is 'blastn-short', which is invoked with the flag -task blastn-short. It has a shorter word-length (7 instead of 11), a smaller reward for a nucleotide match (1 instead of 2), compared to standard blastn. This is a good mode when blasting primers against genomes or loci. Setting the E-value to 10 could also be useful to detect primers with mismatches.
 
