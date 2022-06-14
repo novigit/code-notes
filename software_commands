@@ -399,11 +399,8 @@ Prohibited characters in sequence names:
 ## will print contents as SAM to the screen
 samtools view <bam>
 
-## prints FLAG field in human readable format
-samtools view -X
-
 ## output lines in SAM file
-samtools view <bam >-L <bed>
+samtools view <bam>-L <bed>
 
 ## output lines in SAM file which have these contigs
 samtools view <bam> <contig1> <contig2>
@@ -418,35 +415,49 @@ samtools view <bam> ergo_tig00000012:1001-1001
 
 
 # samtools mpileup
-
 ##
 samtools mpileup -f <ref> <bam> > mpileup.out
-
 ## show contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
+## piles up all reads that overlap with the specified region
 samtools mpileup <bam> -r ergo_tig00000012:108383-108383
+
 
 # samtools rmdup
 samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
 
+
 # samtools index
 samtools index <INPUT.SRT.RMDUP.BAM> or <INPUT.SRT.BAM>
 
-# samtools sort
 
+# samtools sort
 ## sorts reads based on their left most coordinate
 samtools sort <bam> <sorted.bam>
 
-# standard samtools pipeline
+
+# samtools idxstats
+## retrieves information from the <bai> file
+## output is tab delimited:
+## reference sequence name, sequence length, # mapped read segments, # unmapped read segments
+## Report length and number of mapped reads per contig
+samtools idxstats <bam>
+
+# samtools flagstat
+## count the number of read mappings for each FLAG type
+## reports per type the number of QC-pass and QC-fail
+## e.g. 17340381 + 0 mapped (99.44% : N/A)
+## meaning 17 340 381 QC-pass reads mapped, and 0 QC-fail reads mapped
+samtools flagstat <bam>
+
+# various samtools snippets
+## standard samtools pipeline
 samtools view -bS [sam] > [bam]		# -b / --bam : output in the BAM format, -S : deprecated, previously required to say input was SAM
 samtools sort [bam] [srt.bam]
 samtools index [srt.bam] [srt.bam.bai]
 
-# Counting reads in a .bam file
+## Counting reads in a .bam file
 samtools view -c -F 4 test.bam		Counting mapped reads
 samtools view -c -f 4 test.bam		Counting unmapped reads
-
-# Report length and number of mapped reads per contig
-samtools idxstats <bam>
 
 # Report per-position read depth
 samtools depth <bam>
@@ -467,6 +478,47 @@ Field	Description
 11	QUAL	Phred score
 
 For segments that have been mapped to the reverse strand (of the reference), the recorded SEQ is reverse complemented from the original unmapped sequence and CIGAR, QUAL, and strand sensitive optional fields are reversed and thus recorded consistently with the sequence bases as represented
+
+
+FLAG - Bitwise flag
+The flag number can only be the sum of a specific set of bits,
+each of which indicate a property of the read mapping
+
+Bit
+0	0x900		For each read/contig in a SAM file, it is required that one and only one line associated with the read satisfies FLAG == 0. This is called the primary line of the read
+
+1	0x1		Read has a paired mate
+2	0x2		Read mapped in 'proper pair'*
+4	0x4		Read was not mapped	
+8	0x8		Mate was not mapped
+16	0x10		Read maps to reverse strand (aka read had to be revcomp'd to map)
+32	0x20		Mate maps to reverse strand (aka read had to be revcomp'd to map)
+64	0x40		First read of pair
+128	0x80		Second read of pair
+256	0x100		Not primary mapping of this read
+512	0x200		Read failed platform/vendor quality checks
+1024	0x400		Read is a PCR or optical duplicate
+2048	0x800		Read mapping is supplementary alignment
+
+(from samformat.info/sam-format-flag)
+
+* A proper pair is most likely one where both reads are properly oriented
+(for example one mapping on the forward strand, the other on the reverse strand)
+and within the expected distance of each other (specified by your mapping command, e.g. with bowtie2 or hisat2)
+
+A segment = A contiguous sequence or subsequence
+
+MAPQ - Mapping Quality
+
+MAPQ: log(probability mapping is wrong) * -10
+so lets say probability mapping is wrong is 0.01,
+log(0.01)  = -2.   -2 * -10 = 20
+log(0.001) = -3.   -3 * -10 = 30
+so MAPQ = 60, corresponds to Pr(mapping is wrong) = 0.000001
+MAPQ = 1,  corresponds to Pr(mapping is wrong) = 0.79
+But, MAPQs are calculated differently based on mapping software,
+and it is apparently not well documented 
+
 
 THE CIGAR STRING
 
