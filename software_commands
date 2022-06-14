@@ -4,6 +4,12 @@ OVERVIEW OF SOFTWARE COMMANDS
 for FILE in cluster*; do alignment_pruner.pl --file $FILE --chi2_prune Half --inverse > $FILE\-high_bias; done
 for FILE in cluster_0*; do alignment_pruner.pl --file $FILE --chi2_prune Half > $FILE\-low_bias; done
 
+# BAMTOOLS #
+
+# split a BAM file into multiple BAM files,
+# one contig per BAM file
+bamtools split -in <.bam> -reference
+
 # BLASTALL #
 blastall -p <PROGRAM> -i <INPUT> -d <PATH TO DATABASE> -a <NUMBEROFCORES> -e <EVALUETRHESHOLD> -F <FILTER> -o <OUTPUT>
 BLASTDATABASE
@@ -214,6 +220,20 @@ fastTreeMP -wag [fasta-alignment] > out.nwk
 perl gmhmmp_heuristic.pl -a -outfile <OUTPUT.faa> -s <INPUT.fasta>
 perl genemark2fasta.pl <INPUT.faa> > <OUTPUT.fa>
 
+# GRAPHMAP #
+graphmap align \
+	 --ref {input.assembly} \
+	 --reads {input.reads} \
+	 --out {output.sam} \
+	 --threads {threads}
+
+ONT / PacBio read mapper
+Graphmap2 is currently bugged with DNA reads, it is more useful for RNAseq reads right now
+Each read is only mapped once
+Many reads that are mapped to repeat areas are "stretched", they contain large stretches of deletions
+Most telomeric reads seemed to map to the first available contig with that telomore
+
+
 # IQTREE #
 iqtree-omp -s <.phylip> -m TESTONLY -mset LG -madd C20,C30,C40,C50,C60 -mredo -nt 30
 Tests the LG model and the mixture models C20 to C60 for a given alignment.
@@ -254,6 +274,11 @@ nw_labels -I tree.nwk					Prints the labels of the tree. -I suppresses inner lab
 nw_labels -L tree.nwk					Prints the labels of the tree. -L suppresses leafs
 nw_reroot <tree> <label1> <label2>			Reroot the tree on the branch that is the LCA of <label1> and <label2>
 nw_clade <tree> <label1> <label2>			Print the subtree that is the LCA of <label1> and <label2>
+
+# NGMLR #
+Reads are mapped multiple times
+
+
 
 # PHYLOBAYES #
 Example
@@ -368,35 +393,93 @@ Prohibited characters in sequence names:
 :,();[]
 
 # SAMTOOLS #
-samtools view -uS <INPUT.sam.gz> | samtools sort - <OUTPUT PREFIX>
-samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
-samtools index <INPUT.SRT.RMDUP.BAM> or <INPUT.SRT.BAM>
-samtools mpileup -f your_ref.fa your.bam > mpileup.out
-samtools view <.bam>		Will print the SAM file
-samtools view -X		Prints FLAG field in human readable format
-samtools view <.bam >-L <.bed>	Output lines in SAM file
-samtools view <.bam> <contig name1> <contig name2>     Output lines in SAM file which have these contigs
 
-Standard samtools pipeline
-samtools view -bS [sam] > [bam]
+# samtools view
+
+## will print contents as SAM to the screen
+samtools view <bam>
+
+## prints FLAG field in human readable format
+samtools view -X
+
+## output lines in SAM file
+samtools view <bam >-L <bed>
+
+## output lines in SAM file which have these contigs
+samtools view <bam> <contig1> <contig2>
+samtools view -bh test.bam $(cat mycontigs.list | tr '\n' ' ')
+
+## filter out mapped reads with MAPQ quality lower than some integer
+samtools view -bq 1 <bam> > <q1.bam>
+
+## view all reads associated with a certain region or particular position
+samtools view <bam> ergo_tig00000012:1000-2000
+samtools view <bam> ergo_tig00000012:1001-1001
+
+
+# samtools mpileup
+
+##
+samtools mpileup -f <ref> <bam> > mpileup.out
+
+## show contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
+samtools mpileup <bam> -r ergo_tig00000012:108383-108383
+
+# samtools rmdup
+samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
+
+# samtools index
+samtools index <INPUT.SRT.RMDUP.BAM> or <INPUT.SRT.BAM>
+
+# samtools sort
+
+## sorts reads based on their left most coordinate
+samtools sort <bam> <sorted.bam>
+
+# standard samtools pipeline
+samtools view -bS [sam] > [bam]		# -b / --bam : output in the BAM format, -S : deprecated, previously required to say input was SAM
 samtools sort [bam] [srt.bam]
 samtools index [srt.bam] [srt.bam.bai]
 
-Counting reads in a .bam file
+# Counting reads in a .bam file
 samtools view -c -F 4 test.bam		Counting mapped reads
 samtools view -c -f 4 test.bam		Counting unmapped reads
 
-Report length and number of mapped reads per contig
+# Report length and number of mapped reads per contig
 samtools idxstats <bam>
 
-Report per-position read depth
+# Report per-position read depth
 samtools depth <bam>
 
-Filter out mapped reads with MAPQ quality lower than some integer
-samtools view -bq 1 <bam> > <q1.bam>
 
-Subset set of contigs from a bam file
-samtools view -bh test.bam $(cat mycontigs.list | tr '\n' ' ')
+SAM FORMAT
+Field	Description
+1	QNAME	Query template name
+2	FLAG	Bitwise flag
+3	RNAME	Reference sequence name
+4	POS	Leftmost mapping position
+5	MAPQ	Mapping quality
+6	CIGAR	Cigar string
+7	RNEXT	Reference name of the other paired end read
+8	PNEXT	Position of the other paired end read
+9	TLEN	Observed template length
+10	SEQ	Segment sequence
+11	QUAL	Phred score
+
+For segments that have been mapped to the reverse strand (of the reference), the recorded SEQ is reverse complemented from the original unmapped sequence and CIGAR, QUAL, and strand sensitive optional fields are reversed and thus recorded consistently with the sequence bases as represented
+
+THE CIGAR STRING
+
+M   Alignment match (includes sequence matches AND mismatches)
+I   Insertion in the read relative to the reference
+D   Deletion in the read relative to the reference
+N
+S   Soft clipping. Terminal ends of the read (5' or 3') that are not part of the alignment but are still reported in the SEQ field
+H   Hard clipping. Terminal ends of the read (5' or 3') that are not part of the alignment and are also not reported in the SEQ field
+P
+=
+X
+
 
 Making a coverage plot with r using the mpileup.out made with samtools
 cut -f 2,4 mpileup.out > mpileup.cov
@@ -422,8 +505,9 @@ Hit the middle mouse button at position of interest to move 'em to that position
 
 Also possible to call a consensus with seaview, at different thresholds
 
-# SELECT_PAIRED.PL #
-Usage: select_paired.pl <file containing forward reads in FASTA format> <name of output file for sorted forward reads> <name of file containing reverse reads in FASTA format> <name of output file for sorted reverse reads> <singletons output file (i.e. reads present in only one of the input files>
+# SEQKIT
+
+seqkit fx2tab -lg <fasta>		Reports per fasta entry the name, the sequence, the length and %GC
 
 # SINA #
 -i [in.fasta] \
@@ -439,6 +523,10 @@ Optional options
 --only-error-correction RUNS THE READ CORRECTION STEP ONLY
 --only-assembler RUNS ASSEMBLY STEP ONLY
 --careful INDUCES MISMATCH CORRECTOR, THAT RUNS POST-ASSEMBLY
+
+# TABLET #
+If you want to load a <file>.sort.bam alignment file, make sure that the index .bai file is named such as <file>.sort.bam.bai
+Otherwise it complains
 
 # TRIMAL #
 trimal \

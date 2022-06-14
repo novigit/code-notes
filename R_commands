@@ -163,6 +163,7 @@ xaxt="n"			Suppress the x-axis labeling
 par(new=T)			State after plot and before plotting a new plot overlaying the previous one
 lwd=1.5				Set line width
 bty="n"				Disable box for plot (only draws 2 axes instead of 4)
+mfrow=c(1,3)			Set up 3 spaces in a row where plots will be added when they are created
 )
 box()				Will create a box around your plot
 
