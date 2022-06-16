@@ -407,32 +407,82 @@ samtools view <bam> <contig1> <contig2>
 samtools view -bh test.bam $(cat mycontigs.list | tr '\n' ' ')
 
 ## filter out mapped reads with MAPQ quality lower than some integer
-samtools view -bq 1 <bam> > <q1.bam>
+samtools view -bq 1 <bam> > <q1.bam> # -b to specify output BAM
 
 ## view all reads associated with a certain region or particular position
 samtools view <bam> ergo_tig00000012:1000-2000
 samtools view <bam> ergo_tig00000012:1001-1001
 
+## keep mapped reads with certain FLAGs set
+
+### -f FLAG or --require-flags FLAG
+### only output alignments with all bits set in FLAG present in the FLAG field
+### so lets say you specify FLAG 163, which has FLAGs 1, 2, 32, 128 set
+### it will select all alignments with FLAG 163, but also FLAG 419, which has FLAGs 1, 2, 32, 128 AND 256 set
+samtools view -f 2 <bam>
+
+### --rf FLAG or --incl-flags FLAG or --include-flags FLAG
+### only output alignments with any bit set in FLAG present in the FLAG field
+### so lets say you specify FLAG 163, which has FLAGs 1, 2, 32, 128 set
+### it will select all alignments which has any of these FLAGs set.
+### for example 81, which has FLAGs 1, 16, 64 set. It is selected because it has FLAG 1.
+### new option as of 1.15 ?
+samtools view --rf 163 <bam>
+
+### -F FLAG or --excl-flags FLAG or --exclude-flags FLAG
+### do  not  output alignments with any bits set in FLAG present in the FLAG field
+### so lets say you specify FLAG 73, which has FLAGs 1, 8 and 64 set
+### it will de-select all alignments which has any of these FLAGs set
+### in my case the only alignments left had FLAGs 0, 16, 256, 272
+### none of these flags have 1, 8 or 64 set
+samtools view -F 4 <bam>
+
+### combining -f and -F is possible
+### you can set multiple FLAGs in a comma separated list, but only with using flag-names
+### this is only possible as of at least from 1.14 onwards
+samtools view -f 2 -F UNMAP,SECONDARY,QCFAIL,DUP
+### you can alternatively also simply add up the bits (4+256+512+1024 = 1796) and specify that
+samtools view -f 2 -F 1796
+
+
+## Counting reads in a .bam file
+samtools view -c -F 4 <bam>		Counting mapped reads    (because you exclude all unmapped reads with -F)
+samtools view -c -f 4 <bam>		Counting unmapped reads  (because you specify all unmapped reads with -f)
+
 
 # samtools mpileup
-##
-samtools mpileup -f <ref> <bam> > mpileup.out
+## piles up all reads and summarizes basecalls per read per site
 ## show contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
-## piles up all reads that overlap with the specified region
+
+### pileup all sites in all contigs
+samtools mpileup <bam> 
+
+### specify a particular region (contig:startpos-endpos) or base (startpos=endpos)
 samtools mpileup <bam> -r ergo_tig00000012:108383-108383
 
+### provide the fasta reference
+samtools mpileup -f <fasta> <bam> -r ergo_tig00000012:108383-108383
+
+#### if <fasta> is not provided, the reference basecall is always N, and ACGTN refer to forward strand, acgtn to reverse strand
+#### if <fasta> is provided, the reference basecall is reported, and ACGTN / actgn refer to MISMATCHES, and '.' forward and ',' reverse refer to matches
+
+### samtools mpileup by default ignores
+### - orphans (reads that come from a pair, but are not in a proper pair in the read mapping). To count orphans use -A
+### - unmapped, secondary, qcfail and pcr dupl reads (the default setting of --excl-flags)
+### - low quality base calls (the default setting of -Q is 13)
+### - read segments that are an overlap with its read pair. This makes sense because you don't want to double count the same molecule twice when estimating coverage. To double count, use --ignore-overlaps
 
 # samtools rmdup
 samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
 
 
 # samtools index
-samtools index <INPUT.SRT.RMDUP.BAM> or <INPUT.SRT.BAM>
+samtools index <sorted.bam> <sorted.bam.bai>
 
 
 # samtools sort
 ## sorts reads based on their left most coordinate
-samtools sort <bam> <sorted.bam>
+samtools sort <bam> -o <sorted.bam>
 
 
 # samtools idxstats
@@ -449,15 +499,19 @@ samtools idxstats <bam>
 ## meaning 17 340 381 QC-pass reads mapped, and 0 QC-fail reads mapped
 samtools flagstat <bam>
 
+# samtools tview
+## view a particular region of the alignment within your terminal - pretty cool!
+## this is nice if you want to check something quick visually but dont want to transfer the file so you can inspect it with Tablet
+## there is also a consensus line
+## not sure why some reads are in blue and others are in white
+samtools tview --reference <fasta> <bam> ergo_tig00000012:2165-2175
+
 # various samtools snippets
 ## standard samtools pipeline
 samtools view -bS [sam] > [bam]		# -b / --bam : output in the BAM format, -S : deprecated, previously required to say input was SAM
-samtools sort [bam] [srt.bam]
+samtools sort [bam] -o [srt.bam]
 samtools index [srt.bam] [srt.bam.bai]
 
-## Counting reads in a .bam file
-samtools view -c -F 4 test.bam		Counting mapped reads
-samtools view -c -f 4 test.bam		Counting unmapped reads
 
 # Report per-position read depth
 samtools depth <bam>
@@ -484,21 +538,28 @@ FLAG - Bitwise flag
 The flag number can only be the sum of a specific set of bits,
 each of which indicate a property of the read mapping
 
-Bit
-0	0x900		For each read/contig in a SAM file, it is required that one and only one line associated with the read satisfies FLAG == 0. This is called the primary line of the read
+Decimal	Hexadecimal    Flag name     	Explanation
 
-1	0x1		Read has a paired mate
-2	0x2		Read mapped in 'proper pair'*
-4	0x4		Read was not mapped	
-8	0x8		Mate was not mapped
-16	0x10		Read maps to reverse strand (aka read had to be revcomp'd to map)
-32	0x20		Mate maps to reverse strand (aka read had to be revcomp'd to map)
-64	0x40		First read of pair
-128	0x80		Second read of pair
-256	0x100		Not primary mapping of this read
-512	0x200		Read failed platform/vendor quality checks
-1024	0x400		Read is a PCR or optical duplicate
-2048	0x800		Read mapping is supplementary alignment
+0	0x0 or 0x900?			None of the bitwise flags are set. So essentially
+	       				- the read doesn't have a paired mate
+					- the read is mapped
+					- the read maps to the forward strand
+					- it is the primary mapping of this read
+					- read passed QC
+					- read is not a PCR or optical duplicate
+
+1	0x1		PAIRED		Read has a paired mate
+2	0x2		PROPER_PAIR	Read mapped in 'proper pair'*
+4	0x4		UNMAP		Read was not mapped	
+8	0x8		MUNAP		Mate was not mapped
+16	0x10		REVERSE		Read maps to reverse strand (aka read had to be revcomp'd to map)
+32	0x20		MREVERSE	Mate maps to reverse strand (aka read had to be revcomp'd to map)
+64	0x40		READ1		First read of pair
+128	0x80		READ2		Second read of pair
+256	0x100		SECONDARY	Not primary mapping of this read
+512	0x200		QCFAIL		Read failed platform/vendor quality checks
+1024	0x400		DUP		Read is a PCR or optical duplicate
+2048	0x800		SUPPLEMENTARY	Read mapping is supplementary alignment
 
 (from samformat.info/sam-format-flag)
 
@@ -525,13 +586,27 @@ THE CIGAR STRING
 M   Alignment match (includes sequence matches AND mismatches)
 I   Insertion in the read relative to the reference
 D   Deletion in the read relative to the reference
-N
+N   Only applies with mRNA-to-genome alignments. Essentially many deletions in a row in the read relative to the reference. Meant to indicate introns
 S   Soft clipping. Terminal ends of the read (5' or 3') that are not part of the alignment but are still reported in the SEQ field
 H   Hard clipping. Terminal ends of the read (5' or 3') that are not part of the alignment and are also not reported in the SEQ field
 P
 =
 X
 
+Some of these letters can also be called "operations". For example, the N operation of the CIGAR string
+
+Other coding names used for these operations
+
+M 	BAM_CMATCH 	0
+I 	BAM_CINS 	1
+D 	BAM_CDEL 	2
+N 	BAM_CREF_SKIP 	3
+S 	BAM_CSOFT_CLIP 	4
+H 	BAM_CHARD_CLIP 	5
+P 	BAM_CPAD 	6
+= 	BAM_CEQUAL 	7
+X 	BAM_CDIFF 	8
+B 	BAM_CBACK 	9
 
 Making a coverage plot with r using the mpileup.out made with samtools
 cut -f 2,4 mpileup.out > mpileup.cov
