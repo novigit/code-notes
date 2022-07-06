@@ -1,0 +1,22 @@
+COMMON CONDA COMMANDS
+
+# INSTALLING MINICONDA #
+
+# UNINSTALLING MINICONDA #
+rm -rf ~/miniconda3/
+rm -rf ~/.conda
+rm  ~/.condarc
+
+Remove the conda block from your ~/.profile or ~/.bashrc
+
+CREATING A NEW ENVIRONMENT
+conda create --name <my_env>
+
+REMOVE AN ENVIRONMENT
+conda env remove -n <my_env>
+
+INSTALLING A PACKAGES IN AN ENVIRONMENT
+conda install -c bioconda -n <my_env> <package>=<version> <package>=<version>
+
+LIST ALL PACKAGES INSTALLED IN AN ENVIRONMENT
+conda list
