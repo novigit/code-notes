@@ -528,6 +528,14 @@ B 3
 C 4
 D 5,6
 
+DIFF
+Shows differences between two files
+diff <file1> <file2>
+
+-y   	     invoke side-by-side mode, really nice
+-w <n>	     set width of visibles lines of differing lines in side by side mode
+--suppress-common-lines
+
 DIRNAME
 Trims filenames from strings (opposite of BASENAME)
 
@@ -836,6 +844,9 @@ sed "s/\_/\t/g3"     Replaces 3rd occurrence until last occurrence of _ in the l
 
 sed "1s/^/foo\n/"    Introduce a new first line that contains "foo"
 
+sed '100,200{s/foo/bar/}'      Only replace 'foo' with 'bar' between line numbers 100 and 200
+sed '100,/foo/{s/foo/bar/}'    Only replace 'foo' with 'bar' between lines 100 and the first line that matches 'foo'
+
 Tricks
 sed -i -r "/^>/ s/_R_// ; s/,/_/" Do two replacements at once
 sed -i -r -e "/^>/ s/_R_//" -e "s/,/_/" Same as above
@@ -913,11 +924,20 @@ svn add [new file]
 svn commit -m "Message to the subversion system DATE"
 svn update UDPATES YOUR LOCAL REPOSITORY WITH LATEST CHANGES ON SUBVERSION SYSTEM
 
-TAIL
+TAIL / HEAD
 tail <file>		Shows the last 10 lines of a file
+-<number>		Shows the last [number] lines of a file
 -n <number>		Shows the last [number] lines of a file
 -n +<number>		Shows the last part of a file starting at line [number]
 -f 			Keeps updating, if the file is being appended continuously
+
+head <file>		Shows the first 10 lines of a file
+-<number>		Shows the first <number> lines of a file
+-n <number>		Shows the first <number> lines of a file
+-n -<number>		Shows the first part of a file until line <number>
+
+note that tail -n+<number> and head -n-<number> only work with GNU head/tail ?
+
 
 TAR
 tar is short for "tape archive"

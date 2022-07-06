@@ -32,6 +32,10 @@ makeblastdb \
 	    -parse_seqids
 NOTE: MAKE SURE THAT FASTA HEADERS ARE FORMATTED SOMETHING LIKE THIS: >lcl|[accession no.] theawesome sequence
 Also make sure that you only have one pipe in your sequence name, the one after >lcl. It will complain otherwise
+makeblastdb -hash_index	     # create index of sequence hash values
+# Dayana:
+# I believe it is the creation of a hash table that contains the mapping of sequence ids to fix identifiers that are used for computing speed and efficiency
+
 
 If it complains about delta sequences, check for non-amino acid characters in the sequences with
 grep -v ">" *.fasta | sed "s/\(.\)/\1\n/g" | sort | uniq -c
@@ -392,15 +396,12 @@ Amino Acid Models:	A substation matrix like BLOSUM62, WAG or DAYHOFF etc in comb
 Prohibited characters in sequence names:
 :,();[]
 
-# SAMTOOLS #
+# SAMTOOLS#
 
 # samtools view
 
 ## will print contents as SAM to the screen
 samtools view <bam>
-
-## output lines in SAM file
-samtools view <bam>-L <bed>
 
 ## output lines in SAM file which have these contigs
 samtools view <bam> <contig1> <contig2>
@@ -412,6 +413,13 @@ samtools view -bq 1 <bam> > <q1.bam> # -b to specify output BAM
 ## view all reads associated with a certain region or particular position
 samtools view <bam> ergo_tig00000012:1000-2000
 samtools view <bam> ergo_tig00000012:1001-1001
+
+## view all read mappings that overlap with regions specified in a BED file
+## NOTE: the keyword here is 'overlap'. Read mappings that have a start or end position outside
+## the specified coordinates in the BED file, but still partially overlap with those coordinates
+## are still selected!
+samtools view -L <bed> <bam>
+## it may be slow! to speed up, specify the <bai> file with -M or --use-index <bai>
 
 ## keep mapped reads with certain FLAGs set
 
@@ -478,6 +486,7 @@ samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
 
 # samtools index
 samtools index <sorted.bam> <sorted.bam.bai>
+samtools -@ <threads> <sorted.bam> <sorted.bam.bai>
 
 
 # samtools sort
@@ -499,12 +508,22 @@ samtools idxstats <bam>
 ## meaning 17 340 381 QC-pass reads mapped, and 0 QC-fail reads mapped
 samtools flagstat <bam>
 
+# samtools stats
+samtools stats <bam>
+
 # samtools tview
 ## view a particular region of the alignment within your terminal - pretty cool!
 ## this is nice if you want to check something quick visually but dont want to transfer the file so you can inspect it with Tablet
 ## there is also a consensus line
-## not sure why some reads are in blue and others are in white
 samtools tview --reference <fasta> <bam> ergo_tig00000012:2165-2175
+## go directly to position x
+samtools tview --reference <fasta> <bam> ergo_tig00000012:2569
+## while in tview, press '?' for interactive controls
+### underlined reads - orphans or secondary read mappings
+### blue reads   - mapping quality 0-9
+### green reads  - mapping quality 10-19
+### yellow reads - mapping quality 20-29
+### white reads  - mapping quality >30
 
 # various samtools snippets
 ## standard samtools pipeline
@@ -559,13 +578,19 @@ Decimal	Hexadecimal    Flag name     	Explanation
 256	0x100		SECONDARY	Not primary mapping of this read
 512	0x200		QCFAIL		Read failed platform/vendor quality checks
 1024	0x400		DUP		Read is a PCR or optical duplicate
-2048	0x800		SUPPLEMENTARY	Read mapping is supplementary alignment
+2048	0x800		SUPPLEMENTARY	Read mapping is supplementary alignment **
 
 (from samformat.info/sam-format-flag)
 
 * A proper pair is most likely one where both reads are properly oriented
 (for example one mapping on the forward strand, the other on the reverse strand)
 and within the expected distance of each other (specified by your mapping command, e.g. with bowtie2 or hisat2)
+
+** When a read alignment can not be represented as a single 'linear alignment' (as normal) it is represented as a 'chimeric alignment'.
+A chimeric alignment is represented as a set of linear alignments that do not have large overlaps.
+Typically, one of these alignments is considered the 'representative' and the others are called 'supplementary' and are
+distinguished by the supplementary 2048 or 0x800 bitwise FLAG.
+
 
 A segment = A contiguous sequence or subsequence
 
@@ -589,7 +614,7 @@ D   Deletion in the read relative to the reference
 N   Only applies with mRNA-to-genome alignments. Essentially many deletions in a row in the read relative to the reference. Meant to indicate introns
 S   Soft clipping. Terminal ends of the read (5' or 3') that are not part of the alignment but are still reported in the SEQ field
 H   Hard clipping. Terminal ends of the read (5' or 3') that are not part of the alignment and are also not reported in the SEQ field
-P
+P   Padding. A deletion in the read relative to another read which also has an insertion (but of a different length) at the same place relative to the reference
 =
 X
 
