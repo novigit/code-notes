@@ -2,7 +2,18 @@
 
 GNU SED
 
-# COMMON USAGE 
+'''
+- sed stands for stream editor
+- sed has two buffers: the pattern buffer & the hold buffer. Both are initially empty
+- execution cycle:
+    1. read line from file or stdin
+    2. remove any trailing newline
+    3. store line in pattern buffer
+    4. modify pattern buffer according to user instructions
+    5. print pattern buffer to stdout
+'''
+
+# sed 's///' #
 sed 's/PATTERN/REPLACE/' file > outfile
 
 # by default sed will only replace the first hit in a line
@@ -54,8 +65,6 @@ sed -r 's/(.+)_([0-9]+)/\2_\1/'
 ## if you use extended regular expressions, '(' is assumed to have the special meaning
 ## if you do not use them, you have to give them special meaning with the '\', so '\(' and '\)'
 
-# LESS COMMON USAGE
-
 # replaces 3rd occurrence of _ in the line with a tab
 sed "s/_/\t/3"      
 # replaces 3rd occurrence until last occurrence of _ in the line with a tab
@@ -67,15 +76,48 @@ sed '/exon/{n;s/SEARCH/REPLACE/}'
 # introduce a new first line that contains "foo"
 sed "1s/^/foo\n/"
 
+
+# sed -n #
+
+## -n supresses automatic printing of pattern space (= pattern buffer ?)
+## p invokes printing of pattern buffer
+
+# general syntax || sed -n 'ADDRESS'p
+# general syntax || sed -n '/PATTERN/p'
+
+# prints line number 3
+sed -n '3'p               
+
+# prints lines in range 3,5
+sed -n '3,5'p
+
+# prints from line 3 to the last line
+sed -n '3,$'p
+
+# prints every second line, starting from line 3
+sed -n '3~2'p
+
+# prints the last line of the file
+sed -n '$'p
+
+# print line that matches PATTERN
+sed -n '/PATTERN/p'
+
+# general syntax || sed -n '/PATTERN/,ADDRESS'
+
+# print from line that matches PATTERN until 6 lines after that
+sed -n '/PATTERN/,6p'
+
+# general syntax || sed -n 'ADDRESS,/PATTERN/'
+
+# print from third line until line that matches PATTERN
+sed -n '3,/PATTERN/p'
+
+
+# sed 'y///' #
+
 # y/// means that each character is replaced separately, kind of like tr (?)
 sed "/^>/! y/acgt/ACGT/" 
-
-# prints line number [number]
-sed -n '[number]'p               
-# prints lines in range number1-number2
-sed -n '[number1],[number2]'p
-# prints from line [number] to the end
-sed -n '[number],$'p
 
 # USEFUL SNIPPETS
 
