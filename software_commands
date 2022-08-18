@@ -480,6 +480,11 @@ samtools mpileup -f <fasta> <bam> -r ergo_tig00000012:108383-108383
 ### - low quality base calls (the default setting of -Q is 13)
 ### - read segments that are an overlap with its read pair. This makes sense because you don't want to double count the same molecule twice when estimating coverage. To double count, use --ignore-overlaps
 
+## samtools mpileup does not automatically show coordinates from regions that have no reads mapped to them
+## to also show these coordinates in the output, invoke -a
+samtools mpilup -a <bam>
+# -a	 output all positions, including those with 0 depth
+
 # samtools rmdup
 samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
 
@@ -524,6 +529,7 @@ samtools tview --reference <fasta> <bam> ergo_tig00000012:2569
 ### green reads  - mapping quality 10-19
 ### yellow reads - mapping quality 20-29
 ### white reads  - mapping quality >30
+## ? samtools tview reports N's in the reference line where reads do not align ? also when --reference is given
 
 # various samtools snippets
 ## standard samtools pipeline
@@ -557,27 +563,27 @@ FLAG - Bitwise flag
 The flag number can only be the sum of a specific set of bits,
 each of which indicate a property of the read mapping
 
-Decimal	Hexadecimal    Flag name     	Explanation
+Decimal	Hexadec.    Flag name     	Explanation
 
-0	0x0 or 0x900?			None of the bitwise flags are set. So essentially
-	       				- the read doesn't have a paired mate
+0	    0x0			None of the bitwise flags are set. So essentially
+	       			- the read doesn't have a paired mate
 					- the read is mapped
 					- the read maps to the forward strand
 					- it is the primary mapping of this read
 					- read passed QC
 					- read is not a PCR or optical duplicate
 
-1	0x1		PAIRED		Read has a paired mate
-2	0x2		PROPER_PAIR	Read mapped in 'proper pair'*
-4	0x4		UNMAP		Read was not mapped	
-8	0x8		MUNAP		Mate was not mapped
-16	0x10		REVERSE		Read maps to reverse strand (aka read had to be revcomp'd to map)
-32	0x20		MREVERSE	Mate maps to reverse strand (aka read had to be revcomp'd to map)
-64	0x40		READ1		First read of pair
-128	0x80		READ2		Second read of pair
-256	0x100		SECONDARY	Not primary mapping of this read
-512	0x200		QCFAIL		Read failed platform/vendor quality checks
-1024	0x400		DUP		Read is a PCR or optical duplicate
+1	    0x1		    PAIRED		    Read has a paired mate
+2	    0x2		    PROPER_PAIR	    Read mapped in 'proper pair'*
+4	    0x4		    UNMAP		    Read was not mapped	
+8	    0x8		    MUNAP		    Mate was not mapped
+16	    0x10		REVERSE		    Read maps to reverse strand (aka read had to be revcomp'd to map)
+32	    0x20		MREVERSE	    Mate maps to reverse strand (aka read had to be revcomp'd to map)
+64	    0x40		READ1		    First read of pair
+128	    0x80		READ2		    Second read of pair
+256	    0x100		SECONDARY	    Not primary mapping of this read
+512	    0x200		QCFAIL		    Read failed platform/vendor quality checks
+1024	0x400		DUP		        Read is a PCR or optical duplicate
 2048	0x800		SUPPLEMENTARY	Read mapping is supplementary alignment **
 
 (from samformat.info/sam-format-flag)
@@ -660,6 +666,11 @@ Also possible to call a consensus with seaview, at different thresholds
 # SEQKIT
 
 seqkit fx2tab -lg <fasta>		Reports per fasta entry the name, the sequence, the length and %GC
+seqkit fx2tab -nlg <fasta>		Reports per fasta entry the name, length and %GC, but not the sequence
+seqkit seq --color <fasta> | less -R    Color FASTA files
+
+# report sequence for 'ergo_tig00000012' but only for region 16000-17000
+seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
 
 # SINA #
 -i [in.fasta] \

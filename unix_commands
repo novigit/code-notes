@@ -17,96 +17,93 @@ ls *.fasta
 List anything that ends with .fasta
 
 But this also works:
-ls *[0-9].fasta		List anything that ends with number.fasta
-ls *[3-5][5]0.fasta	List anything that ends with 350, 450, 550
+ls *[0-9].fasta     List anything that ends with number.fasta
+ls *[3-5][5]0.fasta List anything that ends with 350, 450, 550
 
 # GENERAL TERMINAL HOTKEYS #
+Ctrl-a       Jump to the start of the line
+Ctrl-e       Jump to the end   of the line
+Ctrl-k       Remove everything between cursor and end   of line (K is for KILL)
+Ctrl-u       Remove everything between cursor and start of line
+Ctrl-w       Remove word where cursor is currently (W is for WORD)
+Ctrl-y       Paste the last thing you removed with Ctrl-K or Ctrl-W or Ctrl-U (Y is for YANK)
+Ctrl-l       Same as 'clear'
+Ctrl-d       Same as 'exit'
+Ctrl-d       If text in command, same as DELETE
+Ctrl-h       If text in command, same as BACKSPACE
+Ctrl-x-e     Open up in-terminal editor (emacs / vim) and write multi line command.
+             Exiting the editor will then execute the command
+Ctrl-p       Cycle through previous commands. Same as arrow up key
+Ctrl-N       When cycling through previous commands, go to next command. Same arrow down key
 
-Ctrl-a		 Jump to the start of the line
-Ctrl-e		 Jump to the end   of the line
-Ctrl-k		 Remove everything between cursor and end   of line (K is for KILL)
-Ctrl-u		 Remove everything between cursor and start of line
-Ctrl-w		 Remove word where cursor is currently (W is for WORD)
-Ctrl-y		 Paste the last thing you removed with Ctrl-K or Ctrl-W or Ctrl-U (Y is for YANK)
-Ctrl-l		 Same as 'clear'
-Ctrl-d		 Same as 'exit'
-Ctrl-d		 If text in command, same as DELETE
-Ctrl-x-e 	 Open up in-terminal editor (emacs / vim) and write multi line command.
-			 Exiting the editor will then execute the command
-Ctrl-p		 Cycle through previous commands. Same as arrow up key
-Ctrl-N		 When cycling through previous commands, go to next command. Same arrow down key
-
-!$			Bang-Dollar. Wildcard for the last argument of the previous command
-Esc-.		Will return the last argument of the previous command
-			Esc could be Alt in other systems
-Esc-Bksp	Remove everything between special character (_./\) and cursor
-Esc-F		Move forward   one word in the command line
-Esc-B		Move backwards one word in the command line
+!$           Bang-Dollar. Wildcard for the last argument of the previous command
+Esc-.        Will return the last argument of the previous command
+             Esc could be Alt in other systems
+Esc-Bksp     Remove everything between special character (_./\) and cursor
+Esc-F        Move forward   one word in the command line
+Esc-B        Move backwards one word in the command line
 
 # THE PROMPT #
-
 See Corey Schafer video on YouTube
 The prompt is determined by the PS1 variable
 
-PS1="-> "					Sets the prompt literally to ->
-PS1="\u@\h \W -> " 			username@hostname currentdir ->
+PS1="-> "                   Sets the prompt literally to ->
+PS1="\u@\h \W -> "          username@hostname currentdir ->
 
-\h			hostname up to the first .
-\n			newline
-\s			the name of the shell
-\t			the current time in 24 hour format
-\u			username of the current user
-\w			current working directory - full absolute path
-\W			the basename of the current working directory - only current directory
-\D			timestamp, e.g. \D{%H:%M:%S} will display hour:minute:second
+\h          hostname up to the first .
+\n          newline
+\s          the name of the shell
+\t          the current time in 24 hour format
+\u          username of the current user
+\w          current working directory - full absolute path
+\W          the basename of the current working directory - only current directory
+\D          timestamp, e.g. \D{%H:%M:%S} will display hour:minute:second
 
 The custom PS1 variable typically gets very long, so you may want to break it up in several pieces, so its more human understandable
 Has added benefit that you can describe the different parts with comments.
 
-PS1="$(tput setaf 166)\u" 		# orange user
-PS1+="$(tput setaf 228)@\h"		# yellow host
-PS1+="$(tput setaf 71)\W -> "	# green directory
-PS1+="$(tput sgr0)"				# reset formatting so colors do not bleed into command line
+PS1="$(tput setaf 166)\u"       # orange user
+PS1+="$(tput setaf 228)@\h"     # yellow host
+PS1+="$(tput setaf 71)\W -> "   # green directory
+PS1+="$(tput sgr0)"             # reset formatting so colors do not bleed into command line
 
 You should also envelope the tput commands with \[  and \], i.e. \[$(tput setaf 166)\] to prevent the cursor from acting up in the terminal
 export PS1
 
 # SYSTEM #
-
-lscpu		Reports the number of cpus, architecture, and all other relevant CPU information of the system
+lscpu       Reports the number of cpus, architecture, and all other relevant CPU information of the system
 
 # SHELL SCRIPTING #
-
 sh, bash, Perl, Python, Ruby etc are scripting languages in which the "program" is a regular file containing plain text that is interpreted into MACHINE CODE at the time you run it. Other languages like c++, java, haskell, rust have a separate
 COMPILATION step to turn their regular text source file into a BINARY EXECUTABLE.
 
 A script from sh, bash, Perl, Python, Ruby etc become EXECUTABLE simply by turning on the executable permission.
 
-& SHEBANG &
+## SHEBANG ##
 
-#!/bin/bash		Allows the script interpreter to recognize that the file should be executed with bash
-#!/usr/bin/env bash	Same, but now the script is portable. I.e., different systems will recognize it as a bash script
-	       		The env program will find the bash that is found in your environment
-#!/usr/bin/env python3	Use the python3 that is found by the environment
+#!/bin/bash     Allows the script interpreter to recognize that the file should be executed with bash
+#!/usr/bin/env bash Same, but now the script is portable. I.e., different systems will recognize it as a bash script
+                The env program will find the bash that is found in your environment
+#!/usr/bin/env python3  Use the python3 that is found by the environment
 
-& VARIABLES &
+## VARIABLES ##
 
 Everything in UNIX is case sensitive. So $NAME ne $name ne $Name
 Probably a good idea to use lower case variable names in scripts, so not to accidentally overwrite environment variables
 
-& SET -U &
+## SET -U ##
 
 Analogous to 'use warnings' in perl?
 Write 'set -u' on top of your shell script
 
-& REDIRECTING &
+## REDIRECTING ##
 
 program 2> file.e   Redirect STDERR to file.e
 program 1> file.o   Redirect STDOUT to file.o
 program 1> file.o 2> file.e Redirect STDOUT to file.o and STDERR to file.e
 program 2>/dev/null   Redirect output to /dev/null , where data is gone forever
 
-& LOOP STUFF &
+## LOOP STUFF ##
 
 IF LOOP SYNTAX
 if []; then
@@ -146,8 +143,8 @@ done < "$FILE"
 Use the read '-r' flag, 'while read -r STRING' to prevent read from eating '\' in $STRING
 
 LOOP CONTROL
-break		Breaks and leaves the loop 
-continue	Skip to the next iteration of the loop (definitely analogous to next of Perl)
+break       Breaks and leaves the loop 
+continue    Skip to the next iteration of the loop (definitely analogous to next of Perl)
 
 LOOP OVER RANGE OF NUMBERS
 for i in {89..97..2}; do
@@ -163,7 +160,7 @@ Will return
 95
 97
 
-& COMPARING STUFF &
+## COMPARING STUFF ##
 
 COMPARE TWO STRINGS
 if [ "$S" -ge "$Q" ] ...
@@ -188,15 +185,15 @@ if [[ "$alphabin" != *"BACL10"* ]]; then
 fi
 
 OTHER COMPARISONS
-[[ -e FILE ]]	     True if FILE exists
-[[ -f FILE ]]	     True if FILE exists and is a regular file
-[[ -h FILE ]]	     True if FILE exists and is a symbolic link
-[[ -s FILE ]]	     True if FILE is non-empty
-[[ -d DIR ]]	     True if DIR exists
+[[ -e FILE ]]        True if FILE exists
+[[ -f FILE ]]        True if FILE exists and is a regular file
+[[ -h FILE ]]        True if FILE exists and is a symbolic link
+[[ -s FILE ]]        True if FILE is non-empty
+[[ -d DIR ]]         True if DIR exists
 [[ -z $STRING ]]     True if $STRING is null (doesn't exist)
 
-cmd1 && cmd2		&& is the AND operator. execute cmd1 and only if it succeeds execute cmd2
-cmd1 || cmd2		|| is the OR  operator. execute cmd2 only if cmd1 fails
+cmd1 && cmd2        && is the AND operator. execute cmd1 and only if it succeeds execute cmd2
+cmd1 || cmd2        || is the OR  operator. execute cmd2 only if cmd1 fails
 Note that these operators already have an 'if' functionality built in!
 
 && is used to chain commands together, such that the command after the && is only run when the command prior to the && is run without any errors
@@ -215,14 +212,14 @@ if ls *.orig.tsv 1> /dev/null 2>&1; then ... ; fi
 # if pattern does NOT exist in file.list
 if ! grep -q $pattern file.list; then ... ; fi
 
-& BASH SCRIPT STUFF &
+## BASH SCRIPT STUFF ##
 POSITIONAL ARGUMENTS FOR BASH SCRIPT
-$0	  Name of the bash script
-$1	  First argument
-$2	  Second argument
-$3	  Etc etc..
-$@	  All the arguments in a single string
-$#	  The number of positional arguments (not including the name of the script)
+$0    Name of the bash script
+$1    First argument
+$2    Second argument
+$3    Etc etc..
+$@    All the arguments in a single string
+$#    The number of positional arguments (not including the name of the script)
 
 If multiple words on the command line are flanked by quotes, whatever is within the quotes is one positional argument
 ./script.sh ONE TWO "THREE PIGS"
@@ -237,11 +234,11 @@ Example:
 var=apple
 case $var in
     apple)
-	echo "variable was apple";;
+    echo "variable was apple";;
     pear)
-	echo "variable was pear";;
+    echo "variable was pear";;
     mango)
-	echo "variable was mango";;
+    echo "variable was mango";;
 esac
 Will print "variable was apple"
 
@@ -257,8 +254,8 @@ while getopts ":s:m:z:n:t:g:" opt; do
         t) threads=${OPTARG};;
         g) guidetree=${OPTARG};;
         *) usage;;
-	:) echo "Option -${OPTARG}" requires an argument; exit 1;; 
-	\?) echo "Error: Invalid option: -${OPTARG:-""}; exit 1"
+    :) echo "Option -${OPTARG}" requires an argument; exit 1;; 
+    \?) echo "Error: Invalid option: -${OPTARG:-""}; exit 1"
     esac
 done
 
@@ -267,44 +264,44 @@ The first : in that line prevents 'verbose error handling'
 :)  gets activated when an option/flag that needs an argument is called without an argument
 \?) gets activated when an option/flag that is not specified in the code is called.
 
-& REST STUFF &
+## REST STUFF ##
 USING DELIMITER OTHER THAN WHITESPACE:
 grep -c ">" foo.fasta | while IFS=':' do
      echo $FILE $SEQCOUNT;
 done
 
-& STRING CONTROL &
+## STRING CONTROL ##
 i=teststring
-echo $i			returns "teststring"
-echo ${i}		returns "teststring"
-echo ${i%string}	returns "test"
-echo ${i%string}var	returns "testvar"
-echo ${i#test}		returns "string"
+echo $i         returns "teststring"
+echo ${i}       returns "teststring"
+echo ${i%string}    returns "test"
+echo ${i%string}var returns "testvar"
+echo ${i#test}      returns "string"
 echo ${i/string/button} returns "testbutton"
 
-& SOME OTHER STRING SYNTAX &
+## SOME OTHER STRING SYNTAX ##
 
-string=${var:-default}	$string gets value $var if $var is set previously. Otherwise, $string gets set to the text "default"
-arg=${1:-'srr.txt'}	Sets arg to $1 (the positional argument) if $1 is set. Otherwise, arg gets set to the text 'srr.txt'
+string=${var:-default}  $string gets value $var if $var is set previously. Otherwise, $string gets set to the text "default"
+arg=${1:-'srr.txt'} Sets arg to $1 (the positional argument) if $1 is set. Otherwise, arg gets set to the text 'srr.txt'
 
-& ARITHMATIC &
+## ARITHMATIC ##
 
-sum=$((1+1))	$((1+1)) returns to 2, prior to assigning sum the value 2	
-let sum=1+1	$sum is assigned the value 2 through simple arithmetic evaluation 
+sum=$((1+1))    $((1+1)) returns to 2, prior to assigning sum the value 2   
+let sum=1+1 $sum is assigned the value 2 through simple arithmetic evaluation 
 $i=$(($i + 1)) is synonymous to let i++
 
-& BASH ARRAYS &
-declare -A arr				Declare a new array arr
-arr=()	   				Empty/reset arr
-arr=( ["moo"]="cow" ["woof"]="dog")	Create a dictionary/hash. Supported since bash v4. Make sure to use #!/bin/bash and not #!/bin/sh
+## BASH ARRAYS ##
+declare -A arr              Declare a new array arr
+arr=()                  Empty/reset arr
+arr=( ["moo"]="cow" ["woof"]="dog") Create a dictionary/hash. Supported since bash v4. Make sure to use #!/bin/bash and not #!/bin/sh
 while read -r one two;
 do
-	arr[$one]="$two"
-done < input_file			Fill up an array/dictionary/hash by reading in a file. It seems critical to have the file read in like this: done < input_file
-echo "${!arr[@]}"			Return the KEYS of the dictionary
-echo "${arr[@]}"			Return the VALUES of the dictionary
+    arr[$one]="$two"
+done < input_file           Fill up an array/dictionary/hash by reading in a file. It seems critical to have the file read in like this: done < input_file
+echo "${!arr[@]}"           Return the KEYS of the dictionary
+echo "${arr[@]}"            Return the VALUES of the dictionary
 
-& PROCESS SUBSTITUTION &
+## PROCESS SUBSTITUTION ##
 join <(sort FILE1) <(sort FILE2) > FILE3
 <(sort FILE) obsoletes an intermediate file, it creates like a temporary file within the command.
 Otherwise you would have done:
@@ -315,13 +312,13 @@ rm FILE1-sort
 rm FILE2-sort
 So it saves you a lot of work! Amazing!!
 
-& REDIRECT OUTPUT &
+## REDIRECT OUTPUT ##
 
-cmd > file.txt		Write STDOUT to file.txt
-cmd >> file.txt	 	Append file.txt with STDOUT
-cmd &> file.txt		Write STDOUT and STDERR to file.txt
+cmd > file.txt      Write STDOUT to file.txt
+cmd >> file.txt     Append file.txt with STDOUT
+cmd &> file.txt     Write STDOUT and STDERR to file.txt
 
-& EXIT STATUS &
+## EXIT STATUS ##
 
 Every command in Unix returns an exit status. A successfull exit status returns 0, an un-succesfull one returns a non-zero value. The last command executed determines the exit status.
 Within a script, when exiting, you can pass on a custom exit status through
@@ -337,19 +334,17 @@ unset VARIABLE         # remove variable VARIABLE from environment
 
 All environment variables are uppercase !
 
-& SPECIAL VARIABLES &
+## TYPICAL ENVIRONMENT VARIABLES ##
+$PATH   Contains all directories that contain executables that can be directly invoked from the command line
+$HOME   Contains the absolute home directory
+$PWD    Contains current absolute directory
+$USER   The username
+$SHELL  The program running the current shell
 
-$PATH	Contains all directories that contain executables that can be directly invoked from the command line
-$HOME	Contains the absolute home directory
-$PWD	Contains current absolute directory
-$USER	The username
-$SHELL	The program running the current shell
 
-
-# UNIX PROGRAMS #
-
+# UNIX UTILITIES #
 ALIAS
-alias		Returns all active aliases
+alias       Returns all active aliases
 
 To add default aliases, write in your .bashrc or .profile files
 alias=<cmdalias>='<cmd>'
@@ -357,96 +352,34 @@ Example:
 alias l='ls -la'
 
 UNALIAS
-unalias <alias>	Remove <alias> from alias list
+unalias <alias> Remove <alias> from alias list
 
 AT
 Execute a bash script at a given time
 Example:
 at -f <commands.sh> 21.00
 
-AWK
-awk 'PREDICATE {CODEBLOCK}'
-awk parses a file line by line by default
-
-FS = Field Separator
-Default FS is whitespace (space and tab characters)
-
-awk -F "\t"					Sets only tab as FS
-awk -F ":"		   	 		Set colon as FS
-
-awk '{print $3}'			Simply print 3rd field
-awk '{print $0}'			$0 is a special variable that holds the whole line
-
-# print fields in whatever order
-awk '{print $2 "\t" $1}'
-
-# print line if 3rd field is greater than 98
-awk 'if ($3 >= 98) {print $0}'
-# short form
-awk '$3 >= 98 {print $0}'
-
-# print line if two conditions are true
-awk 'if ( ($3 >= 0.3) && ($5 >= 0.3) ) {print $0}'
-# short form
-awk '$3 >= 0.3 && $5 >= 0.3 {print $0}'
-
-# print line if 2nd field matches a regex
-awk 'if ($2 ~ /regex/) {print $0}'
-# short form
-awk '$2 ~ /regex/ {print $0}'
-# case insensitive regex
-awk '$2 ~ /regex/i {print $0}'
-
-# if else statement
-awk 'if ($10 < $9) {print $1}; else if ($7 < 45) {print $2}; else {print $0}'
-
-# apply a function
-## length() returns the length the string held by $10 
-awk '{print length($10)}'
-
-# pass on a variable from the shell
-awk -v var="$shellvar" '$2 ~ var {print $0}'
-
-# math operations
-## if $9 is an integer, add a 1000 to its value when printing
-awk '{print $9+1000}'
-
-awk '{ for(i=1;i<=NF;i++){ print $i}}'		Merge multiple columns into single column
-awk 'OFS="\t" {print $3,$1,$2}'			Sets Output Field Separator to tab. In print statement use commas!
-awk 'NR>2'  NR = Number of Record  		By default, NR is the line number
-
-# Only print line numbers (Number Records) 3 and higher
-l | awk 'NR>2'
-
-NOTE: When filtering columns for fractions, i.e. $7 > 0.3, make sure that the input files decimal separators are DOTS, not COMMAS !!
-
-NR		= Number of total records (default => record is one line)
-FNR 		= Number of file records
-map[$1] = $2 	= awk array (like a perl hash)
-
-# print every 10th line
-awk 'NR % 10 == 0' input > output
 
 BASENAME
 Trims paths and extensions froms strings (opposite of DIRNAME)
 
 Example:
-          FASTA      returns	panorthologs/famcl00140.faa
-basename $FASTA      returns 	famcl00140.faa
-basename $FASTA .faa returns 	famcl00140
+          FASTA      returns    panorthologs/famcl00140.faa
+basename $FASTA      returns    famcl00140.faa
+basename $FASTA .faa returns    famcl00140
 
 see also DIRNAME
 
 BC
 Calculator
-echo "100/50" | bc		Yields 2
-echo "scale=2:100/60 | bc -l	Yields 1.67
+echo "100/50" | bc      Yields 2
+echo "scale=2:100/60 | bc -l    Yields 1.67
 
 CAT
--e	Show newline characters as '$'
--A	Show tabs (^I), newline characters ($) and other non-printing characters (^ + ascii char). Option does not exist in macOS
--t	Show tabs (^I), newline characters ($) in macOS.
--n	Print line numbers
+-e  Show newline characters as '$'
+-A  Show tabs (^I), newline characters ($) and other non-printing characters (^ + ascii char). Option does not exist in macOS
+-t  Show tabs (^I), newline characters ($) in macOS.
+-n  Print line numbers
 
 Neat trick:
 cat > new_file
@@ -455,17 +388,17 @@ End with Ctrl-D
 You now have a new file with the typed content!
 
 COLUMN
-column -t [file]	Prints the file so that all columns are nicely aligned in view
+column -t [file]    Prints the file so that all columns are nicely aligned in view
 column -t [file] -s $'\t' Use TAB as separator instead of the default whitespace
 You can also type 'Ctrl-v TAB' while typing the comment. "
 
 CD
-cd -	Returns to the previous directory
+cd -    Returns to the previous directory
 
 CHMOD
 Change rights of owner / user, group, others or all of a file to either read, write or execute.
 Example:
-chmod u+x <file>	Adds the e(x)ecutable right for (u)ser to this <file>
+chmod u+x <file>    Adds the e(x)ecutable right for (u)ser to this <file>
 chmod ug+x <file> Add executable rights to user and group
 chmod u-x <file>  Remove executable rights for user
 chmod 755 <file>  7=4+2+1=r+w+x for user. 7=4+2+1=r+w+x for group. 5=4+1=r+x for others
@@ -480,37 +413,37 @@ chown kasiazar kasia/
 COMM
 Compares to files and lists the common lines and unique files
 Files have to be sorted first (in the same way ofcourse)
-Column1: unique to file1      	  '-1' to suppress this column
-Column2: unique to file2	  '-2' to suppress this column
-Column3: appear in both files	  '-3' to suppress this column
+Column1: unique to file1          '-1' to suppress this column
+Column2: unique to file2      '-2' to suppress this column
+Column3: appear in both files     '-3' to suppress this column
 
 CP
-cp -P	Copy a symbolic link
+cp -P   Copy a symbolic link
 
 CONVERT
 Converts between image file formats
 Example:
 convert                 filename.pdf filename.png
-convert -resize 200x100 filename.pdf filename.png	Resizes the image while converting
-convert -resize 200     filename.pdf filename.png	Resizes the image to 200px wide, but keeps aspect ratio for length
+convert -resize 200x100 filename.pdf filename.png   Resizes the image while converting
+convert -resize 200     filename.pdf filename.png   Resizes the image to 200px wide, but keeps aspect ratio for length
 
 CRONTAB
--l	List all current crontabs
--e	Edit crontab commands
+-l  List all current crontabs
+-e  Edit crontab commands
 crontab command format:
 [minute] [hour] [day of the month] [week] [month] [day of the week]
 Example
-0 12 * * * *		Every day, at 12.00
+0 12 * * * *        Every day, at 12.00
 
 CUT
-cut <flags> <file>		Remove sections from lines
--f <number or list>	       	Select column <number>
-   	      		       	Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
--d <delim>		       	Select delimiter to use to creat fields,
-   			       	Example: '_' or ' '. Default is '\t' ?
--d\'					Set literal single tick as delimiter
---complement		       	Prints all fields except those specified in -f
-cmd | rev | cut -f 1 | rev	Trick to print the last column. Be ware: you may need to put cut -f 2 instead.
+cut <flags> <file>      Remove sections from lines
+-f <number or list>         Select column <number>
+                        Example: 3. Or 1,3,4. Or 1-5. Or 1-3,5-7
+-d <delim>              Select delimiter to use to creat fields,
+                    Example: '_' or ' '. Default is '\t' ?
+-d\'                    Set literal single tick as delimiter
+--complement                Prints all fields except those specified in -f
+cmd | rev | cut -f 1 | rev  Trick to print the last column. Be ware: you may need to put cut -f 2 instead.
 
 DATAMASH
 datamash -s -g 1 collapse 2
@@ -532,54 +465,54 @@ DIFF
 Shows differences between two files
 diff <file1> <file2>
 
--y   	     invoke side-by-side mode, really nice
--w <n>	     set width of visibles lines of differing lines in side by side mode
+-y           invoke side-by-side mode, really nice
+-w <n>       set width of visibles lines of differing lines in side by side mode
 --suppress-common-lines
 
 DIRNAME
 Trims filenames from strings (opposite of BASENAME)
 
 Example:
-	 FILE	     returns	/path/to/panorthologs/famcl00140.faa
-dirname $FILE	     returns 	/path/to/panorthologs
+     FILE        returns    /path/to/panorthologs/famcl00140.faa
+dirname $FILE        returns    /path/to/panorthologs
 
 DNSDOMAINNAME
-dnsdomainname	Reveals the domain name of the current computer where you are logged in
-		Example: icm.uu.se
+dnsdomainname   Reveals the domain name of the current computer where you are logged in
+        Example: icm.uu.se
 
-DU					Reports disk usage of directories or files
--h <file|directory>			Human readable numbers
-du -h . | sort -h -r | head -n 20	Nice quick command to look for the top biggest directories from current directory
-du -sh <dir>  	       	       		Report total size of dir only. Will not report any nested directories or files
+DU                  Reports disk usage of directories or files
+-h <file|directory>         Human readable numbers
+du -h . | sort -h -r | head -n 20   Nice quick command to look for the top biggest directories from current directory
+du -sh <dir>                        Report total size of dir only. Will not report any nested directories or files
 
 ECHO
-echo "$STRING"	Prints string to STDOUT
-echo $STRING	Same thing but converts tabs to spaces
+echo "$STRING"  Prints string to STDOUT
+echo $STRING    Same thing but converts tabs to spaces
 
 Options:
--e	Enables interpretation of backslash escapes and certain characters are recognized, like \t and \n
--n	Removes the newline character
+-e  Enables interpretation of backslash escapes and certain characters are recognized, like \t and \n
+-n  Removes the newline character
 
 EVAL
 Takes a string as an argument and evaluates it as if you'd typed that string on a command line
 
 EXIT
-exit <n>	Exit with an exit code. Any non-zero exit code will be interpreted as exited with an error.
+exit <n>    Exit with an exit code. Any non-zero exit code will be interpreted as exited with an error.
 
 FIND
 find <PATH> <flags> \;
 -name <EXPRESSION>
--maxdepth <number>		The level of directories down find will try to find your attern
+-maxdepth <number>      The level of directories down find will try to find your attern
 -size 0
--exec <cmd> {}			{} refers to each file that was found
--xtype l    			Find broken symlinks
--newermt "2022-05-10"		Find files that are newer (modified later) than May 10th 2022
--ls	 			Print found files like an 'ls -l' print
+-exec <cmd> {}          {} refers to each file that was found
+-xtype l                Find broken symlinks
+-newermt "2022-05-10"       Find files that are newer (modified later) than May 10th 2022
+-ls             Print found files like an 'ls -l' print
  
 Example:
 find . -name "All.htm"
-find . -size 0 -exec rm {} \;	Remove empty files
-find . -xtype l -exec rm {} \;	Remove broken symlinks
+find . -size 0 -exec rm {} \;   Remove empty files
+find . -xtype l -exec rm {} \;  Remove broken symlinks
 
 FG
 Bring back jobs that are running in the background, into the "foreground". Jobs that are running in the background can be displayed with "jobs"
@@ -587,38 +520,38 @@ Ctrl-Z to put current windown in the background. Then you can use 'fg' to put it
 
 GREP
 grep "PATTERN" <file> OUTPUTS THE ENTIRE LINE OF WHERE IT FINDS ITS HITS
-grep -v "^$"   	      REMOVES EMPTY LINES
-     		      (no special character, but clever use
-		      of regexp: ^ start of line, $ end of line)
+grep -v "^$"          REMOVES EMPTY LINES
+                  (no special character, but clever use
+              of regexp: ^ start of line, $ end of line)
 Flags:
--i			Ignores case
--n			REPORTS LINE NUMBER OF HITS
--c			COUNTS HITS
--c ""			Counts lines in the file
--A <int>	       	PRINTS IN ADDITION TO HIT LINE ALSO int LINES AFTER HIT
--v 		       	PRINTS ALL LINES EXCEPT LINES WITH HITS
--P		       	Allows for Perl regexp in PATTERN
--f <FILE>	       	Prints all lines that have the PATTERNS listed in FILE, one per line
--x 		        The PATTERN must encompass the entire line. Handy for speeding up grep
---no-group-separator	Suppresses the '--' seperator when using -A, -B, or -C
--o			If you have multiple hits in a single line, it will report all the hits on that line, seperated by newlines.
-			It will not report the whole line, but just the match. Hence the name '-only_matching'
---color=always		Keep coloring of match even if you pipe into a new grep command. Even less keeps color
-			Can even do 2 different colors. Example
-			echo "hello" | grep --color=always "he" | GREP_COLORS="mt=01;34" grep "lo"
--e			Multiple search patterns at the same time. grep -e "pattern1" -e "pattern2"
--m <NUM>		Only reports the first <NUM> lines with match
--H 			Always reports the filename that it found its hit in
--q			Quiet mode
+-i          Ignores case
+-n          REPORTS LINE NUMBER OF HITS
+-c          COUNTS HITS
+-c ""           Counts lines in the file
+-A <int>            PRINTS IN ADDITION TO HIT LINE ALSO int LINES AFTER HIT
+-v              PRINTS ALL LINES EXCEPT LINES WITH HITS
+-P              Allows for Perl regexp in PATTERN
+-f <FILE>           Prints all lines that have the PATTERNS listed in FILE, one per line
+-x              The PATTERN must encompass the entire line. Handy for speeding up grep
+--no-group-separator    Suppresses the '--' seperator when using -A, -B, or -C
+-o          If you have multiple hits in a single line, it will report all the hits on that line, seperated by newlines.
+            It will not report the whole line, but just the match. Hence the name '-only_matching'
+--color=always      Keep coloring of match even if you pipe into a new grep command. Even less keeps color
+            Can even do 2 different colors. Example
+            echo "hello" | grep --color=always "he" | GREP_COLORS="mt=01;34" grep "lo"
+-e          Multiple search patterns at the same time. grep -e "pattern1" -e "pattern2"
+-m <NUM>        Only reports the first <NUM> lines with match
+-H          Always reports the filename that it found its hit in
+-q          Quiet mode
 
 AGREP
 Grep that allows mismatching. Very handy to search sequence data still allowing sequence errors
 --color
--E <NUM>	Allowed <NUM> of mismatches
+-E <NUM>    Allowed <NUM> of mismatches
 
 HOSTNAME
-hostname	Reveals the name of the host
-		Example: molev209
+hostname    Reveals the name of the host
+        Example: molev209
 
 IDENTIFY
 Reports properties of an image file. Part of the ImageMagick suite.
@@ -637,12 +570,12 @@ Join two files based on a common field between two files to create a new, merged
 
 join -a 1 -a 2 -e '0' -1 2 -2 2 -o '1.1,2.1,0' -t $'\t' FILE1 FILE2 > FILE3
 
--a 1 -a 2      	  Switch to print unpairable fields of FILE1 and FILE2
--e '0'	       	  Replace missing fields with 0 (if a column value exists in FILE1 and not in FILE2 or vice versa)
--1 2		  Join using the 2nd field in file 1
--2 2		  Join using the 2nd field in file 2
--o '1.1,2.1,0'	  Print the field 1 of file 1, field 1 of file 2, and the field used to join them (0 special meaning)
--t $'\t'	  Set field delimiter. Tab is default, but by setting this explicitly, Tab becomes the delimiter in the output too
+-a 1 -a 2         Switch to print unpairable fields of FILE1 and FILE2
+-e '0'            Replace missing fields with 0 (if a column value exists in FILE1 and not in FILE2 or vice versa)
+-1 2          Join using the 2nd field in file 1
+-2 2          Join using the 2nd field in file 2
+-o '1.1,2.1,0'    Print the field 1 of file 1, field 1 of file 2, and the field used to join them (0 special meaning)
+-t $'\t'      Set field delimiter. Tab is default, but by setting this explicitly, Tab becomes the delimiter in the output too
 
 NOTE: FILE1 and FILE2 need to be sorted (on their common field) prior to attempting to join!
 
@@ -658,43 +591,43 @@ Search for regex pattern in file from this point on forward
 Search for regex pattern in file from this point on backwards
 Press 'n' to go to the next hit
 Press 'N' to go the previous hit
-<number> then g	    Go to line <number>
+<number> then g     Go to line <number>
 
 Flags:
--S		Show file without line breaks
--N		Show line numbers
--R		Show font colors
-+F 		
+-S      Show file without line breaks
+-N      Show line numbers
+-R      Show font colors
++F      
 
 LN
 Symbolic links
-ln -s <source> <link name>	Places a link to another file (so prevents additional space to be used)
-ln -s <source> 	     		Automatically clips the path and only leaves the file name as the name of the link
+ln -s <source> <link name>  Places a link to another file (so prevents additional space to be used)
+ln -s <source>              Automatically clips the path and only leaves the file name as the name of the link
 
 LS
-ls -S		Sorts all files in directory by size
-ls -t		Sorts all files in directory by last time modified
+ls -S       Sorts all files in directory by size
+ls -t       Sorts all files in directory by last time modified
 
 MAN
-man -l <file>	Will open the file with man
-man ./		Will open the file with man
+man -l <file>   Will open the file with man
+man ./      Will open the file with man
 
 MKDIR
-mkdir -p			Create nested directories in a single command. 'p' stands for parent directory
+mkdir -p            Create nested directories in a single command. 'p' stands for parent directory
 Example:
 mkdir -p newdir1/newdir2
-mkdir -m 777	Create directory with these permissions ??
+mkdir -m 777    Create directory with these permissions ??
 
 MKTEMP
-tmp=$(mktemp)		mktemp returns a random temporary file name and creates that file
-tmp_dir=$(mktemp -d)	mktemp -d returns a random temporary directory name and creates that directory 
+tmp=$(mktemp)       mktemp returns a random temporary file name and creates that file
+tmp_dir=$(mktemp -d)    mktemp -d returns a random temporary directory name and creates that directory 
 
 MORE
 more <file>
 Opens the file for reading. Can for some files display colors, underlines and bold text
 
 NOHUB
-nohub <program>		Continue running the program even if the session ends
+nohub <program>     Continue running the program even if the session ends
 
 PARALLEL
 parallel -j<n processors> "<command you want to parallelize> {}" ::: <files to process>
@@ -708,16 +641,16 @@ This command will use 8 processors, so 8 seqret commands will be executed at the
 {/.} holds the basname of the file, and the extension trimmed, for example in this case wgs_cevg01_env.dat
 If you don't provide a number of processors, parallel will take ALL available processors
 
-parallel -j2 < $(JOBS) 	      	    	    	      Where $(JOBS) holds a list of commands to be executed independently
-parallel -j2 --halt soon,fail=1 < $(JOBS)	      --halt will prevent any new jobs from being invoked when an error is returned by one of the jobs.
-	     	    		  		      Currently running jobs are still finished properly
+parallel -j2 < $(JOBS)                                Where $(JOBS) holds a list of commands to be executed independently
+parallel -j2 --halt soon,fail=1 < $(JOBS)         --halt will prevent any new jobs from being invoked when an error is returned by one of the jobs.
+                                      Currently running jobs are still finished properly
  
 
 
 PASTE
-paste	Concatenate vertically
--d	Sets delimiter, default=TAB
-cat <list> | paste -sd+ | bc	easy code to get the sum of column
+paste   Concatenate vertically
+-d  Sets delimiter, default=TAB
+cat <list> | paste -sd+ | bc    easy code to get the sum of column
 
 PERL -PE (perldoc perlrun)
 As a replacement for sed. Perl -PE has a better regular expressions support
@@ -736,28 +669,28 @@ or
 pdftk *.pdf cat output <new.pdf>
 
 Subset pages of a PDF
-pdftk <in.pdf> cat 1-4 6-7 output <out.pdf>				Put pages 1-4 and 6-7 of <in.pdf> into <out.pdf>
-pdftk <in.pdf> cat 8-end output <out.pdf>				Put pages 8 until the last page into <out.pdf>
+pdftk <in.pdf> cat 1-4 6-7 output <out.pdf>             Put pages 1-4 and 6-7 of <in.pdf> into <out.pdf>
+pdftk <in.pdf> cat 8-end output <out.pdf>               Put pages 8 until the last page into <out.pdf>
 
 
 PS
-ps		Shows a list of active processes with process IDs (PIDs) and the command used to start these processes
-ps -fu $USER  	Shows all actives processes invoked by $USER
+ps      Shows a list of active processes with process IDs (PIDs) and the command used to start these processes
+ps -fu $USER    Shows all actives processes invoked by $USER
 ps -o <field1,field2,etc> Show process key fields. Example:
 ps -o user,uid,comm,pid,pcpu,tty
-ps -r 			Sort by pcpu (%CPU)
+ps -r           Sort by pcpu (%CPU)
 
 PPID: Parent Process ID
 
 
 READLINK
 
-readlink -f <file.txt>	Returns the absolute path of the file
+readlink -f <file.txt>  Returns the absolute path of the file
 If realpath is not available
 
 REALPATH
 
-realpath <file.txt>	Returns the absolute path of the file
+realpath <file.txt> Returns the absolute path of the file
 
 REBOOT
 reboots the system
@@ -765,109 +698,50 @@ reboots the system
 RSYNC
 rsync <option> <source> <destination>
 Options:
--a			    Archive mode, keeps all symlinks, devices, attributes, permissions, ownerships etc.
--v			    Verbose mode
--z			    Compress data during transfer
--h			    Human readable output
--P		       	    --progress and --partial combined
---partial		    If transfer breaks, you can restart it no problem later
---progress	   	    Shows progress bars of transfer
---log-file=<file>   	    Creates log of rsync transfer
---delete-after		    Deletes files in the destination that are no long present in the source
--L or --copy-links	    Rsyncs the file that the link is pointed to
--p    			    Preserve permissionsÎ
--u or --update		    Skip files that are newer on the receiver
--r or --recursive	    Tells rsync to copy directories recursively
---exclude='*.txt'	    Rsync all files except for those that end with .txt
---include='*.txt'	    Rsync only files that end with .txt
---files-from=files.txt	    Rsync only the files that are listed in 'files.txt'.
-			    Example: rsync --files-from=files.list jmartijn@molev-32-72.icm.uu.se:/path/of/destination/ .
-			    Where files.list contained only file names, no paths or slashes etc.
+-a              Archive mode, keeps all symlinks, devices, attributes, permissions, ownerships etc.
+-v              Verbose mode
+-z              Compress data during transfer
+-h              Human readable output
+-P                  --progress and --partial combined
+--partial           If transfer breaks, you can restart it no problem later
+--progress          Shows progress bars of transfer
+--log-file=<file>           Creates log of rsync transfer
+--delete-after          Deletes files in the destination that are no long present in the source
+-L or --copy-links      Rsyncs the file that the link is pointed to
+-p                  Preserve permissionsÎ
+-u or --update          Skip files that are newer on the receiver
+-r or --recursive       Tells rsync to copy directories recursively
+--exclude='*.txt'       Rsync all files except for those that end with .txt
+--include='*.txt'       Rsync only files that end with .txt
+--files-from=files.txt      Rsync only the files that are listed in 'files.txt'.
+                Example: rsync --files-from=files.list jmartijn@molev-32-72.icm.uu.se:/path/of/destination/ .
+                Where files.list contained only file names, no paths or slashes etc.
 --exclude-from=files.txt    Rsync all files except those listed in files.txt
-			    Make sure the filenames in files.txt are relative to <source>, not necessarily from where you execute the command!
---dry-run		    Do a dry-run. Execute a test operation without making any changes
---inplace		    Update destination files in-place. Update file without creating a new file.
-			    Without --inplace, rsync would create a new tmp file, copy the updated parts onto it, swap with destination file, delete old copy of destination file
---append		    Append data onto shorter files
-			    Append assumes that the destination file is a shorter version of the source file, meaning the destination file is identical to the start of the source file
+                Make sure the filenames in files.txt are relative to <source>, not necessarily from where you execute the command!
+--dry-run           Do a dry-run. Execute a test operation without making any changes
+--inplace           Update destination files in-place. Update file without creating a new file.
+                Without --inplace, rsync would create a new tmp file, copy the updated parts onto it, swap with destination file, delete old copy of destination file
+--append            Append data onto shorter files
+                Append assumes that the destination file is a shorter version of the source file, meaning the destination file is identical to the start of the source file
 
 For updating chain backups, this command is really useful
 rsync -avP --inplace --append chain*.* chain_backup/
 
-SCREEN
-screen			Open up a new screen
-screen -S <sessionname>	Create a new screen with <sessionname>
-screen -ls		List down the current open screens
-screen -r <screen id>  	Reattach to the screen
-screen -r <sessionname>	Reattach to screen with the set sessionname
-screen -r 	  	If there is only one screen, it automatically will reattach to that one.
-exit   	  	  	Exit the current screen you are in
-			(this will kill any processses in this screen?)
-killall screen		Kill all screens
+# SCREEN
+screen          Open up a new screen
+screen -S <sessionname> Create a new screen with <sessionname>
+screen -ls      List down the current open screens
+screen -r <screen id>   Reattach to the screen
+screen -r <sessionname> Reattach to screen with the set sessionname
+screen -r       If there is only one screen, it automatically will reattach to that one.
+exit            Exit the current screen you are in
+            (this will kill any processses in this screen?)
+killall screen      Kill all screens
 
 WHILE IN SCREEN
-ctrl-a + ctrl-d						Detach from the screen while not interuppting any processes in the screen
-ctrl-a + ':' + sessionname <SESSIONNAME> + Enter	Rename a session to something easy to remember
-
-
-SED (ON UNIX)
-sed 's/PATTERN/REPLACE/g' <file> > <outfile>
-sed 's|PATTERN|REPLACE|g' <file> > <outfile> # any character works as delimiter in sed
-
-If you want to replace a PATTERN expressed as a $STRING, and the $STRING contains '/', use a different delimiter instead.
-
-If sed is used in a for loop with replace as $i, use double quotes:
-sed "s/PATTERN/$i/g" or "s/$i/PATTERN/g"
-
-Flags:
--i	Will replace patterns in the input file. Input = output file
-sed -n '[number]'p   	      	 Prints line number [number]
-sed -n '[number1],[number2]'p 	 Prints lines in range number1-number2
-sed -n '[number],$'p		 Prints from line [number] to the end
-
-sed -r 's/(.+)\|(.+)/\2\|\1/'
-You have to escape pipes (present in the file) but not the parentheses (have a function here). + only works here with extended regexp (-r)
-'>' You dont have to escape though
-\d+ does not work with sed. you have to use [0-9]
-If you want to replace single quotes, then use double quotes for the whole sed command (so "s///" instead of 's///' )
-
-sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta	Negates any line that starts with '>'
-the first argument within the quotes tells sed which lines to look or not look for
-
-Flags
--r	For extended regexp
--E	For extended regexp
-
-sed "s/^$/d" 	     Delete empty lines
-sed "s/\_/\t/3"	     Replaces 3rd occurrence of _ in the line with a tab
-sed "s/\_/\t/g3"     Replaces 3rd occurrence until last occurrence of _ in the line with a tab
-
-sed "1s/^/foo\n/"    Introduce a new first line that contains "foo"
-
-sed '100,200{s/foo/bar/}'      Only replace 'foo' with 'bar' between line numbers 100 and 200
-sed '100,/foo/{s/foo/bar/}'    Only replace 'foo' with 'bar' between lines 100 and the first line that matches 'foo'
-
-Tricks
-sed -i -r "/^>/ s/_R_// ; s/,/_/" Do two replacements at once
-sed -i -r -e "/^>/ s/_R_//" -e "s/,/_/" Same as above
-
-sed -i -r "/^>/! y/acgt/ACGT/" y/// means that each character is replaced separately, kind of like tr (?)
-
-SED (ON MAC OS)
-On the Mac there are two flavors of REs for sed. Basic Regular Expressions (BRE) and Extended Regular Expressions (ERE).
-But in addition, there is also 'Enhanced BRE' and 'Enhanced ERE'. It's a total mess, this RE world ...
-Enhanced allows REs like \s \S \d \D \w \W etc . But apparently these enhanced do not work with Mac OS sed
-
-\s  [[:space:]]
-\S  [^[:space:]]
-
-Also quantifiers like + do not work. * Does work.
-PCRE = Perl Compatible Regular Expressions
-
-Replace with newlines in MacOS
-sed -E 's/£££/\'$'\n/g'
-It's important to use single quotes around the entire expression!
-
+ctrl-a + ctrl-d                     Detach from the screen while not interuppting any processes in the screen
+ctrl-a + ':' + sessionname <SESSIONNAME> + Enter    Rename a session to something easy to remember
+ctrl-a + Esc                        You can now scroll up and down using arrow keys and PgUp PgDwn
 
 SEQ
 Creates a sequence of numbers
@@ -876,34 +750,34 @@ seq -w 000 050 500 returns 000 050 100 150 etc. -w ensures that all numbers have
 
 Example:
 END=5
-seq 0 $END		Returns 0 1 2 3 4 5, separated by <separator>
+seq 0 $END      Returns 0 1 2 3 4 5, separated by <separator>
 
 SIPS
 Rotate png / jpg images a certain number of degrees
 sips \
-	-r <degrees_rotating_clockwise>
-	--padColor <color_of_resulting_deadspace> (FFFFFF = white)
-	--out <out_file>
+    -r <degrees_rotating_clockwise>
+    --padColor <color_of_resulting_deadspace> (FFFFFF = white)
+    --out <out_file>
 If you want to rotate counter clockwise e.g. 10 degrees, simply rotate clockwise 360-10=350 degrees.
 
 
 SORT
--t "_"				Set field separator to underscore
--r   	       	   	Reverses the sort output (for example instead of large to small go from small to large)
--u -k 1,1  			Omits lines that are copies in the first field after sorting
--g    	   			Sort exponential values
--h	   				Sort human readable numbers, incompatible with -n
--k 1				All fields from field 1 until the last field
--k 1,1				Just field 1
+-t "_"              Set field separator to underscore
+-r                  Reverses the sort output (for example instead of large to small go from small to large)
+-u -k 1,1           Omits lines that are copies in the first field after sorting
+-g                  Sort exponential values
+-h                  Sort human readable numbers, incompatible with -n
+-k 1                All fields from field 1 until the last field
+-k 1,1              Just field 1
 
 SHUTDOWN
-shutdown -r +5 "Rebooting soon, log out ASAP!"		Gives people who are logged in some time to log out.
+shutdown -r +5 "Rebooting soon, log out ASAP!"      Gives people who are logged in some time to log out.
 
 SPLIT
 Split a file by size, by lines or other things
-split -l 10000 <myfile> <prefix>				Splits up a file into multiple files with 10000 lines each
-split -d <myfile>						Makes numerical suffixes instead of alphabetical
-split -n l/<N> <myfile>						Splits file into <N> chunks while not splitting lines
+split -l 10000 <myfile> <prefix>                Splits up a file into multiple files with 10000 lines each
+split -d <myfile>                       Makes numerical suffixes instead of alphabetical
+split -n l/<N> <myfile>                     Splits file into <N> chunks while not splitting lines
 
 SSH
 Login as root:
@@ -912,8 +786,8 @@ or
 ssh into your own machine as root as follows:
 ssh -i .ssh/root_rsa root@molev209
 and enter the passphrase for key '.ssh/root_rsa' (not the same as the root password)
-ssh -X	  enable X11-forwarding
-ssh -Y	  enable trusted X11-forwarding
+ssh -X    enable X11-forwarding
+ssh -Y    enable trusted X11-forwarding
 
 SVN
 cd desired/directory
@@ -925,39 +799,65 @@ svn commit -m "Message to the subversion system DATE"
 svn update UDPATES YOUR LOCAL REPOSITORY WITH LATEST CHANGES ON SUBVERSION SYSTEM
 
 TAIL / HEAD
-tail <file>		Shows the last 10 lines of a file
--<number>		Shows the last [number] lines of a file
--n <number>		Shows the last [number] lines of a file
--n +<number>		Shows the last part of a file starting at line [number]
--f 			Keeps updating, if the file is being appended continuously
+tail <file>     Shows the last 10 lines of a file
+-<number>       Shows the last [number] lines of a file
+-n <number>     Shows the last [number] lines of a file
+-n +<number>        Shows the last part of a file starting at line [number]
+-f          Keeps updating, if the file is being appended continuously
 
-head <file>		Shows the first 10 lines of a file
--<number>		Shows the first <number> lines of a file
--n <number>		Shows the first <number> lines of a file
--n -<number>		Shows the first part of a file until line <number>
+head <file>     Shows the first 10 lines of a file
+-<number>       Shows the first <number> lines of a file
+-n <number>     Shows the first <number> lines of a file
+-n -<number>        Shows the first part of a file until line <number>
 
 note that tail -n+<number> and head -n-<number> only work with GNU head/tail ?
 
 
 TAR
 tar is short for "tape archive"
-tar -tvf	Lists the contents of the .tar
-tar -ztvf	Lists the contents of the .tar.gz
-tar -jtvf	Lists the contents of the .tar.bz2
-tar -czvf <new archive name>.tar.gz /path/to/dir-or-file>	(Create) an archive with g(Z)ip, with (V)erbose and specify (F)ilename
+tar -tvf    Lists the contents of the .tar
+tar -ztvf   Lists the contents of the .tar.gz
+tar -jtvf   Lists the contents of the .tar.bz2
+tar -czvf <new archive name>.tar.gz /path/to/dir-or-file>   (Create) an archive with g(Z)ip, with (V)erbose and specify (F)ilename
 tar xzf <tar_ball> -C <output_dir>
 
 TR
-tr -s ' '			    If you have multiple white space characters in a row, it will truncate it to just a single white space
+tr -s ' '               If you have multiple white space characters in a row, it will truncate it to just a single white space
 
-tr '\t' '\n'	   	       	    Transform all tab into newlines
-tr '[abc]' '[def]' 		    Transform all a's into d's, b's into e's etc.
-cat FILE | tr -dc '(' | wc -c	    Counts number of '(' in file
-tr -d ' >'    	      	   	    Deletes space ánd >
-tr -d '\n'						Removes all newline characters
+tr '\t' '\n'                    Transform all tab into newlines
+tr '[abc]' '[def]'          Transform all a's into d's, b's into e's etc.
+cat FILE | tr -dc '(' | wc -c       Counts number of '(' in file
+tr -d ' >'                      Deletes space ánd >
+tr -d '\n'                      Removes all newline characters
 
 TIME
-time [cmd]	Will print out the time it takes to execute a given command
+time [cmd]  Will print out the time it takes to execute a given command
+
+TMUX
+tmux                            Start a new tmux session
+tmux a                          Attach to the last used existing session
+tmux a -t <my_session>          Attach to the desired session
+tmux ls                         List existing sessions
+tmux new -s <my_session>        Start a new session with a desired session name
+tmux kill-ses -t <my_session>   Kill a session
+
+tmux new -s <my_session> -n <my_window>     Start a new name session with a named window
+
+WHILE IN TMUX
+<prefix> is by default Ctrl-b
+<prefix> d                      Detach from session
+<prefix> b                      Rename session
+
+<prefix> c                      Create a new window
+<prefix> ,                      Rename current window
+<prefix> &                      Close current window
+<prefix> n                      Go to next window
+<prefix> p                      Go to previous window
+<prefix> <number>               Go to window <number>
+
+<prefix> %                      Split window vertically
+<prefix> "                      Split window horizontally
+<prefix> <arrow-key>            Move cursor to another pane
 
 UNAME
 Prints system information
@@ -966,10 +866,10 @@ Prints system information
 Prints among other stuff, hostname, 32-bit or 64-bit
 
 UNIQ
--u		show which lines are not repeated (?)
+-u      show which lines are not repeated (?)
 
 VI(M)
-:x	Quit
+:x  Quit
 
 W
 Shows you who is currently logged in
@@ -979,7 +879,7 @@ wget <source_url> -P <out_dir>
 
 
 WC 
-wc -m 			Prints the number of characters in the entire file
+wc -m           Prints the number of characters in the entire file
 
 WHATIS 
 whatis <command>
