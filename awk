@@ -7,11 +7,14 @@ awk parses a file line by line by default
 FS = Field Separator
 Default FS is whitespace (space and tab characters)
 
-awk -F "\t"                 Sets only tab as FS
-awk -F ":"                  Set colon as FS
+# sets only tab or colon as field separator
+awk -F "\t"
+awk -F ":"
 
-awk '{print $3}'            Simply print 3rd field
-awk '{print $0}'            $0 is a special variable that holds the whole line
+# print the 3rd field
+awk '{print $3}'
+# print the whole line
+awk '{print $0}'
 
 # print fields in whatever order
 awk '{print $2 "\t" $1}'
@@ -39,6 +42,9 @@ awk 'if ($10 < $9) {print $1}; else if ($7 < 45) {print $2}; else {print $0}'
 # apply a function
 ## length() returns the length the string held by $10 
 awk '{print length($10)}'
+## sub() does a search replace in defined field
+## replace the first space with tab in the 15th field, then print the whole edited line
+awk '{sub(" ","\t",$15); print $0}'
 
 # pass on a variable from the shell
 awk -v var="$shellvar" '$2 ~ var {print $0}'
@@ -53,7 +59,7 @@ awk 'OFS="\t" {print $3,$1,$2}'
 
 # 'NR' refers to Number of Record
 ## by default the line number   
-awk 'NR>2'  NR = Number of Record
+awk 'NR>2'
 
 # BEGIN block followed by if else statement
 ## note that if else statement is within {}

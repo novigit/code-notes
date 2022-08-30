@@ -80,6 +80,7 @@ sed "1s/^/foo\n/"
 # sed -n #
 
 ## -n supresses automatic printing of pattern space (= pattern buffer ?)
+## (step 5 in the default execution cycle)
 ## p invokes printing of pattern buffer
 
 # general syntax || sed -n 'ADDRESS'p
