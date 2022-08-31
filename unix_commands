@@ -858,6 +858,10 @@ WHILE IN TMUX
 <prefix> %                      Split window vertically
 <prefix> "                      Split window horizontally
 <prefix> <arrow-key>            Move cursor to another pane
+<prefix> :                      Enter command prompt
+
+WHILE IN COMMAND PROMPT
+swap-window -s 3 -t 2           Change order of windows by swapping window 3 with window 2
 
 UNAME
 Prints system information

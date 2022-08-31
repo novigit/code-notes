@@ -1,0 +1,177 @@
+#!/usr/bin/env python
+
+# gffutils - a python library for dealing with GFF and GTF files
+
+# load the library
+import gffutils
+
+# load a GFF file and create an sqlite3 database file
+db = gffutils.create_db('file.gff3', 'file.db')
+# load a GFF file and store the sqlite3 database into memory
+db = gffutils.create_db('file.gff3', ':memory:')
+## where db is a 'gffutils.interface.FeatureDB' object
+
+# merging attributes when loading a GFF file
+## when loading, two features may have the exact same primary key
+## such features may be 'merged' into a single feature
+## merging strategies:
+##   merge_strategy='merge'           : all attributes of features with the same primary key will be merged (combined?)
+##   merge_strategy='create_unique'   : the first feature keeps its original primary key, the next will have a unique auto-incremented key
+##   merge_strategy='error'           : a gffutils.DuplicateID exception will be raised. Try to fix the duplicate primary key issue yourself
+db = gffutils.create_db('file.gff3', ':memory:', merge_strategy="error")
+
+# load an already created db from a file
+db = gffutils.FeatureDB('file.db')
+
+# get the 'dialect' of the db
+## dialects are like different flavors of GFF formats
+db.dialect
+# {
+#     'leading semicolon': False,
+#     'trailing semicolon': False, 
+#     'quoted GFF2 values': False, 
+#     'field separator': ';', 
+#     'keyval separator': '=', 
+#     'multival separator': ',', 
+#     'fmt': 'gff3', 
+#     'repeated keys': False, 
+#     'order': ['ID', 'Name', 'Parent']
+# }
+
+# access the db
+gene = db['ctg012.gene0001']
+exon = db['ctg012.mRNA0001.exon01']
+## where gene/exon is a 'Feature object'
+# here 'ctg012.gene0001' is the primary key of the feature,
+# which by default is retrieved from the 'ID=' field in the attributes (the 9th) column
+
+# print the whole GFF record of this gene feature
+## (i.e. equivalent to 1 line in the GFF3 file)
+print(gene)
+
+# get the primary key ('string')
+gene.id
+
+# get the start and end coordinates of the requested gene ('integers')
+gene.start
+gene.end
+
+# get the value of the Name= attribute
+## returns a list of strings, even if its just 1 value
+gene['Name']
+gene['ID']
+## returns a string, i.e. the first value of the list
+gene['Name'][0]
+
+# access the attributes of a feature
+gene.attributes         # returns an attribute object
+gene.attributes.items() # returns a list [] of tuples (): [ ('ID',['ctg012.gene0001']) , ('Name',['gene0001']) ]
+gene.attributes['Name']
+gene.attributes['ID']
+exon.attributes['Parent']
+
+# return the DNA sequence of a particular gene feature
+## by providing the FASTA file
+gene.sequence('ergo_cyp_genome.fasta')
+
+# get all children (mRNAs, CDSs, exons, introns) from a gene
+for c in db.children('ctg012.gene0001'):
+    print(c)
+
+# db.children('ctg012.gene0001') returns a generator object
+list(db.children('ctg012.gene0001'))
+# returns a list of feature objects
+# [ <Feature mRNA (tig00000012:248937-250896[+]) at 0x11452d828>, 
+#   <Feature CDS (tig00000012:248937-250153[+]) at 0x11452d780>, 
+#   <Feature CDS (tig00000012:250212-250310[+]) at 0x11452d7f0>, 
+#   <Feature CDS (tig00000012:250452-250896[+]) at 0x11452d940>, 
+#   <Feature exon (tig00000012:248937-250153[+]) at 0x11452da90>, 
+#   <Feature exon (tig00000012:250212-250310[+]) at 0x11452dbe0>, 
+#   <Feature exon (tig00000012:250452-250896[+]) at 0x11452dd30> ]
+
+# retrieve all exons or CDSs from a particular gene
+exons = db.children('ctg012.gene0001', featuretype='exon')
+cdss  = db.children('ctg012.gene0001', featuretype='CDS')
+cdss  = db.children(gene, featuretype='CDS')
+# here 'exons' and 'cdss' are generator object FeatureDB._relation
+# .children() requires at least the ID argument or the Feature object
+
+# iterate over the exons of a particular gene
+[ exon.id for exon in db.children('ctg012.gene0001', featuretype='exon') ]
+## returns the IDs of the exons
+## ['ctg012.mRNA0001.exon01', 'ctg012.mRNA0001.exon02', 'ctg012.mRNA0001.exon03']
+
+# access the parents of a particular feature
+exon = db['ctg012.mRNA0001.exon01']
+for f in db.parents(exon):
+    print(f.id)
+# this may return the gene and mRNA parent of this exon feature
+
+
+
+# iterate over all features of a db
+for f in db.all_features():
+    print(f)
+
+# iterate over all features of a particular type
+for f in db.features_of_type('exon'):
+    print(f)
+
+# check what feature types are present in the db
+for t in db.featuretypes():
+    print(t)
+
+# get an overview of all parents and their children
+## .iter_by_parent_childs() returns a generator object
+## essentially a long list, where each entry is a list of feature objects,
+## which convey parent-children relationships
+## i.e. 
+## [<Feature gene (tig00000498:1097802-1109351[-]) at 0x1111e60b8>, 
+##  <Feature mRNA (tig00000498:1097802-1109351[-]) at 0x110831588>, 
+##  <Feature CDS (tig00000498:1097802-1109351[-]) at 0x1111d04e0>, 
+##  <Feature exon (tig00000498:1097802-1109351[-]) at 0x1111d0e80>]
+for p in db.iter_by_parent_childs():
+    for f in p:
+        print(f.id)
+
+# construct intron features between exons within a gene
+gene0001 = db['ctg012.gene0001']
+gene0001_exons = db.children(gene0001, featuretype='exon')
+for f in db.interfeatures(gene0001_exons, new_featuretype='intron', merge_attributes=True):
+    print(f)
+## merge_attributes=True is useful when providing a list of exons;
+##    if False then the newly created introns may contain the same parent ID multiple times
+
+# a more direct approach to create introns between exons is to use db.create_introns()
+for f in db.create_introns():
+    print(f)
+## which prints out all the new intron features
+## the newly created introns have multiple IDs by default: the neigboring exons, i.e.
+## ID=exon1,exon2; Parent=mRNA1
+
+# update the current database with created introns
+db.update(db.create_introns())
+## this will not work if intron features have multiple IDs separated by commas
+## like exon1,exon2 (see above)
+## adjust your GFF file such that exons and CDSs do not have IDs
+## (this is also compliant with GFF3 format)
+
+
+
+
+
+
+
+######## gffutils - Command Line Interface ########
+
+# the gffutils package also comes with a cli tool!
+gffutils-cli
+
+# get help
+gffutils-cli -h
+
+# create a db from a gff3 file
+gffutils-cli create test.simple.gff3
+## creates test.simple.gff3.db
+
+
