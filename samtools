@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SAMTOOLS#
+# SAMTOOLS #
 
 # samtools view
 
@@ -147,17 +147,17 @@ samtools depth <bam>
 
 
 SAM FORMAT
-Field	Description
+    FIELD   DESCRIPTION
 1	QNAME	Query template name
 2	FLAG	Bitwise flag
 3	RNAME	Reference sequence name
-4	POS	Leftmost mapping position
+4	POS	    Leftmost mapping position
 5	MAPQ	Mapping quality
 6	CIGAR	Cigar string
 7	RNEXT	Reference name of the other paired end read
 8	PNEXT	Position of the other paired end read
 9	TLEN	Observed template length
-10	SEQ	Segment sequence
+10	SEQ	    Segment sequence
 11	QUAL	Phred score
 
 For segments that have been mapped to the reverse strand (of the reference), the recorded SEQ is reverse complemented from the original unmapped sequence and CIGAR, QUAL, and strand sensitive optional fields are reversed and thus recorded consistently with the sequence bases as represented

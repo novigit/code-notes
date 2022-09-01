@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+
+# pysam - a python package for dealing with SAM/BAM/CRAM files etc
+
+import pysam
+
+# load the bam file into a AlignmentFile object
+bamfile = pysam.AlignmentFile('example.bam', mode='rb')
+# mode = 'r'    : reading
+# mode = 'w'    : writing
+# mode = 'b'    : specify you are reading or writing a BAM file. 'b' must immediately follow 'r' or 'w'
+
+# check if an indexed bam (.bai) file exists
+# if it doesn't, create it
+if os.path.isfile('example.bam.bai'):
+	print("BAM index present... OK!")
+else:
+	print("No index available for pileup. Creating an index...")
+	pysam.index('example.bam')
+
+# iterate over aligned positions with .pileup()
+
+## to iterate over all positions, 
+## do not specify a stop coordinate
+## alternatively, a samtools 'region' string can be applied
+## i.e. 'ergo_tig00000012:1000-2000'
+
+## .pileup() returns all reads that overlap the specified region
+## so if a read starts at pos 9995 and ends at 10095, it will be parsed
+
+# if truncate=True (False by default) only consider positions between 0 and 10000 exactly
+for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, truncate=True):
+
+    # pileupcolumn is a PileupColumn object
+    ## that represents a particular position in the reference
+    ## and all the reads in the SAM/BAM file that map to it
+
+    # get the reference position (0-indexed!)
+    pileupcolumn.pos # deprecated
+    pileupcolumn.reference_pos
+
+    # get the coverage for the considered position
+    pileupcolumn.get_num_aligned()
+    ## .get_num_aligned() applies a base quality filter
+    ## .get_num_aligned() includes reads that span this position as spliced alignments
+    pileupcolumn.nsegments
+    ## .nsegments ignores the base quality filter
+    ## .nsegments includes reads that span this position as spliced alignments
+
+    # reads aligned to the considered position are
+    # represented as PileupRead objects,
+    # which can be accessed with .pileups:
+    for pileupread in pileupcolumn.pileups:
+
+        # .is_del returns 1 if at the considered position,
+        # the aligned read has a deletion
+        pileupread.is_del
+
+        # .is_refskip returns 1 if at the considered position,
+        # the aligned read has an 'N' in the CIGAR string
+        # i.e. an RNA-seq read spanning an intron
+        pileupread.is_refskip
+
+        # .alignment returns an AlignedSegment object
+        pileupread.alignment
+
+        # .alignment.query_name returns the aligned read name
+        pileupread.alignment.query_name
+
+        # .alignment.query_sequence returns the sequence of the read,
+        # including soft-clipped bases
+        pileupread.alignment.query_sequence
+
+        # .alignment.query_position returns the position within the read,
+        # that is aligned at the considered position in the reference sequence
+        # it is 0-indexed! 'None' if its a deletion or part of intron
+        pileupread.alignment.query_position
+
+        # get the base at the aligned position
+        base = puread.alignment.query_sequence[puread.query_position]
+

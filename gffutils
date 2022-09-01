@@ -56,6 +56,9 @@ gene.id
 gene.start
 gene.end
 
+# get the featuretype ('gene', 'mRNA', 'exon', etc)
+gene.featuretype
+
 # get the value of the Name= attribute
 ## returns a list of strings, even if its just 1 value
 gene['Name']
@@ -113,8 +116,20 @@ for f in db.parents(exon):
 for f in db.all_features():
     print(f)
 
+# iterate over all features of a db - in a certain region
+for f in db.all_features(limit='contig01:1000-9000'):
+    print(f)
+
+# iterate over all features of a db - in a logical order
+for f in db.all_features(order_by=('seqid','start','attributes')):
+    print(f)
+
 # iterate over all features of a particular type
-for f in db.features_of_type('exon'):
+for f in db.features_of_type(featuretype='exon'):
+    print(f)
+
+# iterate over all features of a particular type - in a certain region
+for f in db.features_of_type(featuretype='exon',limit='contig01:1000-9000'):
     print(f)
 
 # check what feature types are present in the db
