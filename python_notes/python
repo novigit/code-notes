@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+
+# DATA TYPES
+string					Same as string in perl
+list					Similar to array in perl, but also to lists in R
+					    Can hold other lists, string, etc
+					    Its like a scaffold
+dictionary				Similar to hash in perl
+
+# INDEXING OF DATA TYPES
+string = "junglespeed"
+print string[1]				Returns "u"
+
+list = ["one","two","three"]
+print list[1]				Returns "two"
+
+# DEFAULT FUNCTIONS
+.append(<string|list|etc>)		Appends elements to an existing list
+len(<list>)				Returns the length of the list
+range(<start>,<stop>,<step>)		Returns a list of integers
+int(<float|integer>)			Returns integer from float
+
+# OBJECTS
+
+## FILTER OBJECT
+some_numbers = [1, 2, 3, 8, 9]
+## apply a function that returns True or False on some iterator
+f = filter( lambda x : x < 5, some_numbers )
+## 'f' is a filter object
+## it is a so-called lazy iterable, 
+## which is only filters when called upon downstream in the script
+## you can only iterate over it once!
+
+## GENERATOR OBJECT
+

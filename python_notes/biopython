@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+# biopython - a python package for dealing with all sorts of molecular sequence data
+
+# load package
+from Bio import SeqIO
+
+# loading FASTA files
+
+# parse a multi FASTA file
+## each 'record' is a SeqRecord object
+for record in SeqIO.parse('example.fasta','fasta'):
+    print(record.id)
+
+# load a FASTA file with only one entry
+record = SeqIO.read('example.fasta','fasta')
+
+# load only the first sequence in a FASTA file
+first_record = next(SeqIO.parse('example.fasta', 'fasta'))
+
+# load a multi FASTA file such that you can access a particular sequence later
+## load multi FASTA into a dictionary in memory
+record_dict = SeqIO.index('example.fasta', 'fasta')
+## load desired record from dict
+desired_record = record_dict['example_seqID']
+
+
+# get the id of the SeqRecord
+record.id
+
+# get the length of the sequence of the SeqRecord
+len(record) # or
+len(record.seq)
+
+# get the Seq object of a SeqRecord object
+record.seq
+
+# get a subsequence from a sequence in a Seq object
+record.seq[0:300]
+
+

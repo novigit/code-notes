@@ -59,6 +59,9 @@ gene.end
 # get the featuretype ('gene', 'mRNA', 'exon', etc)
 gene.featuretype
 
+# get the direction of the feature
+gene.strand
+
 # get the value of the Name= attribute
 ## returns a list of strings, even if its just 1 value
 gene['Name']
@@ -72,6 +75,32 @@ gene.attributes.items() # returns a list [] of tuples (): [ ('ID',['ctg012.gene0
 gene.attributes['Name']
 gene.attributes['ID']
 exon.attributes['Parent']
+
+# create a new Feature object
+## using gffutils.feature.Feature()
+new_feature_obj = gffutils.feature.Feature(
+    seqid='some_new_id',
+    source='EVM',
+    featuretype='exon',
+    start=255080,
+    end=255843,
+    score='.',
+    strand='+',
+    frame='.',
+    attributes='ID=some_new_id.exon01;Parent=some_new_id'
+)
+## using gffutils.feature.feature_from_line()
+### note that fields need to be delimited by tabs!
+default_feature = 'some_new_id\tEVM\texon\t255080\t255843\t.\t+\t.\tID=some_new_id.exon-1;Parent=some_new_id' + '\n'
+new_feature_obj = gffutils.feature.feature_from_line(line=default_feature)
+
+# update the attributes of a Feature object
+intron.attributes['ID'][0] = 'newID' # this update does NOT automatically update intron.id
+intron.attributes['ID'][0] = i.attributes['ID'][0].replace('exon','intron')
+intron.id = 'newID'
+
+# add an entirely new attribute to a Feature object
+intron.attributes['call'] = 'true'
 
 # return the DNA sequence of a particular gene feature
 ## by providing the FASTA file
@@ -164,12 +193,35 @@ for f in db.create_introns():
 ## the newly created introns have multiple IDs by default: the neigboring exons, i.e.
 ## ID=exon1,exon2; Parent=mRNA1
 
+# update the current database with new Feature objects
+db.update(data)
+# where 'data' is an iterable of feature objects
+
 # update the current database with created introns
 db.update(db.create_introns())
 ## this will not work if intron features have multiple IDs separated by commas
 ## like exon1,exon2 (see above)
 ## adjust your GFF file such that exons and CDSs do not have IDs
 ## (this is also compliant with GFF3 format)
+
+## OR update the names of the attribute features before doing the db.update():
+
+# infer and add intron features
+introns = list(db.create_introns(merge_attributes=True))
+
+# edit ID attributes of introns
+## intron features have ID=exon1,exon2 as format
+## this breakse .update(), so we need to adjust their IDs
+for i in introns:
+
+    # remove the second exon of the ID
+    i.attributes['ID'].pop(1)
+
+    # give the intron feature an intron ID!
+    i.attributes['ID'][0] = i.attributes['ID'][0].replace('exon','intron')
+
+# update db with new introns
+db.update(introns)
 
 
 
