@@ -53,6 +53,13 @@ awk -v var="$shellvar" '$2 ~ var {print $0}'
 ## if $9 is an integer, add a 1000 to its value when printing
 awk '{print $9+1000}'
 
+# calculate mean of a list of numbers
+awk '{ sum += $1 } END { if (NR > 0) print sum / NR }'
+
+# calculate stdev of a list of numbers
+## '73' here is an example mean value
+awk '{ sum += ($1-73)^2 } END { if (NR > 0) print sqrt(sum / NR) }'
+
 # set Output Field Separator
 ## in print statement use commas!
 awk 'OFS="\t" {print $3,$1,$2}'
