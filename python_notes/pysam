@@ -48,9 +48,10 @@ for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, trunca
     ## .nsegments includes reads that span this position as spliced alignments
 
     # reads aligned to the considered position are
-    # represented as PileupRead objects,
     # which can be accessed with .pileups:
     for pileupread in pileupcolumn.pileups:
+
+        # pileupread is a PileupRead object
 
         # .is_del returns 1 if at the considered position,
         # the aligned read has a deletion
@@ -79,3 +80,14 @@ for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, trunca
         # get the base at the aligned position
         base = puread.alignment.query_sequence[puread.query_position]
 
+# you can iterate directly over all read mappings aligned to a particular region using fetch()
+for read in bamfile.fetch('chr1', 100, 200):
+    print(read)
+
+    # read is an AlignedSegment object
+
+    # you can retrieve the value of a particular 'tag' of the AlignedSegment object
+    read.get_tag('XS')
+    # the 'XS' tag in Hisat2 RNAseq alignments returns
+    # ’+’ means a read belongs to a transcript on ‘+’ strand of genome
+    # ‘-‘ means a read belongs to a transcript on ‘-‘ strand of genome

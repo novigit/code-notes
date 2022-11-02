@@ -1,3 +1,10 @@
-To type, hit 'Insert button'
-To exit 'insert-mode' press Esc
-Enter ':wq' to save and quit
+#!/usr/bin/bash
+
+# search replace between current line and 2 next lines
+:.,+2s/foo/bar/g
+
+
+# folding
+'za' # toggle fold
+'zM' # collapse all folds
+'zR' # expand all folds

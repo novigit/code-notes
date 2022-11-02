@@ -76,6 +76,8 @@ sed '/exon/{n;s/SEARCH/REPLACE/}'
 # introduce a new first line that contains "foo"
 sed "1s/^/foo\n/"
 
+# remove all trailing white space from a file
+sed -i 's/[ \t]*$//'
 
 # sed -n #
 

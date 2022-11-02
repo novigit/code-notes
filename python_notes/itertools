@@ -63,3 +63,12 @@ list(map(pow, range(10), itertools.repeat(2)))
 ## with the values of itertools.repeat(2)
 ## and provides them to the pow function
 ## so pow(0,2), pow(1,2), pow(2,2), pow(3,2) etc
+
+# itertools.chain()
+## chain various iteratables together in a combined iterator
+letters = ['a', 'b', 'c', 'd', 'e']
+numbers = [0, 1, 2, 3]
+names = ['Corey', 'Nicole']
+combined = itertools.chain(letters, numbers, names)
+for i in combined:
+    print(item)

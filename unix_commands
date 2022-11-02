@@ -769,6 +769,8 @@ SORT
 -h                  Sort human readable numbers, incompatible with -n
 -k 1                All fields from field 1 until the last field
 -k 1,1              Just field 1
+-k 1,1n             Sort field 1 numerically
+-o FILE FILE        Sort the file in place
 
 SHUTDOWN
 shutdown -r +5 "Rebooting soon, log out ASAP!"      Gives people who are logged in some time to log out.
@@ -871,6 +873,7 @@ Prints among other stuff, hostname, 32-bit or 64-bit
 
 UNIQ
 -u      show which lines are not repeated (?)
+-d      show only duplicate lines
 
 VI(M)
 :x  Quit
