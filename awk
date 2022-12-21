@@ -35,9 +35,18 @@ awk 'if ($2 ~ /regex/) {print $0}'
 awk '$2 ~ /regex/ {print $0}'
 # case insensitive regex
 awk '$2 ~ /regex/i {print $0}'
+# search for multiple strings
+awk '$1 ~ /tig00000016|tig00000012|tig00000492/ {print $0}'
+# search for anything except multiple strings
+awk '$1 !~ /tig00000016|tig00000012|tig00000492/ {print $0}'
 
 # if else statement
-awk 'if ($10 < $9) {print $1}; else if ($7 < 45) {print $2}; else {print $0}'
+awk '{ if ($3 ~ /gene/) {print "\n"$0}  else {print $0} }'
+# you can omit some curly braces like this
+awk '{ if ($3 ~ /gene/)  print "\n"$0 ; else  print $0  }'
+# using the ternary operator
+## awk '{ print (condition) ? if_true : if_false }'
+awk '{ print ($3 ~ /gene/) ? "\n"$0 : $0 }'
 
 # apply a function
 ## length() returns the length the string held by $10 
@@ -59,6 +68,8 @@ awk '{ sum += $1 } END { if (NR > 0) print sum / NR }'
 # calculate stdev of a list of numbers
 ## '73' here is an example mean value
 awk '{ sum += ($1-73)^2 } END { if (NR > 0) print sqrt(sum / NR) }'
+## or if you don't know the mean a priori
+awk '{ sum += $1 ; sumsq += $1*$1 } END { print sqrt(sumsq/NR - (sum/NR)**2) }'
 
 # set Output Field Separator
 ## in print statement use commas!

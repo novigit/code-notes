@@ -1,32 +1,37 @@
 #!/usr/bin/env python
 
-# assign multiple values at once
+# GENERAL
+## assign multiple values at once
 a, b = 4, 8
 a, b, c, d = 4, "geeks", 3.14, True
 
+# STRINGS
+## f-strings
+name = Joran
+age = 34
+print(f'Hello, I am {name} and I am {age} years old')
+### number formatting
+n = 10.1234
+print(f'{n:.2f}')           # 2f -> two digits after the dot, e.g. 10.12
+n = 12
+print(f'{n:05d}')           # 05d -> 5 digits, so 00012
+### do math
+print(f"{2 * 37}")
 
-# DEFAULT FUNCTIONS
+# LISTS
+## list unpacking
+colors = ['red', 'blue', 'green', 'yellow']
+red, blue, green = colors
+red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
+red, *_ = colors            # red = 'red', _ = ['blue', 'green', 'yellow']
+
+
+# FUNCTIONS
 list.append('string')               Appends elements to an existing list
 len(list)				            Returns the length of the list
 range(start,stop,step)              Returns a range object
 int(float)                          Returns integer from float
 
-# F-STRINGS
-
-# easy example
-name = Joran
-age = 34
-print(f'Hello, I am {name} and I am {age} years old')
-
-# number formatting
-n = 10.1234
-print(f'{n:.2f}')           # 2f -> two digits after the dot
-## 10.12
-n = 12
-print(f'{n:05d}')           # 05d -> 5 digits, so 00012
-
-# do math
-print(f"{2 * 37}")
 
 
 # OBJECTS

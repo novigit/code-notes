@@ -18,6 +18,10 @@ conda env remove -n <my_env>
 # search for packages
 conda search -c bioconda <package>
 
+# search for packages in already installed environments
+conda search --envs <package>
+mamba search --envs <package>
+
 # installing a packages in an environment
 conda install -c bioconda -n <my_env> <package>=<version> <package>=<version>
 ## 'bioconda' is a specific 'channel' of conda packages
@@ -41,6 +45,10 @@ mamba update <package>
 # checkout the history of an environment
 ## package upgrades / downgrades, additions, removals etc
 conda list -n <my_env> -r # -r is short for --revisions
+
+# get info of versions and build numbers of packages
+conda search -c bioconda <package> --info
+mamba search -c bioconda <package> --info
 
 # remova a package from an environment
 conda remove <package>

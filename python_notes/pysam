@@ -29,11 +29,14 @@ else:
 ## so if a read starts at pos 9995 and ends at 10095, it will be parsed
 
 # if truncate=True (False by default) only consider positions between 0 and 10000 exactly
-for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, truncate=True):
+for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, truncate=True, ignore_orphans=None):
 
     # pileupcolumn is a PileupColumn object
     ## that represents a particular position in the reference
     ## and all the reads in the SAM/BAM file that map to it
+
+    ## ignore_orphans=True by default
+    ## ignore_orphans=False allows you to take into account orphan reads
 
     # get the reference position (0-indexed!)
     pileupcolumn.pos # deprecated
@@ -81,6 +84,8 @@ for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, trunca
         base = puread.alignment.query_sequence[puread.query_position]
 
 # you can iterate directly over all read mappings aligned to a particular region using fetch()
+# NOTE: unmapped reads can still be assigned to a particular contig, maybe because their partner was mapped to that contig
+# .fetch() will catch these also
 for read in bamfile.fetch('chr1', 100, 200):
     print(read)
 
@@ -91,3 +96,21 @@ for read in bamfile.fetch('chr1', 100, 200):
     # the 'XS' tag in Hisat2 RNAseq alignments returns
     # ’+’ means a read belongs to a transcript on ‘+’ strand of genome
     # ‘-‘ means a read belongs to a transcript on ‘-‘ strand of genome
+
+
+# find introns with .find_introns()
+rev_introns = bamfile.find_introns( (read for read in bamfile.fetch(contig='Seq_38') if read.is_reverse and read.is_mapped) )
+fwd_introns = bamfile.find_introns( (read for read in bamfile.fetch(contig='Seq_38') if read.is_forward and read.is_mapped) )
+## apparently the 'if read.is_reverse' condition is necessary, otherwise it will throw an error
+## .find_introns() takes a read iterator as input (which bamfile.fetch() returns)
+## or a generator that filter such an iterator (as in the example above)
+## .find_introns() returns a dictionary {(start, stop): count}, e.g.
+### (92040, 92072) 4
+### (92414, 92444) 1
+### (95461, 95699) 1
+### (95867, 95897) 1
+### (100855, 100883) 2
+### (105442, 105475) 2
+### (105680, 105715) 1
+### (106948, 107542) 2
+

@@ -128,7 +128,7 @@ sed "/^>/! y/acgt/ACGT/"
 sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta
 
 # delete empty lines
-sed "s/^$/d"
+sed "/^$/d"
 
 # NOTES
 

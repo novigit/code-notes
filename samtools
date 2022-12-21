@@ -141,7 +141,6 @@ samtools view -bS [sam] > [bam]		# -b / --bam : output in the BAM format, -S : d
 samtools sort [bam] -o [srt.bam]
 samtools index [srt.bam] [srt.bam.bai]
 
-
 # Report per-position read depth
 samtools depth <bam>
 

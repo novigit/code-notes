@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+# tqdm
+## tqdm is a library in Python which is used for creating Progress Meters or Progress Bars. tqdm got its name from the Arabic name taqaddum which means ‘progress’.
+
+# load tqdm
+from tqdm import tqdm
+
+# basic example
+## wrap tqdm() around any iterable
+for char in tqdm(["a", "b", "c", "d"]):
+    pass
+
+## loop over a range object
+for i in tqdm(range(20)):
+    time.sleep(0.5)
+# NOTE: it will sleep 0.5s every iteration to actually show a progressing bar
+# uses 'time' module
+
+## decorate the progress bar with a description
+for i in tqdm(range(20), desc = 'tqdm() Progress Bar'):
+    time.sleep(0.5)
+
+## the total number of iterations is automatically
+## inferred for all iterables on which len() can be applied
+## for generators, you can manually set the total
+## if you know how many yields the generator will make
+length = 1000000
+generator = (3 * n for n in range(length))
+for n in tqdm(generator, total=length):
+    pass
+

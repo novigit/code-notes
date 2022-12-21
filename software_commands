@@ -430,6 +430,9 @@ seqkit seq --color <fasta> | less -R    Color FASTA files
 # report sequence for 'ergo_tig00000012' but only for region 16000-17000
 seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
 
+# print the sequence of a fasta file without newlines (i.e. no wrapping)
+seqkit seq --seq <fasta>
+
 # SINA #
 -i [in.fasta] \
 -o [out.aln] \

@@ -40,6 +40,10 @@ db.dialect
 #     'order': ['ID', 'Name', 'Parent']
 # }
 
+# get the pragmas/directives of gff3 file used for creating the db
+## returns a list
+db.directives
+
 # access the db
 gene = db['ctg012.gene0001']
 exon = db['ctg012.mRNA0001.exon01']
