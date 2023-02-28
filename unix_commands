@@ -427,6 +427,12 @@ convert                 filename.pdf filename.png
 convert -resize 200x100 filename.pdf filename.png   Resizes the image while converting
 convert -resize 200     filename.pdf filename.png   Resizes the image to 200px wide, but keeps aspect ratio for length
 
+CSVKIT
+Convert xslx to csv
+Example:
+in2csv in.xlsx > out.csv
+Install with 'brew install csvkit'
+
 CRONTAB
 -l  List all current crontabs
 -e  Edit crontab commands
@@ -544,10 +550,16 @@ Flags:
 -H          Always reports the filename that it found its hit in
 -q          Quiet mode
 
-AGREP
+..AGREP
 Grep that allows mismatching. Very handy to search sequence data still allowing sequence errors
 --color
 -E <NUM>    Allowed <NUM> of mismatches
+
+..RIPGREP (rg)
+rg -f <pattern_file>        Prints all lines that have the PATTERNS listed in FILE, one per line. MUCCCH FASTER than grep -f
+Other options:
+-N          Suppress line numbers
+-c          Count hits
 
 HOSTNAME
 hostname    Reveals the name of the host

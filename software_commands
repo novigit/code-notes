@@ -237,6 +237,19 @@ Each read is only mapped once
 Many reads that are mapped to repeat areas are "stretched", they contain large stretches of deletions
 Most telomeric reads seemed to map to the first available contig with that telomore
 
+# HMMER #
+HMMFETCH - select a subset of HMM profiles from a file containing many HMM profiles
+
+First index the file to make searching significantly faster
+hmmfetch --index Pfam-A.hmm
+This will create a Pfam-A.hmm.ssi index file
+
+Then fetch a desired profile
+hmmfetch Pfam-A.hmm PF00001.20
+
+Or a bunch of profiles listed in a file
+hmmfetch -f Pfam-A.hmm profiles.list > selected_Pfams.hmm
+
 
 # IQTREE #
 iqtree-omp -s <.phylip> -m TESTONLY -mset LG -madd C20,C30,C40,C50,C60 -mredo -nt 30
@@ -432,6 +445,10 @@ seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
 
 # print the sequence of a fasta file without newlines (i.e. no wrapping)
 seqkit seq --seq <fasta>
+
+# translate a sequence over all six frames
+seqkit translate -f 6 <fasta>
+cat <fasta> | seqkit translate -f 6
 
 # SINA #
 -i [in.fasta] \

@@ -3,8 +3,11 @@
 # search replace between current line and 2 next lines
 :.,+2s/foo/bar/g
 
-# convert multiple spaces in a row to tabs
+# convert multiple spaces in a row to tabs on a single line
 :s/\s\+/\t/g
+
+# convert multiple spaces in a row to tabs on all lines
+:%s/\s\+/\t/g
 
 # folding
 ## according to vim docs, the letter 'z' sort of looks like a fold

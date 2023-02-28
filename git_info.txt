@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# OVERVIEW OF GIT COMMANDS AND GENERAL BITBUCKET METHODOLOGY
+
+# GIT CONCEPT
+GIT is a decentralized versioning system.
+You can make changes locally to cloned copy of the repository, and commit these changes to the online repository.
+This can be either github or bitbucket or some other git system.
+When committing, git makes a "snapshot" of how your local repository looks like and stores that.
+
+# GIT EXAMPLE
+Lets say you want to make a modification to a script.
+You don't want to disturb the master branch with faulty scripts, so therefore you make a new branch, "issue1" for example.
+While in this branch, you make the modification. And now you want to store that modification:
+
+      git add <modified file>
+
+After this you can choose to modify more files, or you can make a commit:
+
+      git commit -m "made change to <file>"
+
+You can make commits offline. Once you are online again, you can push the commits to bitbucket or github as follows
+
+      git push origin <branch>
+
+Enter your account and password, and then it should be done!
+
+# GIT COMMANDS
+git init					Initiate a local git repository
+git config --global user.name "Joran Martijn"
+git config --global user.email joran.martijn@icm.uu.se
+git config -l					Some general configuration information of account and repository
+git clone https://github.com/novigit/brocode	"Clone" the repository to current directory
+git status					Check what has been changed since last update
+git add <file|dir> <file|dir> <etc>		"Stage" files for commit, or "add" files to the "staging area", where files are tracked
+git add .					Adds all changed files for commit
+git diff <file>					Check the changes of a file, between when it was added and now
+    	 					Enters 'less'
+git commit -m "commit message"			"Commit" the files to your repository
+git commit -a -m "commit message"		Will automatically add all tracked files with changes. Will not add untracked files
+git log	 					Check your commit log
+git show HEAD					Show all changes in the last commit, and the commit details (SHA etc)
+git remote -v					Lists remote repositories
+git checkout <branch>				Change to a specific branch
+git checkout HEAD <file>			Restore <file> to state it was in before last commit. In the working directory
+git reset HEAD <file>				Restore staged <file> to state it was in, in the last commit, and remove it from staging area. In the staging area
+git reset <commit_SHA>				Restore repository to state it was in, after <commit_SHA>
+git push origin master				"Push" changes into repository
+git fetch origin master				Downloads the latest master branch to the branch origin/master
+git pull origin master				Fetch ánd merge the current master branch with your local copy
+    	 					"Origin" refers to the bitbucket server
+git branch -v					Shows the local branches and which branch you are on
+git branch <branchname>				Create new branch with <branchname>
+git branch -d <branch>				Delete <branch>
+git merge <branch>				Merge <branch> with branch you are currently on
+git --version					Shows current version of git
+
+
+# GENERAL COMMIT "PIPELINE" # this needs to be updated to an sop that prevents messy collaborative git projects
+1. Make a modification to a <file>
+2. git add <file>
+3. git commit -m "<message>"
+4. git push origin <master|branch>
+
+# BITBUCKET
+Bitbucket is a repository system where people can share their code and work collectively on code at the same time using a git versioning system.
+Bitbucket, unlike github also has the option to keep code hidden, which is why we are using it.
+We don't want people to steal our code and publish before us!! :P
+
+# SOME BITBUCKET CONCEPTS
+branches			People can make new branches in the project.
+				This will prevent potentially breaking the "stable" code, which should be in the master branch
+merging branches		After your branch is done and you want to incorporate it to the master branch,
+				it is possible to merge your branch with the master branch.
+				After that, your branch will still exist however.
+				You need to close the branch manually if you want.
+closing branches		The terminology for deleting a branch
+forking				Can be synonymous to "branching", but also it can mean to fork the entire repository.
+issues				Every time you want to make a modification to your code, you should make an "issue"
+				Each consecutive issues gets a number. Starting with issue #1, then #2 etc.
+				If you believe your issue is resolved, type "fix #<issue number>" in your commit message.
+				For example, commit -m "script is now working fix #45"
+				Then bitbucket will mark the issue as "resolved"
+
+# CREATING ISSUES
+1.	 Create an issue on the bitbucket project page and write some description of what you want to do with the code
+2.	 Create a branch on the website as well and use the "git fetch && git checkout <branchname>" command on your pc to switch to this branch. <branchname> should be something like 'issue<issuenumber>'
+3.	 Now you are on the branch <branchname>. Work on your code.
+4.	 Once code is done, do a 'git pull origin <branchname>' to make sure no other edits have been made that can give conflicts
+5.	 Then do 'git add' 'git commit' and 'git push'.
+
+In case you write a new code, also make a git issue.
+Some people might see your issue name on email and may have suggestions on how to do what you want to do in a more efficient way or if another tools is already available.
+Will save you a lot of time
+
+6.   	  Once the issue is resolved, do a final commit that contains "Fix#<issuenumber>" in the commit message. Bitbucket will interpret this and close the issue.
+7.	  Merge with master
+8.	  Delete branch

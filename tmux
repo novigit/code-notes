@@ -31,6 +31,9 @@ WHILE IN TMUX
 <prefix> [                      Enter copy-mode
 <prefix> <PgUp>                 Enter copy-mode, which allows you to scroll up and down
 
+WHILE IN COMMAND PROMPT
+:kill-session                   Kill current session
+
 WHILE IN COPY MODE
 C-d / C-u                       Scroll up and down just like in vim
 Shift-k / Shift-j               Scroll page up and down one line

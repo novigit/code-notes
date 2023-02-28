@@ -44,6 +44,9 @@ sed '/PATTERN/ s/SEARCH/REPLACE/g'
 # do replacements in all lines except those that match PATTERN
 sed '/PATTERN/! s/SEARCH/REPLACE/g'
 
+# only do replacements in lines that match PATTERN1 or PATTERN2
+sed '/PATTERN1|PATTERN2/ s/SEARCH/REPLACE/g'
+
 # do multiple replacements at once
 sed -e "s/_R_//" -e "s/,/_/"
 sed "s/_R_// ; s/,/_/" 
@@ -64,6 +67,14 @@ sed 's/PATTERN/d' file
 sed -r 's/(.+)_([0-9]+)/\2_\1/'
 ## if you use extended regular expressions, '(' is assumed to have the special meaning
 ## if you do not use them, you have to give them special meaning with the '\', so '\(' and '\)'
+## backreferences also work with nested parentheses
+sed -r 's/ (contig([0-9]{3}).*)ID=FUN_ / \1ID=ctg\2.gene /'
+## (contig[0-9]{3}.*) = \1
+## ([0-9]{3})         = \2
+
+# a special kind of back-reference is &, which captures the whole search string
+sed -r "s/last_bit_of_sentence/&i_add_to_sentence/"
+## which would yield 'last_bit_of_sentence_add_to_sentence
 
 # replaces 3rd occurrence of _ in the line with a tab
 sed "s/_/\t/3"      
@@ -93,6 +104,9 @@ sed -n '3'p
 
 # prints lines in range 3,5
 sed -n '3,5'p
+
+# prints from line 3 and 2 lines more
+sed -n '3,+2'p
 
 # prints from line 3 to the last line
 sed -n '3,$'p

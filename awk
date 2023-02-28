@@ -92,6 +92,8 @@ awk '
         {print $1,$2,$3,$4,$5,$6,$7,$8,$9" "$10" "$13" "$12":"$NF}
     }
 ' 
+# check if two consecutive lines have the same value in the same column
+awk '$3==prev3 {print prevline; print $0; getline; print} {prev3 = $3; prevline = $0}' 01_curated_purged.gff3
 
 # meaning of 'NF'
 # NF is a predefined variable whose value is the number of fields in the current record.

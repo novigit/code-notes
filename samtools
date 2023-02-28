@@ -61,6 +61,9 @@ samtools view -f 2 -F 1796
 samtools view -c -F 4 <bam>		Counting mapped reads    (because you exclude all unmapped reads with -F)
 samtools view -c -f 4 <bam>		Counting unmapped reads  (because you specify all unmapped reads with -f)
 
+## Print mapped reads that have a certain tag:value
+### for example, from HISAT2 mappings, select those that stem from transcripts of the + strand
+samtools view --tag XS:+ <bam>
 
 # samtools mpileup
 ## piles up all reads and summarizes basecalls per read per site
