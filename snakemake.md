@@ -9,21 +9,26 @@ With a bash pipeline you provide the input files and bash will use the bash scri
 # Snakefile tips
 
 ### expand() 
-
+Useful to compactly state your desired output files in the all rule
 ```py
 expand('{sample}.{direction}.fastqc.html', sample = ['sample1','sample2'], direction = ['fw', 'rv'])
-## will generate
-## sample1.fw.fastqc.html
-## sample1.rv.fastqc.html
-## sample2.fw.fastqc.html
-## sample2.rv.fastqc.html
-# useful to compactly state your desired output files in the all rule
+
+```
+This will generate
+```
+sample1.fw.fastqc.html
+sample1.rv.fastqc.html
+sample2.fw.fastqc.html
+sample2.rv.fastqc.html
 ```
 
 ### input function
+Useful to process outputs from different parts of the pipeline in a single rule
 
+Input functions need to be stated _above_ the rules that call them
+
+If you have a _single_ input file that is different depending on the requested output:
 ```py
-
 def get_fastq(wildcards):
     if wildcards.sample == 'sample1':
         return 'sample1/sample1.fw.fastq.gz'
@@ -34,9 +39,8 @@ rule fastqc:
     input: get_fastq
 ```
 
-
-Useful to process outputs from different parts of the pipeline in a single rule
-
+If you have _multiple_ input files that are different depending on the requested output:
+```py
 def get_pilon_input(wildcards):
     input_dict = {
         'assembly' : '{wildcards.assembly}.fasta'.format(wildcards = wildcards),
@@ -47,74 +51,75 @@ def get_pilon_input(wildcards):
 rule pilon:
     input: unpack(get_pilon_input)
     shell: 'pilon --genome {input.assembly} --bam {input.bam}'
-## useful if you have multiple input files that vary depending on the requested output
+```
 
-## input functions need to be stated ABOVE the rules that call them in the Snakefile
-
-
-# using a lambda expression
+### lambda expressions
+Useful if there is a maximum amount of threads you can use per 'job'
+```py
 rule repeatmasker:
     threads: 8
     params:
         jobs=lambda wildcards, threads : threads // 4
     shell: 'RepeatModeler -p {params.job}'
-## useful if there is a maximum amount of threads you can use per 'job'
-## // means floor division. E.g., 9 // 4 = 2
+```
+`//` means floor division. E.g., 9 // 4 = 2
 
 
-# define which rules should not be submitted to the cluster
-# i.e., execute these on the headnode
+### local rules
+These are rules which will _not_ be submitted to compute nodes on a computer cluster.
+In other words, these are rules executed by the head-node / login-node.
+```py
 localrules: all, rule_a, rule_b
+```
+
+### temp()
+Mark output files with temp() to delete them once all rules
+that use those output files are completed
+```py
+output: temp('outfile')
+```
+
+### using {} in shell
+```py
+shell: 'awk {{ print $0 }}'
+```
+
+# Snakemake command line
+
+| Option                    | Explanation                                                                                                     |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `-S` snakefile.smk        | Run a snakefile that is not called `Snakefile`                                                                  |
+| `--dry-run / -n`          | Check `Snakefile` for syntax errors, pipeline connectiveness and which rules and jobs will be executed          |
+| `--reason / -r`           | State why each reason was activated                                                                             |
+| `--printshellcmds / -p`   | State exact shell commands used for each rule or job                                                            |
+| `--cores 40               | Set the total number of cores that can be used                                                                  |
+| `--use-conda`             | Use conda environments defined in the rules. Can be pre-existing conda environment, or an environment YAML file |
+| `--conda-create-envs-only | Installs all necessary conda packages, but does NOT run the pipeline                                            | 
 
 
-# using {} in shell: that is not a wildcard thingy
-    shell: 'awk {{ print $0 }}'
-
-
-# temp()
-## mark output files with temp() to delete them once all rules
-## that use those output files are completed
-    output: temp('outfile')
-
-# SNAKEMAKE COMMAND LINE - TIPS AND TRICKS
-
-# do a dry-run
-## check if snakefile is written correctly, w/o any syntax errors etc
-## and the rules are properly connected etc
-snakemake --dry-run / -n
-
-# verbose reason why each rule was activated
-snakemake --reason / -r
-
-# verbose the exact shell commands used per rule / job
-snakemake --printshellcmds / -p
-
-# run a snakefile that is not called Snakefile
-snakemake -S assembly_genome.smk
-
-# make jobgraph and rulegraph
+### generate a jobgraph and rulegraph
+```sh
 snakemake --dag | dot -Tpng > jobgraph.png
 snakemake --rulegraph | dot -Tnpg > rulegraph.png
-
-# set the total number of cores/threads that can be used
-snakemake --cores 40
-
-# use tools specified in conda enviroments or environment YAML files
-snakemake --use-conda
-# only install the conda packages, do not run the pipeline
-snakemake --use-conda --conda-create-envs-only
-# activate a conda environment created by snakemake
+```
+### activate a conda environment created by snakemake
+```sh
 source activate .snakemake/conda/<env>
-## where <env> is the MD5 hash of the environment definition file content ??
+```
+Here <env> is the MD5 hash of the environment definition file content ??
 
-# run a snakefile on an HPC cluster
+# Executing snakemake on a HPC cluster
+
+Snakemake is able to delegate snakejobs as separate jobs to the queue of a computer cluster.
+```sh
 snakemake --cluster 'qsub -V'
 snakemake --cluster 'sbatch'
-# each 'snakejob' will be submitted seperately with qsub / sbatch
-## when on a Sun Grid Engine cluster, make sure you are in
-## the environment that has all required tools loaded
-## before executing the snakefile. 
-## -V ensures that your environment variables are passed on to the submitted job
+```
+
+If you are on a Sun Grid Engine cluster (qsub), make sure you are in
+the environment that has all required tools loaded
+before executing the snakefile. 
+-V ensures that your environment variables are passed on to the submitted job
 
 # submit each snakejob with the number of threads specified in the rule
 snakemake --cluster 'qsub -V -pe threaded {threads}'
