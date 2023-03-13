@@ -1,5 +1,3 @@
-* Snakemake
-
 = Introduction =
 
 Snakemake is a workflow management system (WMS)
@@ -10,7 +8,8 @@ With a bash pipeline you provide the input files and bash will use the bash scri
 
 = Snakefile tips =
 
-== expand() ==
+=== expand() ===
+
 {{{py
 
 expand('{sample}.{direction}.fastqc.html', sample = ['sample1','sample2'], direction = ['fw', 'rv'])
@@ -23,7 +22,8 @@ expand('{sample}.{direction}.fastqc.html', sample = ['sample1','sample2'], direc
 
 }}}
 
-== input function ==
+=== input function ===
+
 {{{py
 
 def get_fastq(wildcards):
