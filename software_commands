@@ -436,9 +436,18 @@ Also possible to call a consensus with seaview, at different thresholds
 
 # SEQKIT
 
-seqkit fx2tab -lg <fasta>		Reports per fasta entry the name, the sequence, the length and %GC
-seqkit fx2tab -nlg <fasta>		Reports per fasta entry the name, length and %GC, but not the sequence
-seqkit seq --color <fasta> | less -R    Color FASTA files
+# reports per fasta entry the name, the sequence, the length and %GC
+seqkit fx2tab -lg <fasta>		
+# reports per fasta entry the name, length and %GC, but not the sequence
+seqkit fx2tab -nlg <fasta>		
+# color FASTA files
+seqkit seq --color <fasta> | less -R    
+
+# extract a single entry
+seqkit grep -p <regexp> <fasta>
+
+# look for a subsequence
+seqkit locate -p AFLEADRTGQA <fasta>
 
 # report sequence for 'ergo_tig00000012' but only for region 16000-17000
 seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta

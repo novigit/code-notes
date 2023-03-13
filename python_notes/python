@@ -25,9 +25,13 @@ red, blue, green = colors
 red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
 red, *_ = colors            # red = 'red', _ = ['blue', 'green', 'yellow']
 
+# IF ELSE
+contig_strand = '+' if contig_frame > 0 else '-'
+
 
 # FUNCTIONS
 list.append('string')               Appends elements to an existing list
+list.extend(other_list)             Concatenate list with other_list
 len(list)				            Returns the length of the list
 range(start,stop,step)              Returns a range object
 int(float)                          Returns integer from float

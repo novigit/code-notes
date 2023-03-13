@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+# find filename whlie in insert mode
+ctrl-X + ctrl-F
+
 # search replace between current line and 2 next lines
 :.,+2s/foo/bar/g
 
@@ -31,3 +34,5 @@
 ## to see the register, type
 :register
 
+# execute code
+:w !python

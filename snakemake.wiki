@@ -1,14 +1,18 @@
-#!/bin/bash
+* Snakemake
 
-# snakemake is a workflow management system (WMS)
+= Introduction =
 
-# it's based on a 'pull' kind of system
-## you ask for output files and snakemake will use your Snakefile to figure out how to generate the requested output files (pull)
-## with a bash pipeline you provide the input files and bash will use the bash script to generate the output files (push)
+Snakemake is a workflow management system (WMS)
 
-# SNAKEFILE - TIPS AND TRICKS
+It's based on a 'pull' kind of system.
+You ask for output files and snakemake will use your Snakefile to figure out how to generate the requested output files (pull).
+With a bash pipeline you provide the input files and bash will use the bash script to generate the output files (push)
 
-# expand()
+= Snakefile tips =
+
+== expand() ==
+{{{py
+
 expand('{sample}.{direction}.fastqc.html', sample = ['sample1','sample2'], direction = ['fw', 'rv'])
 ## will generate
 ## sample1.fw.fastqc.html
@@ -17,8 +21,11 @@ expand('{sample}.{direction}.fastqc.html', sample = ['sample1','sample2'], direc
 ## sample2.rv.fastqc.html
 # useful to compactly state your desired output files in the all rule
 
+}}}
 
-# input functions
+== input function ==
+{{{py
+
 def get_fastq(wildcards):
     if wildcards.sample == 'sample1':
         return 'sample1/sample1.fw.fastq.gz'
@@ -27,7 +34,9 @@ def get_fastq(wildcards):
 
 rule fastqc:
     input: get_fastq
-## useful to process outputs from different parts of the pipeline in a single rule
+}}}
+
+Useful to process outputs from different parts of the pipeline in a single rule
 
 def get_pilon_input(wildcards):
     input_dict = {

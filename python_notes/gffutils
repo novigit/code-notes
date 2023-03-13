@@ -10,6 +10,9 @@ db = gffutils.create_db('file.gff3', 'file.db')
 # load a GFF file and store the sqlite3 database into memory
 db = gffutils.create_db('file.gff3', ':memory:')
 ## where db is a 'gffutils.interface.FeatureDB' object
+# create a new database from an iterator of Feature Objects (here 'new_features')
+db = gffutils.create_db(new_features, dbfn=':memory:', merge_strategy='create_unique')
+
 
 # merging attributes when loading a GFF file
 ## when loading, two features may have the exact same attribute IDs 
