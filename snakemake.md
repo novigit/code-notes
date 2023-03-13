@@ -86,16 +86,20 @@ shell: 'awk {{ print $0 }}'
 
 # Snakemake command line
 
-| Option                    | Explanation                                                                                                     |
-|---------------------------|-----------------------------------------------------------------------------------------------------------------|
-| `-S` snakefile.smk        | Run a snakefile that is not called `Snakefile`                                                                  |
-| `--dry-run / -n`          | Check `Snakefile` for syntax errors, pipeline connectiveness and which rules and jobs will be executed          |
-| `--reason / -r`           | State why each reason was activated                                                                             |
-| `--printshellcmds / -p`   | State exact shell commands used for each rule or job                                                            |
-| `--cores 40               | Set the total number of cores that can be used                                                                  |
-| `--use-conda`             | Use conda environments defined in the rules. Can be pre-existing conda environment, or an environment YAML file |
-| `--conda-create-envs-only | Installs all necessary conda packages, but does NOT run the pipeline                                            | 
+| Option                     | Explanation                                                                                                         |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------|
+| `-S snakefile.smk`         | Run a snakefile that is not called `Snakefile`                                                                      |
+| `--dry-run / -n`           | Check `Snakefile` for syntax errors, pipeline connectiveness and which rules and jobs will be executed              |
+| `--reason / -r`            | State why each reason was activated                                                                                 |
+| `--printshellcmds / -p`    | State exact shell commands used for each rule or job                                                                |
+| `--cores 40`               | Set the total number of cores that can be used                                                                      |
+| `--use-conda`              | Use conda environments defined in the rules. Can be pre-existing conda environment, or an environment YAML file     |
+| `--conda-create-envs-only` | Installs all necessary conda packages, but does NOT run the pipeline                                                |
+| `--rerun-triggers mtime`   | Define conditions for rerunning a rule. Default is `mtime,params,input,software_env,code`, which is very aggressive |
+| `--touch file`             | Mark a `file` as up to date, even if its mtime is older than upstream files                                         |
+| `--unlock`                 | Unlock a working directory. Snakemake workdirs can get locked if a pipeline crashed in an abnormal way<*>           |
 
+\* For example Ctrl-C, power outage, HPC job that ran out of time
 
 ### generate a jobgraph and rulegraph
 ```sh
@@ -117,41 +121,28 @@ snakemake --cluster 'sbatch'
 ```
 
 If you are on a Sun Grid Engine cluster (qsub), make sure you are in
-the environment that has all required tools loaded
-before executing the snakefile. 
--V ensures that your environment variables are passed on to the submitted job
+the environment that has all required tools loaded before executing the snakefile. 
+`-V` ensures that your environment variables are passed on to the submitted job
 
-# submit each snakejob with the number of threads specified in the rule
-snakemake --cluster 'qsub -V -pe threaded {threads}'
+#### submit each snakejob with the number of threads specified in the rule
+`snakemake --cluster 'qsub -V -pe threaded {threads}'`
 
-# limit the number of jobs that can be submitted to the HPC queue at the same time
-snakemake --cluster 'qsub -V' --jobs 6
+#### limit the number of jobs that can be submitted to the HPC queue at the same time
+`snakemake --cluster 'qsub -V' --jobs 6`
 
-# specify the location of the STDOUT and STDERR files of each submitted snakejob
-snakemake --cluster 'qsub -V -cwd -o logs/{rule}.{jobid}.o -e logs/{rule}.{jobid}.e'
-## where {rule} and {jobid} are special wildcards holding the rule name and jobid of the snakejob, respectively
-## if not specified, the STDOUT and STDERR files are stored in your $HOME
-## -cwd ensures that the relative paths of -o and -e are relative to your working dir instead relative to your $HOME
+#### specify the location of the STDOUT and STDERR files of each submitted snakejob
+`snakemake --cluster 'qsub -V -cwd -o logs/{rule}.{jobid}.o -e logs/{rule}.{jobid}.e'`
 
-# only trigger a rerun using modification times
-snakemake --rerun-triggers mtime
-## default is mtime,params,input,software_env,code
-## which is very aggressive
+Here {rule} and {jobid} are special wildcards holding the rule name and jobid of the snakejob, respectively.
+If not specified, the STDOUT and STDERR files are stored in your `$HOME`.
+`-cwd` ensures that the relative paths of `-o` and `-e` are relative to your working dir instead relative to your `$HOME`
 
-# mark certain output files as up-to-date, so
-# that their associated rule will not rerun even if their input files are newer
-snakemake --touch outputfile
 
-# unlock the working directory
-## working dirs can be locked if pipeline execution is cancelled / crashed artificially
-## examples: Ctrl-C, power outage, cluster job ran out of time, etc
-snakemake --unlock
+# Other notes
 
-# SNAKEMAKE GENERAL EXECUTION NOTES
+- Output directories specified in your rules are automatically made my Snakemake. So no need for `mkdir` in the `shell:`
 
-# - Output directories specified in your rules are automatically made my Snakemake. So no need for 'mkdir' in the 'shell:'
-
-# - After a rule is executed, SNAKEMAKE will check if all your desired output files stated in 'output:' are actually present in your filesystem.
-# If at least one of them is not present, SNAKEMAKE will assume the rule executation failed and remove all files generated by that rule / job
+- After a rule is executed, snakemake will check if all your desired output files stated in `output:` are actually present in your filesystem.
+If at least one of them is not present, snakemake will assume the rule executation failed and remove all files generated by that rule / job
 
 
