@@ -448,6 +448,7 @@ seqkit grep -p <regexp> <fasta>
 
 # look for a subsequence
 seqkit locate -p AFLEADRTGQA <fasta>
+seqkit locate -rp AFLEADRTGQA.*VAPARS <fasta>  # use regexp
 
 # report sequence for 'ergo_tig00000012' but only for region 16000-17000
 seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
