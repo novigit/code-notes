@@ -105,6 +105,9 @@ snakemake --rulegraph | dot -Tnpg > rulegraph.png
 
 # Check `Snakefile` for syntax errors, pipeline connectiveness and which rules and jobs will be executed
 snakemake --dry-run / -n
+## NOTE: when doing a dry-run the yellow text will report using only 1 thread for a job,
+## even if you requested multiple threads in the relevant rule. Not to worry,
+## snakemake will execute a rule with the requested number of threads in a normal run
 
 # State reason why each rule was activated
 snakemake --reason / -r
@@ -160,6 +163,17 @@ snakemake --cluster 'qsub -V -cwd -o logs/{rule}.{jobid}.o -e logs/{rule}.{jobid
 ## Here {rule} and {jobid} are special wildcards holding the rule name and jobid of the snakejob, respectively.
 ## If not specified, the STDOUT and STDERR files are stored in your $HOME.
 ## -cwd ensures that the relative paths of -o and -e are relative to your working dir instead relative to your $HOME
+
+# If you have rules that point to specific conda environments, e.g. conda: 'funannotate',
+# then make sure that there are no conflicting versions of softwares between 
+# the environment where you are submitting the snakemake pipeline from (e.g. 'proj-ergo', or 'snakemake')
+# and the conda environment. 
+#
+# I had one issue where funannotate was calling the wrong version of diamond,
+# even though the 'funannotate' environment had the correct version installed,
+# because the environment that I was calling snakemake from, had an earlier version
+# of diamond, and in the jobs environment that version's path preceeded the correction version's path
+# in $PATH
 ```
 
 

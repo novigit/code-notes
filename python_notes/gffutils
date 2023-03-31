@@ -121,6 +121,9 @@ intron.attributes['call'] = 'true'
 # strip the attribute object so it contains absolutely nothing
 intron.attributes = {}
 
+# remove a particular field from the attributes
+intron.attributes.pop('Name')
+
 # return the DNA sequence of a particular gene feature
 ## by providing the FASTA file
 gene.sequence('ergo_cyp_genome.fasta')
@@ -275,7 +278,12 @@ for i in introns:
 # update db with new introns
 db.update(introns)
 
-
+# print updated gff record in logical order
+for g in db.features_of_type('gene', order_by=('seqid', 'start')):
+    print()
+    print(g)
+    for f in db.children(g, order_by='start'):
+        print(f)
 
 
 

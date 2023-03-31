@@ -129,6 +129,13 @@ sed -n '/PATTERN/,6p'
 
 # print from third line until line that matches PATTERN
 sed -n '3,/PATTERN/p'
+
+# prints lines where line matches PATTERN1 and the next line matches PATTERN2
+sed -n '/PATTERN1/{n;/PATTERN2/p;}'
+
+# prints lines where line matches PATTERN1 and the next line matches PATTERN2,
+# and the line numbers of lines that match PATTERN2
+sed -n '/PATTERN1/{n;/PATTERN2/=;}'
 ```
 
 

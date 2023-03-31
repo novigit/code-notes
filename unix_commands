@@ -520,6 +520,9 @@ find . -name "All.htm"
 find . -size 0 -exec rm {} \;   Remove empty files
 find . -xtype l -exec rm {} \;  Remove broken symlinks
 
+# sort all files in directory and subdirectories by modification time
+find . -type f -printf '%TY-%Tm-%Td %TH:%TM: %Tz %p\n' | sort -n
+
 FG
 Bring back jobs that are running in the background, into the "foreground". Jobs that are running in the background can be displayed with "jobs"
 Ctrl-Z to put current windown in the background. Then you can use 'fg' to put it back to the foreground

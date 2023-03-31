@@ -1,16 +1,20 @@
-#!/bin/bash
+TMUX - Terminal MUtlipleXer
 
-tmux                            Start a new tmux session
-tmux a                          Attach to the last used existing session
-tmux a -t <my_session>          Attach to the desired session
-tmux ls                         List existing sessions
-tmux new -s <my_session>        Start a new session with a desired session name
-tmux kill-ses -t <my_session>   Kill a session
+#### General
+```sh
+tmux                                        # Start a new tmux session
+tmux a                                      # Attach to the last used existing session
+tmux a -t <my_session>                      # Attach to the desired session
+tmux ls                                     # List existing sessions
+tmux new -s <my_session>                    # Start a new session with a desired session name
+tmux kill-ses -t <my_session>               # Kill a session
+tmux new -s <my_session> -n <my_window>     # Start a new name session with a named window
+```
 
-tmux new -s <my_session> -n <my_window>     Start a new name session with a named window
-
-WHILE IN TMUX
-<prefix> is by default Ctrl-b   I like to set it to ctrl-space
+#### While in tmux
+```
+<prefix> 
+by default Ctrl-b               I like to set it to ctrl-space
 
 <prefix> d                      Detach from session
 <prefix> b                      Rename session
@@ -28,20 +32,33 @@ WHILE IN TMUX
 <prefix> <arrow-key>            Move cursor to another pane
 <prefix> :                      Enter command prompt
 
+<prefix> Option-1               Layout panes in preset 'even-horizontal'
+<prefix> Option-2               Layout panes in preset 'even-vertical'    ,i.e. make two landscapes on top of each other
+<prefix> Option-3               Layout panes in preset 'main-horizontal'
+<prefix> Option-4               Layout panes in preset 'main-vertical'
+<prefix> Option-5               Layout panes in preset 'tiled'
+
 <prefix> [                      Enter copy-mode
 <prefix> <PgUp>                 Enter copy-mode, which allows you to scroll up and down
+```
 
-WHILE IN COMMAND PROMPT
+#### While in command prompt
+```
 :kill-session                   Kill current session
+```
 
-WHILE IN COPY MODE
+#### While in copy mode
+```
 C-d / C-u                       Scroll up and down just like in vim
 Shift-k / Shift-j               Scroll page up and down one line
 h, j, k, l                      Move up down sideways etc
 space                           Start selection
 enter                           Finish selection and put into clipboard
 q                               Exit copy mode
+```
 
-WHILE IN COMMAND PROMPT
+#### While in command prompt
+```
 swap-window -s 3 -t 2           Change order of windows by swapping window 3 with window 2
+```
 
