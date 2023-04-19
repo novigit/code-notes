@@ -1,4 +1,4 @@
-VIM
+# VIM
 
 
 #### Search and Replace
@@ -35,6 +35,12 @@ According to vim docs, the letter 'z' sort of looks like a fold
 'zk'        # move cursor to previous fold
 ```
 
+#### Line wrapping
+```
+:set wrap
+:set nowrap
+```
+
 #### Macros
 ```
 'q<letter>'  # start recording a macro
@@ -47,4 +53,5 @@ to see the register, type `:register`
 #### Execute code
 ```
 :w !python
+:w !bash
 ```

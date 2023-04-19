@@ -61,6 +61,9 @@ print(gene)
 # get the primary key ('string')
 gene.id
 
+# get the contig
+gene.seqid
+
 # get the start and end coordinates of the requested gene ('integers')
 gene.start
 gene.end
@@ -211,7 +214,10 @@ for p in db.iter_by_parent_childs():
         print(f.id)
 
 # construct intergenic space features between genes
-genes = db.features_of_type('gene')
+genes = db.features_of_type( 'gene', order_by=('seqid','start') )
+## in this context the order_by flag is important, because
+## the .interfeatures method does -for reasons- not sort the gene features by coordinates,
+## which can lead to erroneous inferred intergenic regions
 igss = db.interfeatures(genes,new_featuretype='intergenic_space')
 ## the new 'intergenic_space' features will have IDs like
 ## ID=ctg498.gene0459,ctg498.gene046

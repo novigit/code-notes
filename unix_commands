@@ -10,6 +10,8 @@ The first column can either be
 d directory
 l symlink
 
+Execute permissions are necessary to remove directories
+
 # WILDCARD #
 The '*' can be used as a wildcard:
 
@@ -471,9 +473,13 @@ DIFF
 Shows differences between two files
 diff <file1> <file2>
 
--y           invoke side-by-side mode, really nice
--w <n>       set width of visibles lines of differing lines in side by side mode
---suppress-common-lines
+-y                          invoke side-by-side mode, really nice
+-w <n>                      set width of visibles lines of differing lines in side by side mode
+ --suppress-common-lines
+--color=always              color persists to less -R
+
+Example:
+diff -W 200 -y --color=always <file1> <file2> | less -R
 
 DIRNAME
 Trims filenames from strings (opposite of BASENAME)

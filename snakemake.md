@@ -164,18 +164,21 @@ snakemake --cluster 'qsub -V -cwd -o logs/{rule}.{jobid}.o -e logs/{rule}.{jobid
 ## If not specified, the STDOUT and STDERR files are stored in your $HOME.
 ## -cwd ensures that the relative paths of -o and -e are relative to your working dir instead relative to your $HOME
 
+```
+
+## Experienced issues with snakemake on a HPC cluster
+```sh
 # If you have rules that point to specific conda environments, e.g. conda: 'funannotate',
 # then make sure that there are no conflicting versions of softwares between 
 # the environment where you are submitting the snakemake pipeline from (e.g. 'proj-ergo', or 'snakemake')
 # and the conda environment. 
-#
+
 # I had one issue where funannotate was calling the wrong version of diamond,
 # even though the 'funannotate' environment had the correct version installed,
 # because the environment that I was calling snakemake from, had an earlier version
 # of diamond, and in the jobs environment that version's path preceeded the correction version's path
 # in $PATH
 ```
-
 
 ## Using conda environments on a HPC cluster
 ```sh
