@@ -17,6 +17,12 @@
 ```
 # autocomplete filename
 ctrl-X + ctrl-F
+
+# autocomplete pattern that exists in the file somewhere
+ctrl-X + ctrl-I
+
+# insert a ^I character
+ctrl-V + ctrl-I
 ```
 
 #### Folding
@@ -29,7 +35,7 @@ According to vim docs, the letter 'z' sort of looks like a fold
 'zO'        # open a fold and all of its nested folds at once
 'zc'        # close a fold
 'zC'        # close a fold and all of its parent folds at once
-'zM'        # close all folds in the file
+'zM'        # close all folds in the file ( I guess the M looks like a folded line )
 'zR'        # expand all folds in the file
 'zj'        # move cursor to the next fold
 'zk'        # move cursor to previous fold

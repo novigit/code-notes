@@ -22,8 +22,18 @@ db = gffutils.create_db(new_features, dbfn=':memory:', merge_strategy='create_un
 ##   merge_strategy='create_unique'   : the first feature keeps its original primary key (key), the next will have a unique auto-incremented key (key_1, key_2, etc)
 ##   merge_strategy='error'           : a gffutils.DuplicateID exception will be raised. Try to fix the duplicate primary key issue yourself
 db = gffutils.create_db('file.gff3', ':memory:', merge_strategy="error")
-## two ore more features may have the exact same attribute ID if they are 'discontinuous' features referring to the same biological entity
+## two or more features may have the exact same attribute ID if they are 'discontinuous' features referring to the same biological entity
 ## for example, multiple CDS features associated with one mRNA transcript that refers to a single protein coding sequence
+
+# specifying your own way of assigning unique id's to features using id_spec
+def id_func(x):
+    if x.featuretype == 'gene':
+        new_id = x.attributes['ID'][0]
+    elif x.featuretype == 'CDS':
+        new_id = '-'.join( [x.attributes['ID'][0], x.seqid, str(x.start), str(x.end)] )
+    return new_id
+
+db = gffutils.create_db('ST7C_to_ST7H_transfer.gff_polished', id_spec=id_func, dbfn=':memory:')
 
 # load an already created db from a file
 db = gffutils.FeatureDB('file.db')

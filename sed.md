@@ -153,6 +153,10 @@ sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta
 
 # delete empty lines
 sed "/^$/d"
+
+# insert a custom string into the first line of a file
+string="Hello\tWorld"
+sed "1i$string" <file>
 ```
 
 ## Other notes

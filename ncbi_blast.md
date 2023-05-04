@@ -70,6 +70,7 @@ blastn \
 blastn \
     -query <path to query> \
     -subject <path to subj> \
+    -perc_identity <i.e. 98> \
     -task <task>
 # where <task> can be blastn, megablast, blastn-short, etc
 # default = megablast

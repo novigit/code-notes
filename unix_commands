@@ -193,6 +193,7 @@ OTHER COMPARISONS
 [[ -s FILE ]]        True if FILE is non-empty
 [[ -d DIR ]]         True if DIR exists
 [[ -z $STRING ]]     True if $STRING is null (doesn't exist)
+[[ -L SYMLINK ]]     True if SYMLINK exists
 
 cmd1 && cmd2        && is the AND operator. execute cmd1 and only if it succeeds execute cmd2
 cmd1 || cmd2        || is the OR  operator. execute cmd2 only if cmd1 fails
