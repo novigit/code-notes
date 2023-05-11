@@ -5,7 +5,7 @@ A python package for dealing with all sorts of molecular sequence data
 #### SeqIO
 
 ##### Load a FASTA file
-```
+```python
 # load package SeqIO
 from Bio import SeqIO
 
