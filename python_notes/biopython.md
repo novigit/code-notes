@@ -30,7 +30,7 @@ desired_record = record_dict['example_seqID']
 ```
 
 ##### SeqRecord objects
-```
+```python
 # get the id of the SeqRecord
 record.id
 
@@ -48,7 +48,7 @@ record.seq[0:300]
 #### SearchIO
 
 ##### Load a hmmsearch --domtblout file
-```
+```python
 # load package SearchIO
 from Bio import SearchIO
 
@@ -58,7 +58,7 @@ hmmsearch_result = SearchIO.parse('example.domtblout','hmmsearch3-domtab')
 ```
 
 ##### QueryResult objects
-```
+```python
 # print the results
 for qr in hmmsearch_result:
     print(qr)
@@ -81,7 +81,7 @@ len(qr)      # returns the number of hits (i.e. Hit objects) the query has
 
 ##### Extract Hit objects from QueryResult objects
 
-```
+```python
 # a QueryResult is sort of like a hybrid between a list and a dictionary
 # it is iterable, and each iteration returns a Hit object
 for hit in qr:
@@ -104,7 +104,7 @@ filtered_qr = qr.hit_filter(has_multiple_hits)
 ```
 
 #### Hit objects
-```
+```python
 # extract and print a Hit object
 th = qr[0]
 print(th)
@@ -128,7 +128,7 @@ len(th)              # returns the number of HSPs tied to the Hit
 ```
 
 ##### Extract Hit objects from QueryResult objects
-```
+```python
 # a Hit object is essentially a simple list of HSP objects and is iterable
 for hsp in th:
     print(hsp)
@@ -137,7 +137,7 @@ top_hsp = th[0]
 ```
 
 #### HSP objects
-```
+```python
 # print a HSP object
 top_hsp = th[0]
 print(top_hsp)
