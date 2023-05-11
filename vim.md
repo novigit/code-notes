@@ -3,14 +3,25 @@
 
 #### Search and Replace
 ```sh
-# search replace between current line and 2 next lines
-:.,+2s/foo/bar/g
-
 # convert multiple spaces in a row to tabs on a single line
 :s/\s\+/\t/g
 
 # convert multiple spaces in a row to tabs on all lines
 :%s/\s\+/\t/g
+
+# search replace between current line and last line of file 
+:.,$s/foo/bar/g
+
+# search replace between current line and 2 next lines
+:.,+2s/foo/bar/g
+
+# search replace in a visual block
+## select block via ctrl-v
+## press esc
+:%s/\%Vfoo/bar/g
+
+
+
 ```
 
 #### While in insert mode
