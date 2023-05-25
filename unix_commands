@@ -138,9 +138,15 @@ ls -la | while read PERM USR USRGRP SIZE; do
    echo $PERM $USR $USRGRP $SIZE;
 done
 
+# recommended file parsing
 while read -r LINE; do
       echo "$LINE"
-done < "$FILE"
+done < file.txt
+
+# instead of
+cat file.txt | while read LINE; do
+    echo $LINE
+done
 
 Use the read '-r' flag, 'while read -r STRING' to prevent read from eating '\' in $STRING
 

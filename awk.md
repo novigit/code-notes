@@ -6,7 +6,7 @@ awk parses a file line by line by default
 
 NR = Number of Record
 By default the line number   
-```
+```sh
 awk 'NR>2'
 ```
 Meaning of NF
@@ -17,7 +17,7 @@ awk automatically updates the value of NF each time it reads a record.
 #### Field Separator
 Default FS is whitespace (space and tab characters)
 
-```
+```sh
 # sets only tab or colon as field separator
 awk -F "\t"
 awk -F ":"
@@ -28,7 +28,7 @@ awk 'OFS="\t" {print $3,$1,$2}'
 ```
 
 #### Printing fields and lines
-```
+```sh
 # print the 3rd field
 awk '{print $3}'
 
@@ -52,6 +52,7 @@ awk '$3 >= 0.3 && $5 >= 0.3 {print $0}'
 awk 'if ($2 ~ /regex/) {print $0}'
 ## short form
 awk '$2 ~ /regex/ {print $0}'
+awk '$2 ~ regex {print $0}'    # not sure which one is correct, with or without //
 ## case insensitive regex
 awk '$2 ~ /regex/i {print $0}'
 ## search for multiple strings
@@ -78,11 +79,10 @@ awk '{ printf "%.3f\n", 5 / 2 }'
 ## %s   for string
 ## %.2f for float
 awk '{printf "%s\t%.2f\n", $0, ($17-$16+1)/$6}' 
-
 ```
 
 #### Functions
-```
+```sh
 ## length() returns the length the string held by $10 
 awk '{print length($10)}'
 
@@ -92,9 +92,9 @@ awk '{sub(" ","\t",$15); print $0}'
 ```
 
 #### Math operations
-```
+```sh
 ## if $9 is an integer, add a 1000 to its value when printing
-awk '{print $9+1000}'
+awk '{ print $9+1000 }'
 
 # calculate mean of a list of numbers
 awk '{ sum += $1 } END { if (NR > 0) print sum / NR }'
@@ -107,7 +107,7 @@ awk '{ sum += $1 ; sumsq += $1*$1 } END { print sqrt(sumsq/NR - (sum/NR)**2) }'
 ```
 
 #### Various snippets
-```
+```sh
 # BEGIN block followed by if else statement
 ## note that if else statement is within {}
 ## note that NF (number of fields in record)

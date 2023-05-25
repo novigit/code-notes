@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(
             description=
         '''
         some description of your script
-        '''
+        ''')
 
 # add arguments
 parser.add_argument(

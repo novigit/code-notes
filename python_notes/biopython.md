@@ -58,6 +58,9 @@ hmmsearch_result = SearchIO.parse('example.domtblout','hmmsearch3-domtab')
 ```
 
 ##### QueryResult objects
+
+There is one QueryResult object per query hmm profile in the domtblout file
+
 ```python
 # print the results
 for qr in hmmsearch_result:
@@ -67,17 +70,22 @@ for qr in hmmsearch_result:
 qr = next(hmmsearch_result)
 
 # qr is a QueryResult object, with certain attributes
+# those taken directly from domtblout
+qr.id        # e.g. '1-cysPrx_C', the name of the hmmsearch Query
+qr.accession # e.g. 'PF10417.8', the accession ID of the hmmsearch Query
+qr.seq_len   # full length of the Query sequence
+
+# other attributes
 qr.program   # i.e. 'blastn', 'hmmer3', or if not stated in the output 'unknown_program'
 qr.version   # i.e. '2.2.27+', or if not stated in the output 'unknown_version'
-qr.accession # e.g. 'PF10417.8', the accession ID of the hmmsearch Query
-qr.id        # e.g. '1-cysPrx_C', the name of the hmmsearch Query
-qr.seq_len   # full length of the Query sequence
 qr.hits      # returns a list of Hit objects
 qr.hit_keys  # returns a list of keys of Hit objects, i.e. the IDs of the hits
 
 # you can also apply methods over QueryResult objects
 len(qr)      # returns the number of hits (i.e. Hit objects) the query has
 ```
+
+A QueryResult object can be broken down to a number of Hit objects
 
 ##### Extract Hit objects from QueryResult objects
 
@@ -106,8 +114,8 @@ filtered_qr = qr.hit_filter(has_multiple_hits)
 #### Hit objects
 ```python
 # extract and print a Hit object
-th = qr[0]
-print(th)
+hit = qr[0]
+print(hit)
 
 # Query: 1-cysPrx_C
 #        <unknown description>
@@ -122,10 +130,20 @@ print(th)
 #           3         8      -0.10       ?           [8:23]        [431071:431086]
 
 # Hit object attributes
-th.query_id          # ID   of the Query tied to the Hit
-th.query_description # Desc of the Query tied to the Hit
-len(th)              # returns the number of HSPs tied to the Hit
+# those taken directly from domtblout
+hit.id              # ID of the Hit (TargetSequence)
+hit.accession       # Accession of the Hit
+hit.seq_len         # Length of the Hit sequence
+hit.evalue          # Hit-level E-value
+hit.bitscore        # Hit-level bitscore
+hit.bias            # Hit-level bias
+
+# other attributes
+hit.query_id          # ID   of the Query tied to the Hit
+hit.query_description # Desc of the Query tied to the Hit
+len(hit)              # returns the number of HSPs tied to the Hit
 ```
+
 
 ##### Extract Hit objects from QueryResult objects
 ```python
@@ -133,14 +151,14 @@ len(th)              # returns the number of HSPs tied to the Hit
 for hsp in th:
     print(hsp)
 # get the top HSP
-top_hsp = th[0]
+hsp = th[0]
 ```
 
 #### HSP objects
 ```python
 # print a HSP object
-top_hsp = th[0]
-print(top_hsp)
+hsp = th[0]
+print(hsp)
 
 #       Query: 1-cysPrx_C <unknown description>
 #         Hit: tig00000492_frame=-1 -
@@ -150,14 +168,26 @@ print(top_hsp)
 #   Fragments: 1 (? columns)
 
 # HSP object attributes
-top_hsp.query_range
-top_hsp.evalue
-top_hsp.hit_start    - start coordinate of the Hit sequence, 0-based
-top_hsp.hit_end      - end   coordinate of the Hit sequence, 1-based
-top_hsp.query_span   - length of Query that is aligned
-top_hsp.aln_span     - length of alignment
-```
+# those directly taken from domtblout
+hsp.domain_index # domain number
+hsp.evalue_cond  # c-Evalue
+hsp.evalue       # i-Evalue
+hsp.bitscore
+hsp.bias
+hsp.query_start  # hmm-From (0-indexed)
+hsp.query_end    # hmm-To   (1-indexed)
+hsp.hit_start    # start coordinate of the Hit sequence, 0-based
+hsp.hit_end      # end   coordinate of the Hit sequence, 1-based
+hsp.env_start    # env-From (0-indexed)
+hsp.env_end      # env-To   (1-indexed)
+hsp.acc_avg      # acc
+hsp.description  # HitDescription
 
+# those calculated from domtblout
+hsp.query_range  # tuple with (query_start, query_end)
+hsp.query_span   # length of Query that is aligned
+hsp.aln_span     # length of alignment
+```
 
 
 
