@@ -57,8 +57,16 @@ rule pilon:
 # is different depending on which upstream rule is used
 ```
 
-#### lambda expressions
+#### python code in your rules
 ```py
+# replace function
+DB='panther17.hmm.h3f'
+rule hmmscan:
+    input: DB
+    params: DB.replace('.h3f','')
+    shell: 'hmmscan {params.db}'
+
+# lambda expression
 rule repeatmasker:
     threads: 8
     params:
@@ -89,6 +97,15 @@ output: temp('outfile')
 #### using {} in shell
 ```py
 shell: 'awk {{ print $0 }}'
+
+shell:
+    '''
+     function body {{
+         IFS= read -r header
+         printf '%s\n' "$header"
+         "$@"
+     }}
+    '''
 
 # { and } have special meaning in the shell directive,
 # so if they are used in a command you need to add another { and } to escape the special meaning?

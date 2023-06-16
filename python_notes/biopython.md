@@ -186,6 +186,7 @@ hsp.description  # HitDescription
 # those calculated from domtblout
 hsp.query_range  # tuple with (query_start, query_end)
 hsp.query_span   # length of Query that is aligned
+hsp.hit_span     # length of Hit   that is aligned
 hsp.aln_span     # length of alignment
 ```
 

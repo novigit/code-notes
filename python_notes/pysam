@@ -81,11 +81,12 @@ for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, trunca
         pileupread.alignment.query_position
 
         # get the base at the aligned position
-        base = puread.alignment.query_sequence[puread.query_position]
+        base = pilupread.alignment.query_sequence[pileupread.query_position]
 
 # you can iterate directly over all read mappings aligned to a particular region using fetch()
 # NOTE: unmapped reads can still be assigned to a particular contig, maybe because their partner was mapped to that contig
 # .fetch() will catch these also
+# NOTE: .fetch() will also return reads that are only partially overlapping with the region. Thus the reads returned might span a region that is larger than the one queried.
 for read in bamfile.fetch('chr1', 100, 200):
     print(read)
 

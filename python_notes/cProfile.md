@@ -1,9 +1,9 @@
-### cProfile
+## cProfile
 
 cProfile is python's built-in profiling tool. 
 Profiling essentially means the act of measuring execution time for different sections of code
 
-##### Simple example
+#### Simple example
 ```python
 def function_one():
     ...
@@ -58,7 +58,7 @@ percall                     - time spent in this function each time it was calle
 filename:lineno(function)   - filename, line number and name of the function that was called
 ```
 
-##### Command line
+#### Command line
 ```sh
 # -m cProfile to load the cProfile module
 # NOTE: now cProfile.run() doesn't have to be invoked inside the script
@@ -67,7 +67,7 @@ python -m cProfile fix_genes_with_false_introns.py -g tiny.gff3 -b rnaseq_vs_mas
 
 The command line version does seem to print out more, for some reason, compared to the 'within-script' version
 
-##### Sorting the table
+#### Sorting the table
 In both instances, the table is sorted alphabetically by the `filename:lineno(function)` column. This isn't very useful. You'll probably want to sort by
 the total, cumulative amount of time per function, to see which functions are slowing down your code the most
 
