@@ -168,9 +168,6 @@ for leaf in t:
     print(leaf.name)
 ```
 
-#!/usr/bin/env python
-from ete3 import Tree
-
 ### Unrooted trees
 
 ```py
