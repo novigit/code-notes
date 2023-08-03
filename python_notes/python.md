@@ -1,12 +1,14 @@
-#!/usr/bin/env python
+Python
 
-# GENERAL
+```py
 ## assign multiple values at once
 a, b = 4, 8
 a, b, c, d = 4, "geeks", 3.14, True
+```
 
 # STRINGS
 ## f-strings
+```py
 name = Joran
 age = 34
 print(f'Hello, I am {name} and I am {age} years old')
@@ -17,30 +19,38 @@ n = 12
 print(f'{n:05d}')           # 05d -> 5 digits, so 00012
 ### do math
 print(f"{2 * 37}")
+```
 
 # LISTS
 ## list unpacking
+```py
 colors = ['red', 'blue', 'green', 'yellow']
 red, blue, green = colors
 red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
 red, *_ = colors            # red = 'red', _ = ['blue', 'green', 'yellow']
+```
 
 # IF ELSE
+```py
 contig_strand = '+' if contig_frame > 0 else '-'
+```
 
 
 # FUNCTIONS
+```py
 list.append('string')               Appends elements to an existing list
 list.extend(other_list)             Concatenate list with other_list
 len(list)				            Returns the length of the list
 range(start,stop,step)              Returns a range object
 int(float)                          Returns integer from float
+```
 
 
 
 # OBJECTS
 
 ## FILTER OBJECT
+```py
 some_numbers = [1, 2, 3, 8, 9]
 ## apply a function that returns True or False on some iterator
 f = filter( lambda x : x < 5, some_numbers )
@@ -48,6 +58,17 @@ f = filter( lambda x : x < 5, some_numbers )
 ## it is a so-called lazy iterable, 
 ## which is only filters when called upon downstream in the script
 ## you can only iterate over it once!
+```
+
+```py
+# get all methods and attributes of an object with dir()
+import requests
+r = requests.get('some_url')
+print( dir(r) )
+
+# get the help of a response object if it exists
+print( help(r) )
+```
 
 ## GENERATOR OBJECT
 

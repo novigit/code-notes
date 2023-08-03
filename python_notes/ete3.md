@@ -75,9 +75,12 @@ t.write(format=1, outfile="new_tree.nw")
 
 ### Basic Tree Attributes
 
-Create a random tree object with random topology `t`
-the `t` tree object is represented by its root node
-`t` is an object of the Tree or TreeNode class
+Create a random tree object with random topology `t`.
+
+The `t` tree object is represented by its root node.
+
+`t` is an object of the Tree or TreeNode class.
+
 ```py
 from ete3 import Tree
 
@@ -146,6 +149,14 @@ print(t.name)
 # so it returns the default value (1.0)
 print(t.dist)
 
+# .support returns the support value of the branch that 
+# connects the node to its parent
+print(t.support)
+```
+
+### Basic TreeNode methods
+
+```py
 # .is_leaf() returns True when TreeNode object t is a leaf,
 # False when it is an internal node
 print(t.is_leaf())
@@ -163,9 +174,9 @@ print(t.children[0].get_tree_root())
 # also this returns the root of the entire tree t
 print(t.children[0].children[0].get_tree_root())
 
-# iterate over tree leaves
-for leaf in t:
-    print(leaf.name)
+# .get_common_ancestor('a', 'b', 'c', ...) returns
+# the node that is the last common ancestor of the requested leafs
+common_ancestor = t.get_common_ancestor('a', 'b', 'c')
 ```
 
 ### Unrooted trees
@@ -189,6 +200,18 @@ Even though this is an unrooted tree, in this context it still as a root node, a
 ETE3 also calls this root of the unrooted tree the 'master' node.
 The root node represents the whole tree structure.
 The root node of an unrooted tree has more than two children nodes.
+
+### Search for particular nodes
+
+```py
+# use .search_nodes()
+# this method returns a list
+A = t.search_nodes(name="A")[0]
+
+# shortcut
+A = t&"A"
+```
+
 
 
 ### Tree Traversing
@@ -217,6 +240,12 @@ print(t)
 #      |   /-P
 #       \-|
 #          \-S
+```
+Iterating over a tree returns a leaf per iteration
+
+```py
+for leaf in t:
+    print(leaf.name)
 ```
 
 `.traverse` returns an 'iterator' of the tree nodes in postorder
@@ -274,15 +303,9 @@ for node in t.iter_descendants("postorder"):
 # C
 ```
 
-```py
-t = Tree( "(A:1,(B:1,(C:1,D:1):0.5):0.5);" )
-print(t)
-# .search_nodes() returns a list of nodes that match a certain set of conditions (name, branch length etc)
-# printing a specific leave node returns
-# --C
-print( t.search_nodes(name="C")[0] )
+Traverse the tree upwards towards the root, starting from a specific node
 
-# traverse the tree node by node upwards from a desired specific node
+```py
 node = t.search_nodes(name="C")[0]
 while node:
     print(node)
@@ -330,10 +353,7 @@ print(t.check_monophyly(values=["i", "o"], target_attr="name"))
 # (False, 'paraphyletic', {Tree node 'e' (0x117646a2), Tree node 'a' (0x1176469b)})
 ```
 
-
-
 ### Annotating a tree with some new attributes
-
 
 Annotating the leafs of a tree by adding some property with `.add_features()`.
 Here a color is added to each leaf
@@ -378,6 +398,10 @@ colors = {
 # then annotate the tree
 for leaf in t:
     leaf.add_features(color=colors.get(leaf.name, "none"))
+
+# 'color' is just an example trait you could add as a feature to a node
+# it can be whatever you wish, 'vowel', 'confidence', 'blergh'
+node.add_features(vowel=False, confidence=1.0, blergh="Wut")
 
 # regular printing of the tree will NOT show the colors
 # you need the .get_ascii() method
@@ -425,13 +449,22 @@ for node in t.get_monophyletic(values=["green","yellow"], target_attr="color"):
 #       \-yellow, june
 ```
 
+
+
 ### BarChartFace()
 
 The deviations is a list of values, where each value represents the size of the error bar
 
 ```python
 face = BarChartFace(
-        values =
-        labels =
+        values = [0.10, 0.20, 0.05, 0.15],          # y-axis values
+        labels = ['A', 'C', 'G', 'T'],              # x-axis labels
+        colors = ['blue', 'red', 'red', 'blue'],    # list of colors for each bar in the chart
+        min_value = 0                               # min y-value of barchart
+        max_value = 0.30,                           # max y-value of barchart
+        width = 200,                                # width of barchart
+        height = 100,                               # height of barchart
+        label_fsize = 9                             # font size of x-axis labels
+        scale_fsize = 6                             # font size of y-axis labels
 )
 ```

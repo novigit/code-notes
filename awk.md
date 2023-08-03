@@ -89,10 +89,11 @@ awk '{printf "%s\t%.2f\n", $0, ($17-$16+1)/$6}'
 awk '{sub(" ","\t",$15); print $0}'
 
 # gensub() allows you to use backreferences
-awk '{ gensub( /gene([0-9]+)/, "gene\\1", "g", $1 }'
+awk '{ $1 = gensub( /gene([0-9]+)/, "gene\\1", "g", $1 ; print $0}'
 # "g" indicates that all occurrances in the line must be replaced, i.e. 'global'
 # "g" can be replaced with 1 or another number, indicating that the n-th occurrance only must be replaced
 # $1 indicates that only the first column is to be searched and replaced
+# gensub() does not perform in-place modifications, its result needs to be assigned to a variable
 
 ```
 

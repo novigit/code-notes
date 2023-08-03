@@ -149,6 +149,7 @@ source activate .snakemake/conda/<env>
 # Define conditions for rerunning a rule. 
 ## Default is mtime,params,input,software_env,code, which is very aggressive
 snakemake --rerun-triggers mtime
+snakemake --rerun-triggers mtime code
 
 # Mark a file as up to date, even if its mtime is older than upstream files
 snakemake --touch file

@@ -1,5 +1,14 @@
 # VIM
 
+#### File handling
+```sh
+# force refresh a buffers content
+# useful if an external action wrote to a file open in vim
+:e!
+
+# open the previously opened file
+:e#
+```
 
 #### Search and Replace
 ```sh
@@ -20,8 +29,8 @@
 ## press esc
 :%s/\%Vfoo/bar/g
 
-
-
+# delete all empty lines
+:g/^$/d
 ```
 
 #### While in insert mode
@@ -72,3 +81,30 @@ to see the register, type `:register`
 :w !python
 :w !bash
 ```
+
+#### Language Server Protocol (LSP)
+
+By letting vim (the client) talk to a language server (the server), vim acquires many powerful features akin to an Integrated Development Environment (IDE). This includes linting, warnings, errors, autocompletion etc.
+It needs plugins to do so, however. The ones I installed are called `vim-lsp` and `vim-lsp-settings`. As far as I understand, `vim-lsp` provides the interface for vim to interact with a language server and `vim-lsp-settings` allows one to easily install and uninstall language servers.
+
+Once you have installed both plugins, and open up for example a Python file, vim will ask you if you want to install the Python language server with the command `:LspInstallServer`. By default it will install `pylsp-all`, but you can specify other Python servers if you like with `:LspInstallServer <some-server>`. If you'd like to switch to another server, you can uninstall the original server with `:LspUninstallServer`.
+
+The default behaviour of a language server can be quite aggressive and overwhelm you with warnings and error messages. To customize the behaviour of the server, you need to create a `settings.json` file (kind of similar to how things work with VsCode). For settings that will work for all files on your computer (i.e. global settings), store it at `~/.local/share/vim-lsp-settings/settings.json`. You can also directly edit this file from within Vim with `:LspSettingsGlobalEdit`. For settings that will work for all files in a project folder (i.e. local settings), store it at `<proj-dir>/.vim-lsp-settings/settings.json`. Local settings override global settings.
+
+Here is an example `settings.json` file that disables pycodestyle:
+```json
+{
+    "pylsp-all": {
+        "workspace_config": {
+            "pylsp": {
+                "plugins": {
+                    "pycodestyle": {
+                        "enabled": false
+                    }
+                }
+            }
+        }
+    }
+}
+```
+

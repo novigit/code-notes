@@ -390,6 +390,10 @@ CAT
 -t  Show tabs (^I), newline characters ($) in macOS.
 -n  Print line numbers
 
+BAT
+-A	Shows identity of whitespace characters. Much nicer than cat -A
+--config-file	Show location of your bat config file
+
 Neat trick:
 cat > new_file
 Then type whatever texts you want to type

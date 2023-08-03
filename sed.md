@@ -87,6 +87,9 @@ sed "1s/^/foo\n/"
 
 # remove all trailing white space from a file
 sed -i 's/[ \t]*$//'
+
+# replace all multiple spaces with tabs
+sed -E 's/[[:space:]]{3,}/\t/g'
 ```
 
 ## Printing 
