@@ -29,15 +29,19 @@ hmmpress Pfam-A.hmm
 
 If you want to do `hmmsearch`, hmms are the query, seqs are the targets
 
-`cpus=0` automatically determines the optimal number of cpus to use
-`E=0.01`    sets the reporting E-value threshold for seq-E-value 
-`domE=0.01` sets the reporting E-value threshold for dom-conditional-E-value 
+`cpus=0` automatically determines the optimal number of cpus to use.
+`E=0.01`    sets the reporting E-value threshold for seq-E-value.
+`domE=0.01` sets the reporting E-value threshold for dom-conditional-E-value.
 
 ```py
 with HMMFile("Pfam-A.hmm.h3m") as hmm_file:
     for tophits in pyhmmer.hmmer.hmmsearch(hmm_file, seqs, cpus=0, E=0.01, domE=0.01):
         # 'tophit' is a 'TopHits' object
 ```
+
+Note that the `Pfam-A.hmm.h3m` does not got loaded into memory all at once, 
+hence the search and downstream stuff needs to be done while the file is opened
+with the `with` statement.
 
 If you want to do `hmmscan`, seqs are the query, hmms are the targets
 
@@ -91,11 +95,88 @@ A `Hit` seems to refer to a target sequence that has at least one HMM model matc
 Or to a HMM model that has at least one target sequence matched to it, in case of `hmmscan`
 
 ```py
-# description of the hit
+# satisfies reporting and/or inclusion thresholds?
+# returns True or False
+hit.reported
+hit.included
+
+# name and description
 # returns a bytes object
 # use .decode() to get a string object
+hit.name
+hit.name.decode()
 hit.description
+hit.description.decode()
+
+# seq-E-value
+hit.evalue
+
+# seq-bit-score
+# after null2 bias correction
+hit.score
 ```
+
+A `Hit` object is linked to a `Domains` object and one or more `Domain` objects
+```py
+# iterate over Domain objects
+for domain in hit.domains:
+    # 'domain' is a Domain object
+
+# iterate over Domain objects that satisfied the reporting i-E-value threshold
+for domain in hit.domains.reported:
+    # 'domain' is a Domain object
+```
+    
+### A `Domain` object
+
+```py
+# satisfies reporting and/or inclusion thresholds?
+# returns True or False
+domain.reported
+domain.included
+
+domain.i_evalue
+domain.c_evalue
+domain.score
+domain.bias
+domain.env_from
+domain.env_to
+```
+
+A `Domain` object is linked to an `Alignment` object,
+which stores the maximum expected accuracy alignment
+of the HMM model versus the target sequence for this
+particular domain in the target sequence
+
+```py
+# returns Alignment object
+domain.alignment
+```
+
+### An `Alignment` object
+
+You can print the visual alignment
+```
+print(domain.alignment)
+#                          HHHHHHHHHHHHSSGGSCHHHHHHHHHHHHHHHHHH CS
+#               Globin  83 freallevlaeklgeeftpetkaawdklldviaaal 118
+#                          ++++l+ vla+++g+eftp+++aa +k+++ +a+al
+#  sp|Q9TT33|HBB_COLGU   1 LGNVLVCVLAHHFGKEFTPQVQAAYQKVVAGVANAL 36
+#                          5789**************************999876 PP
+```
+
+Access particular attributes of the alignment
+```py
+domain.alignment.hmm_from
+domain.alignment.hmm_to
+domain.alignment.target_from
+domain.alignment.target_to
+
+domain.alignment.target_sequence
+```
+
+
+
 
 ```py
 # d = open("toy_vs_pfam.pyhmmer.domtblout", "wb")
