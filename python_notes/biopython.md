@@ -38,6 +38,9 @@ record.id
 len(record) # or
 len(record.seq)
 
+# get the sequence string
+str( record.seq )
+
 # get the Seq object of a SeqRecord object
 record.seq
 

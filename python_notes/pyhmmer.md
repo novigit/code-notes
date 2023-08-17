@@ -5,14 +5,52 @@ A python package that can run hmmer algorithms. It's supposed to be much faster
 ```py
 import pyhmmer
 from pyhmmer.easel import SequenceFile
+from pyhmmer.easel import MSAFile
 from pyhmmer.plan7 import HMMFile
 ```
+Easel is a C library developed by the Eddy/Rivas Lab to facilitate the development of biological software in C. It is used by HMMER and Infernal.
+This is a high-level interface to the Easel C library.
 
-### Load a FASTA sequence file
+### Load an unaligned FASTA sequence file
 ```py
 # this prefetches all sequences into memory
 with SequenceFile("unaligned_toy.fasta", digital=True) as seq_file:
     seqs = seq_file.read_block()
+```
+
+### Load an aligned FASTA sequence file
+```py
+# 
+with MSAFile("aligned_toy.aln", format="afa", digital=True) as msa_file:
+    
+    # .read() returns an MSA objects,
+    # in this case a DigitalMSA object because digital=True
+    msa = msa_file.read()
+
+    # to make it parseable by hmmscan(),
+    # convert it to a list of DigitalSequence objects??
+    seqs = list( msa_file.read().sequences )
+    # msa.sequences returns a _DigitalMSASequences object
+    # which is an iterable of DigitalSequence objects
+
+    # a DigitalSequence object is stripped of its gap characters ('-')
+
+    # iterate over DigitalSequence objects
+    for s in msa.sequences:
+
+        # get the name of the sequence
+        print(s.name.decode())
+        
+        # len(s) returns the length of the sequence
+        print(len(s))
+
+        # s.sequence returns the 'raw' sequence digits
+        # a byte vector, a VectorU8 object
+        print(s.sequence)
+
+        # s.textize() returns a TextSequence object
+        # of which .sequence returns the raw sequence
+        print(s.textize().sequence)
 ```
 
 ### Load the HMM profiles file and do a search
@@ -34,6 +72,10 @@ If you want to do `hmmsearch`, hmms are the query, seqs are the targets
 `domE=0.01` sets the reporting E-value threshold for dom-conditional-E-value.
 
 ```py
+# this prefetches all sequences into memory
+with SequenceFile("unaligned_toy.fasta", digital=True) as seq_file:
+    seqs = seq_file.read_block()
+
 with HMMFile("Pfam-A.hmm.h3m") as hmm_file:
     for tophits in pyhmmer.hmmer.hmmsearch(hmm_file, seqs, cpus=0, E=0.01, domE=0.01):
         # 'tophit' is a 'TopHits' object
@@ -44,8 +86,13 @@ hence the search and downstream stuff needs to be done while the file is opened
 with the `with` statement.
 
 If you want to do `hmmscan`, seqs are the query, hmms are the targets
+`seqs` below is an iterable of `DigitalSequence`
 
 ```py
+# this prefetches all sequences into memory
+with SequenceFile("unaligned_toy.fasta", digital=True) as seq_file:
+    seqs = seq_file.read_block()
+
 with HMMFile("Pfam-A.hmm.h3m") as hmm_file:
     for tophits in pyhmmer.hmmer.hmmscan(seqs, hmm_file, cpus=0, E=0.01, domE=0.01):
 ```

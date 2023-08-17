@@ -1,7 +1,7 @@
 CONDA and MAMBA
 
 
-#### uninstalling miniconda
+#### Uninstalling miniconda
 ```
 rm -rf ~/miniconda3/
 rm -rf ~/.conda
@@ -74,6 +74,23 @@ conda list -n <my_env> -r
 ```
 conda update <package>
 mamba update <package>
+```
+
+#### Renaming a conda environment
+As far as I know there is not a direct rename option, but it is possible
+to copy an old environment to a new environment with a new name, and then
+delete the old environment
+```
+conda activate old_environment_name
+conda env export > environment.yml
+```
+Now edit the name of the environment in the YML file to the new name. Then
+
+```
+conda env create -f environment.yml --name new_environment_name
+
+conda deactivate
+conda env remove --name old_environment_name
 ```
 
 #### Installing perl modules with conda

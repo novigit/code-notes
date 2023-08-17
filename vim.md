@@ -18,6 +18,9 @@
 # convert multiple spaces in a row to tabs on all lines
 :%s/\s\+/\t/g
 
+# convert spaces into newline characters
+:%s/\s/\r/g
+
 # search replace between current line and last line of file 
 :.,$s/foo/bar/g
 

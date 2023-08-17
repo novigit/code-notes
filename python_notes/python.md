@@ -41,7 +41,7 @@ contig_strand = '+' if contig_frame > 0 else '-'
 list.append('string')               Appends elements to an existing list
 list.extend(other_list)             Concatenate list with other_list
 len(list)				            Returns the length of the list
-range(start,stop,step)              Returns a range object
+range(start,stop,step)              Returns a range object, only works with integers?
 int(float)                          Returns integer from float
 ```
 

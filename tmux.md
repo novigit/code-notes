@@ -40,6 +40,8 @@ by default Ctrl-b               I like to set it to ctrl-space
 
 <prefix> [                      Enter copy-mode
 <prefix> <PgUp>                 Enter copy-mode, which allows you to scroll up and down
+
+<prefix> t                      Show time. Press any key to get out
 ```
 
 #### While in command prompt

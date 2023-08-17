@@ -177,6 +177,16 @@ print(t.children[0].children[0].get_tree_root())
 # .get_common_ancestor('a', 'b', 'c', ...) returns
 # the node that is the last common ancestor of the requested leafs
 common_ancestor = t.get_common_ancestor('a', 'b', 'c')
+# using * unpacking
+common_ancestor = t.get_common_ancestor(*outgroup_representatives)
+
+# .get_leaves()
+# get all leaf nodes
+leaf_nodes = t.get_leaves()
+
+# .get_leaf_names()
+# get an iterable of strings that correspond to the leaf names
+leaf_names = t.get_leaf_names()
 ```
 
 ### Unrooted trees
@@ -200,6 +210,19 @@ Even though this is an unrooted tree, in this context it still as a root node, a
 ETE3 also calls this root of the unrooted tree the 'master' node.
 The root node represents the whole tree structure.
 The root node of an unrooted tree has more than two children nodes.
+
+### Rooting trees
+```py
+# Outgroup rooting
+# first get the common ancestor Node of your desired outgroup
+common_ancestor = t.get_common_ancestor('taxon1','taxon2')
+# then set that Node as your outgroup
+t.set_outgroup(common_ancestor)
+
+# Midpoint rooting
+midpoint_node = t.get_midpoint_outgroup()
+t.set_outgroup(midpoint_node)
+```
 
 ### Search for particular nodes
 
@@ -449,6 +472,16 @@ for node in t.get_monophyletic(values=["green","yellow"], target_attr="color"):
 #       \-yellow, june
 ```
 
+### Tree Style
+```python
+from ete3 import TreeStyle
+
+tree_style = TreeStyle()
+tree_style.show_scale = False
+tree.ladderize()                # top-to-bottom ordering
+tree.ladderize(direction=1)     # bottom-to-top ordering
+
+```
 
 
 ### BarChartFace()
@@ -467,4 +500,36 @@ face = BarChartFace(
         label_fsize = 9                             # font size of x-axis labels
         scale_fsize = 6                             # font size of y-axis labels
 )
+```
+
+### SeqMotifFace()
+
+The `seq` parameter is not strictly necessary, but if you wish to render for example
+protein domains, it is necessary to load into the sequence so that the sequence ends
+not associated with protein domains (i.e. the C-terminus) is properly rendered as a simple line
+
+```python
+face = SeqMotifFace(
+        seq = "ETTVIDTQELLHFKHEG-RGPVFTSC",         # aa sequence of the entry.
+        seq_format = "line",                        # shape of the sequence regions outside or under motifs
+        gap_format = "blank",                       # "blank" omits the line, "line" simply shows a line visibly different from sequence region
+        motifs = [ [motif1],[motif2],... ]          # list of lists containing motifs
+)
+```
+
+Formatting of motif: `[start, end, shape, width, height, fgcolor, bgcolor, text_label]`
+Example motif: `1, 310, "()", 100, 10, "black", "rgradient:blue", f"arial|7|black|ComplexI_30_kDa" `
+
+```
+shape           # shape of the motif
+
+"[]"    rectangle
+"()"    rounded rectangle
+"<>"    diamond
+"o"     oval
+"[)"    does not work unfortunately
+
+fgcolor         # color of the motif outline
+bgcolor         # color of the motif body
+height          # determines the drawing height of the motif
 ```
