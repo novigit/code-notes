@@ -34,6 +34,11 @@
 
 # delete all empty lines
 :g/^$/d
+
+# delete all occurrances of a pattern you found
+/\v\[\&.*
+# then
+:%s//
 ```
 
 #### While in insert mode

@@ -19,6 +19,10 @@ git diff <other_branch> <path/to/file>
 
 # undo an accidental git add
 git reset <FILE>
+
+# delete the latest commit
+git reset --hard HEAD~1
+
 ```
 
 #### Branch Management

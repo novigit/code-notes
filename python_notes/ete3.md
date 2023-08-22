@@ -159,20 +159,23 @@ print(t.support)
 ```py
 # .is_leaf() returns True when TreeNode object t is a leaf,
 # False when it is an internal node
-print(t.is_leaf())
+t.is_leaf()
+
+# .is_root() returns True when TreeNode object t is the root node
+t.is_root()
 
 # .get_tree_root returns the root of tree that the TreeNode object is in
 # in this case it returns the same node,
 # since the considered TreeNode object is already the root
 # the print statement then prints the tree again in ascii characters
-print(t.get_tree_root())
+t.get_tree_root()
 
 # .get_tree_root() applied on the TreeNode
 # t.children[0] returns the root of entire tree t
-print(t.children[0].get_tree_root())
+t.children[0].get_tree_root()
 
 # also this returns the root of the entire tree t
-print(t.children[0].children[0].get_tree_root())
+t.children[0].children[0].get_tree_root()
 
 # .get_common_ancestor('a', 'b', 'c', ...) returns
 # the node that is the last common ancestor of the requested leafs
@@ -477,9 +480,10 @@ for node in t.get_monophyletic(values=["green","yellow"], target_attr="color"):
 from ete3 import TreeStyle
 
 tree_style = TreeStyle()
-tree_style.show_scale = False
-tree.ladderize()                # top-to-bottom ordering
-tree.ladderize(direction=1)     # bottom-to-top ordering
+tree_style.show_scale = False       # suppress branch length scale
+tree_style.show_leaf_name = False   # suppress taxon names
+tree.ladderize()                    # top-to-bottom ordering
+tree.ladderize(direction=1)         # bottom-to-top ordering
 
 ```
 
