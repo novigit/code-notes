@@ -1,91 +1,150 @@
-#!/bin/bash
+## SAMTOOLS
 
-# SAMTOOLS #
+### samtools view
 
-# samtools view
+#### Viewing BAM files
 
-## will print contents as SAM to the screen
+```sh
+# will print contents as SAM to the screen
 samtools view <bam>
 
-## output lines in SAM file which have these contigs
+# output lines in SAM format which have these contigs
 samtools view <bam> <contig1> <contig2>
-samtools view -bh test.bam $(cat mycontigs.list | tr '\n' ' ')
 
-## filter out mapped reads with MAPQ quality lower than some integer
+# view the header of a BAM/SAM file
+samtools view -H <bam>
+
+# save a new bam file with header that only contains mappings on a particular contig
+# -b to specify BAM output
+# -h to include SAM header in output
+samtools view -bh <bam> <contig1> > test.contig1.bam
+samtools view -bh <bam> $(cat mycontigs.list | tr '\n' ' ') > test.contigs.bam
+
+# filter out mapped reads with MAPQ quality lower than some integer
 samtools view -bq 1 <bam> > <q1.bam> # -b to specify output BAM
 
-## view all reads associated with a certain region or particular position
+# view all reads associated with a certain region or particular position
 samtools view <bam> ergo_tig00000012:1000-2000
 samtools view <bam> ergo_tig00000012:1001-1001
 
-## view all read mappings that overlap with regions specified in a BED file
-## NOTE: the keyword here is 'overlap'. Read mappings that have a start or end position outside
-## the specified coordinates in the BED file, but still partially overlap with those coordinates
-## are still selected!
+# view all read mappings that overlap with regions specified in a BED file
+# NOTE: the keyword here is 'overlap'. Read mappings that have a start or end position outside
+# the specified coordinates in the BED file, but still partially overlap with those coordinates
+# are still selected!
 samtools view -L <bed> <bam>
-## it may be slow! to speed up, specify the <bai> file with -M or --use-index <bai>
+# it may be slow! to speed up, specify the <bai> file with -M or --use-index <bai>
+```
 
-## keep mapped reads with certain FLAGs set
+#### Selecting certain read mappings
 
-### -f FLAG or --require-flags FLAG
-### only output alignments with all bits set in FLAG present in the FLAG field
-### so lets say you specify FLAG 163, which has FLAGs 1, 2, 32, 128 set
-### it will select all alignments with FLAG 163, but also FLAG 419, which has FLAGs 1, 2, 32, 128 AND 256 set
-samtools view -f 2 <bam>
+Keep mapped reads with certain FLAGs set
 
-### --rf FLAG or --incl-flags FLAG or --include-flags FLAG
-### only output alignments with any bit set in FLAG present in the FLAG field
-### so lets say you specify FLAG 163, which has FLAGs 1, 2, 32, 128 set
-### it will select all alignments which has any of these FLAGs set.
-### for example 81, which has FLAGs 1, 16, 64 set. It is selected because it has FLAG 1.
-### new option as of 1.15 ?
+`-f FLAG` or `--require-flags FLAG`
+
+Only output alignments with all bits set in FLAG present in the FLAG field
+So lets say you specify FLAG 163, which has FLAGs 1, 2, 32, 128 set
+it will select all alignments with FLAG 163, but also FLAG 419, which has FLAGs 1, 2, 32, 128 AND 256 set
+
+```sh
+samtools view -f 163 <bam>
+```
+
+`--rf FLAG` or `--incl-flags FLAG` or `--include-flags FLAG`
+
+Only output alignments with any bit set in FLAG present in the FLAG field
+So lets say you specify FLAG 163, which has FLAGs 1, 2, 32, 128 set
+It will select all alignments which has any of these FLAGs set.
+for example 81, which has FLAGs 1, 16, 64 set. It is selected because it has FLAG 1.
+
+new option as of 1.15 ?
+
+```sh
 samtools view --rf 163 <bam>
+```
 
-### -F FLAG or --excl-flags FLAG or --exclude-flags FLAG
-### do  not  output alignments with any bits set in FLAG present in the FLAG field
-### so lets say you specify FLAG 73, which has FLAGs 1, 8 and 64 set
-### it will de-select all alignments which has any of these FLAGs set
-### in my case the only alignments left had FLAGs 0, 16, 256, 272
-### none of these flags have 1, 8 or 64 set
-samtools view -F 4 <bam>
+`-F FLAG` or `--excl-flags FLAG` or `--exclude-flags FLAG`
 
-### combining -f and -F is possible
-### you can set multiple FLAGs in a comma separated list, but only with using flag-names
-### this is only possible as of at least from 1.14 onwards
+Do  not  output alignments with any bits set in FLAG present in the FLAG field
+so lets say you specify FLAG 73, which has FLAGs 1, 8 and 64 set
+it will de-select all alignments which has any of these FLAGs set
+in my case the only alignments left had FLAGs 0, 16, 256, 272
+none of these flags have 1, 8 or 64 set
+
+```sh
+samtools view -F 73 <bam>
+```
+
+Combining `-f` and `-F` is possible
+You can set multiple FLAGs in a comma separated list, but only with using flag-names
+This is only possible as of at least from 1.14 onwards
+
+```sh
 samtools view -f 2 -F UNMAP,SECONDARY,QCFAIL,DUP
-### you can alternatively also simply add up the bits (4+256+512+1024 = 1796) and specify that
+```
+
+You can alternatively also simply add up the bits (4+256+512+1024 = 1796) and specify that
+```sh
 samtools view -f 2 -F 1796
+```
 
+#### Subsampling read mappings
 
-## Counting reads in a .bam file
-samtools view -c -F 4 <bam>		Counting mapped reads    (because you exclude all unmapped reads with -F)
-samtools view -c -f 4 <bam>		Counting unmapped reads  (because you specify all unmapped reads with -f)
+This could be useful if you have memory issues with viewing your BAM files in for example IGV or Tablet
+```sh
+# Select 25% random mappings
+samtools view -s 0.25 -bh <bam> > <subsampled.bam>
 
-## Print mapped reads that have a certain tag:value
-### for example, from HISAT2 mappings, select those that stem from transcripts of the + strand
+# Ensure that you always select the same 25% random mappings by using a seed
+samtools view -s 0.25 -bh <bam> -S 42 > <subsampled.bam>
+```
+
+#### Counting reads 
+
+```sh
+# Counting mapped reads    (because you exclude all unmapped reads with -F)
+samtools view -c -F 4 <bam>
+
+# Counting unmapped reads  (because you specify all unmapped reads with -f)
+samtools view -c -f 4 <bam>
+```
+
+#### Extracting reads that map to a certain strand
+
+```sh
+# From HISAT2 mappings, select those that stem from transcripts of the + strand
 samtools view --tag XS:+ <bam>
 
-# samtools mpileup
-## piles up all reads and summarizes basecalls per read per site
-## show contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
+# From HISAT2 mappings, select those that stem from transcripts of the - strand
+samtools view --tag XS:- <bam>
+```
 
-### pileup all sites in all contigs
+### samtools mpileup
+
+Piles up all reads and summarizes basecalls per read per site
+Shows contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
+
+#### Basic Usage
+
+```sh
+# pileup all sites in all contigs
 samtools mpileup <bam> 
 
-### specify a particular region (contig:startpos-endpos) or base (startpos=endpos)
+# specify a particular region 
+# (contig:startpos-endpos) or base (startpos=endpos)
 samtools mpileup <bam> -r ergo_tig00000012:108383-108383
 
-### provide the fasta reference
+# provide the fasta reference
 samtools mpileup -f <fasta> <bam> -r ergo_tig00000012:108383-108383
+```
 
-#### if <fasta> is not provided, the reference basecall is always N, and ACGTN refer to forward strand, acgtn to reverse strand
-#### if <fasta> is provided, the reference basecall is reported, and ACGTN / actgn refer to MISMATCHES, and '.' forward and ',' reverse refer to matches
+If <fasta> is not provided, the reference basecall is always N, and ACGTN refer to forward strand, acgtn to reverse strand
+If <fasta> is provided, the reference basecall is reported, and ACGTN / actgn refer to MISMATCHES, and '.' forward and ',' reverse refer to matches
 
-### samtools mpileup by default ignores
-### - orphans (reads that come from a pair, but are not in a proper pair in the read mapping). To count orphans use -A
-### - unmapped, secondary, qcfail and pcr dupl reads (the default setting of --excl-flags)
-### - low quality base calls (the default setting of -Q is 13)
-### - read segments that are an overlap with its read pair. This makes sense because you don't want to double count the same molecule twice when estimating coverage. To double count, use --ignore-overlaps
+Samtools mpileup by default ignores
+- orphans (reads that come from a pair, but are not in a proper pair in the read mapping). To count orphans use `-A`
+- unmapped, secondary, qcfail and pcr dupl reads (the default setting of `--excl-flags`)
+- low quality base calls (the default setting of -Q is 13)
+- read segments that are an overlap with its read pair. This makes sense because you don't want to double count the same molecule twice when estimating coverage. To double count, use `--ignore-overlaps`
 
 ## samtools mpileup does not automatically show coordinates from regions that have no reads mapped to them
 ## to also show these coordinates in the output, invoke -a
@@ -98,6 +157,9 @@ samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
 
 # samtools index
 samtools index <sorted.bam> <sorted.bam.bai>
+## or simply
+samtools index <sorted.bam>
+## will automatically generated <sorted.bam.bai>
 samtools -@ <threads> <sorted.bam> <sorted.bam.bai>
 
 
@@ -127,9 +189,9 @@ samtools stats <bam>
 ## view a particular region of the alignment within your terminal - pretty cool!
 ## this is nice if you want to check something quick visually but dont want to transfer the file so you can inspect it with Tablet
 ## there is also a consensus line
-samtools tview --reference <fasta> <bam> ergo_tig00000012:2165-2175
+samtools tview <bam> <fasta> -p ergo_tig00000012:2165-2175
 ## go directly to position x
-samtools tview --reference <fasta> <bam> ergo_tig00000012:2569
+samtools tview <bam> <fasta> -p ergo_tig00000012:2569
 ## while in tview, press '?' for interactive controls
 ### underlined reads - orphans or secondary read mappings
 ### blue reads   - mapping quality 0-9

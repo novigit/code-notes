@@ -21,6 +21,9 @@
 # convert spaces into newline characters
 :%s/\s/\r/g
 
+# replace pattern, but confirm each time
+:%s/pattern/replacement/c
+
 # search replace between current line and last line of file 
 :.,$s/foo/bar/g
 
@@ -31,6 +34,13 @@
 ## select block via ctrl-v
 ## press esc
 :%s/\%Vfoo/bar/g
+
+# search replace with visual line mode
+## highlight lines you want to use
+## press ':'
+## ':'<,'>' should now appear
+## complete the command by appending ':'<,'>' with
+:s/foo/bar/g
 
 # delete all empty lines
 :g/^$/d
@@ -51,6 +61,18 @@ ctrl-X + ctrl-I
 
 # insert a ^I character
 ctrl-V + ctrl-I
+
+# enter insert-normal mode
+# enter a single normal mode command and then immediately return to insert mode
+ctrl-O
+```
+
+#### Tab management
+```
+# make all tabs consistent
+## either 4 spaces if :set expandtab in .vimrc
+## or ^I if :set expandtab not set in .vimrc
+:retab
 ```
 
 #### Folding
@@ -74,6 +96,12 @@ According to vim docs, the letter 'z' sort of looks like a fold
 :set wrap
 :set nowrap
 ```
+
+#### Copying to the system-clipboard
+
+Select what you want to copy with VISUAL mode.
+Then, while still in VISUAL mode, type `"+y`.
+`"+` for specifying system-clipboard, and `y` for yank.
 
 #### Macros
 ```

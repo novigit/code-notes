@@ -59,6 +59,12 @@ JSON responses
 # create a python Dictionary from a JSON response
 dict = r.json()
 # basically the same as using the 'json' module with json.loads()
+# loads = short for load string
+
+# pretty print the python Dictionary
+import json
+print( json.dumps(dict, indent=2) )
+# dumps = short for dump string
 
 # access certain keys of that JSON form
 names = dict['names']

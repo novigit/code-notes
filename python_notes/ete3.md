@@ -119,6 +119,11 @@ print(t)
 #            |   /-aaaaaaaaai
 #             \-|
 #                \-aaaaaaaaaj
+
+# print branch support values
+t = Tree('test.treefile')
+print(t.get_ascii(attributes=['support','name']))
+
 ```
 
 Inspect its attributes
@@ -484,7 +489,17 @@ tree_style.show_scale = False       # suppress branch length scale
 tree_style.show_leaf_name = False   # suppress taxon names
 tree.ladderize()                    # top-to-bottom ordering
 tree.ladderize(direction=1)         # bottom-to-top ordering
+```
 
+### Node Style
+```python
+# define node style
+ns = NodeStyle()
+ns["size"] = 0                      # suppress any node symbol
+ns["hz_line_width"] = 1             # horizontal line with of line leading to node
+ns["vt_line_width"] = 1             # vertical   line with of line leading to node
+for node in tree.traverse():
+    node.set_style(node_style=ns)   # set node style for current node
 ```
 
 

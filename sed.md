@@ -56,8 +56,6 @@ sed '100,200{s/foo/bar/}'
 # only replace 'foo' with 'bar' between lines 100 and the first line that matches 'foo'
 sed '100,/foo/{s/foo/bar/}'    
 
-# delete lines that match PATTERN
-sed 's/PATTERN/d' file
 
 # capture a part of a search string, and use it in the replacement string
 ## the backreference \1 contains the content of the first regexp (.+) 
@@ -90,6 +88,15 @@ sed -i 's/[ \t]*$//'
 
 # replace all multiple spaces with tabs
 sed -E 's/[[:space:]]{3,}/\t/g'
+```
+
+## Deleting lines
+```sh
+# delete the first line (1d) and the last line ($d)
+sed -e '1d;$d'
+
+# delete lines that match PATTERN
+sed 's/PATTERN/d' file
 ```
 
 ## Printing 
@@ -127,6 +134,9 @@ sed -n '/PATTERN/p'
 
 # print from line that matches PATTERN until 6 lines after that
 sed -n '/PATTERN/,6p'
+
+# print from line that matches PATTERN until line that matches PATTERN2
+sed -n '/PATTERN/,/PATTERN2/p'
 
 # general syntax || sed -n 'ADDRESS,/PATTERN/'
 

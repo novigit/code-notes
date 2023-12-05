@@ -2,7 +2,7 @@ GFFUTILS
 
 A python library for dealing with GFF and GTF files
 
-```
+```py
 # load the library
 import gffutils
 ```
@@ -13,7 +13,7 @@ import gffutils
 Each feature is indexed with a so-called 'primary key'
 By default the ID attribute, for example `ID=identifier`, is used to create the primary key
 
-```
+```py
 # load a GFF file and create an sqlite3 database file
 db = gffutils.create_db('file.gff3', 'file.db')
 
@@ -33,7 +33,7 @@ This does not work for sqlite3, as each entry must have a unique primary key.
 `gffutils` can merge features with the same attribute ID to solve this issue.
 There are several different merging strategies
 
-```
+```py
 merge_strategy='merge'           : all attributes of features with the same primary key will be merged (combined?)
 merge_strategy='create_unique'   : the first feature keeps its original primary key (key), the next will have a unique auto-incremented key (key_1, key_2, etc)
 merge_strategy='error'           : a gffutils.DuplicateID exception will be raised. Try to fix the duplicate primary key issue yourself
@@ -47,7 +47,7 @@ For example, multiple CDS features associated with one mRNA transcript that refe
 
 Rather than using the ID attribute, you can decide yourself how you would like to construct the primary key, by providing a `id_spec` function:
 
-```
+```py
 # specifying your own way of assigning unique id's to features using id_spec
 def id_func(x):
     new_id = ''
@@ -63,7 +63,7 @@ db = gffutils.create_db('ST7C_to_ST7H_transfer.gff_polished', id_spec=id_func, d
 
 
 ### Accessing the db
-```
+```py
 gene = db['ctg012.gene0001']
 exon = db['ctg012.mRNA0001.exon01']
 ## where gene/exon is a 'Feature object'
@@ -77,7 +77,7 @@ print(gene)
 
 
 ### Feature object attributes
-```
+```py
 # get the 'dialect' of the db
 ## dialects are like different flavors of GFF formats
 db.dialect
@@ -138,7 +138,7 @@ exon.attributes['Parent']
 
 
 ### Create a new Feature object
-```
+```py
 # using gffutils.feature.Feature()
 new_feature_obj = gffutils.feature.Feature(
     seqid='some_new_id',
@@ -159,7 +159,7 @@ new_feature_obj = gffutils.feature.feature_from_line(line=default_feature)
 ```
 
 ### Update the attributes of a feature object
-```
+```py
 intron.attributes['ID'][0] = 'newID' # this update does NOT automatically update intron.id
 intron.attributes['ID'][0] = i.attributes['ID'][0].replace('exon','intron')
 intron.id = 'newID'
@@ -177,21 +177,21 @@ intron.attributes.pop('Name')
 ### Get the DNA sequence of a particular gene feature
 
 The function gets the DNA sequence from a provided FASTA file
-```
+```py
 gene.sequence('ergo_cyp_genome.fasta')
 ```
 
 ### Useful FeatureDB methods
 
 db.seqids()
-```
+```py
 # get all contig names
 for s in db.seqids():
     print(s)
 ```
 
 db.children()
-```
+```py
 # get all children (mRNAs, CDSs, exons, introns) from a gene
 for c in db.children('ctg012.gene0001'):
     print(c)
@@ -221,7 +221,7 @@ cdss  = db.children(gene, featuretype='CDS')
 ```
 
 db.parents()
-```
+```py
 # access the parents of a particular feature
 exon = db['ctg012.mRNA0001.exon01']
 for f in db.parents(exon):
@@ -230,7 +230,7 @@ for f in db.parents(exon):
 ```
 
 db.all_features()
-```
+```py
 # iterate over all features of a db
 for f in db.all_features():
     print(f)
@@ -248,14 +248,14 @@ for f in db.all_features(order_by=('seqid','start','featuretype'), reverse=True)
 ```
 
 db.region()
-```
+```py
 # iterate over all features of a db - on one particular contig
 for f in db.region(seqid='contig01', start=1):
     print(f)
 ```
 
 db.features_of_type()
-```
+```py
 # iterate over all features of a particular type
 for f in db.features_of_type(featuretype='exon'):
     print(f)
@@ -270,7 +270,7 @@ for t in db.featuretypes():
 ```
 
 db.iter_by_parent_childs()
-```
+```py
 # get an overview of all parents and their children
 
 ## .iter_by_parent_childs() returns a generator object
@@ -287,7 +287,7 @@ for p in db.iter_by_parent_childs():
 ```
 
 ### Construct intergenic space features between genes
-```
+```py
 genes = db.features_of_type( 'gene', order_by=('seqid','start') )
 # in this context the order_by flag is important, because
 # the .interfeatures method does -for reasons- not sort the gene features by coordinates,
@@ -320,7 +320,7 @@ db.update(igss, transform=transform, merge_strategy='error')
 
 
 ### Construct intron features between exons within a gene
-```
+```py
 gene0001 = db['ctg012.gene0001']
 gene0001_exons = db.children(gene0001, featuretype='exon')
 for f in db.interfeatures(gene0001_exons, new_featuretype='intron', merge_attributes=True):
@@ -337,7 +337,7 @@ for f in db.create_introns():
 ```
 
 ### Update the current database with new Feature objects
-```
+```py
 db.update(data)
 # where 'data' is an iterable of feature objects
 
@@ -370,7 +370,7 @@ db.update(introns)
 ```
 
 ### Print updated gff record in logical order
-```
+```py
 for g in db.features_of_type('gene', order_by=('seqid', 'start')):
     print()
     print(g)
@@ -384,7 +384,7 @@ for g in db.features_of_type('gene', order_by=('seqid', 'start')):
 
 Command Line Interface
 
-```
+```sh
 # the gffutils package also comes with a cli tool!
 gffutils-cli
 

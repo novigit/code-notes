@@ -4,8 +4,12 @@
 ```
 # reports per fasta entry the name, the sequence, the length and %GC
 seqkit fx2tab -lg <fasta>		
+
 # reports per fasta entry the name, length and %GC, but not the sequence
 seqkit fx2tab -nlg <fasta>		
+
+# get number of contigs, total length, min/max length, N50
+seqkit stats -a <fasta>
 ```
 
 #### Visual aid

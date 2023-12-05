@@ -47,6 +47,7 @@ by default Ctrl-b               I like to set it to ctrl-space
 #### While in command prompt
 ```
 :kill-session                   Kill current session
+:show-environment               Shows environment variables
 ```
 
 #### While in copy mode
@@ -64,3 +65,50 @@ q                               Exit copy mode
 swap-window -s 3 -t 2           Change order of windows by swapping window 3 with window 2
 ```
 
+#### Duplicate $PATH entries
+Starting tmux sessions can do some funny things with the `$PATH`. That is because tmux starts a new login-shell,
+which loads the `.profile` again, which causes `$PATH` modifications to load a second time.
+So if you start an iTerm2 session, the $PATH modifications are done. Then, when you start tmux session,
+all those modifications are added to the $PATH once more.
+
+The solution is to add an if statement in your `.profile` before making your `$PATH` modifications:
+```sh
+if [[ -z $TMUX ]]; then
+    # add repositories and tools to PATH
+    export PATH="/Users/joran/repositories/broCode:$PATH"
+    export PATH="/Users/joran/repositories/gospel_of_andrew:$PATH"
+    ...
+fi
+```
+
+`[[ -z $TMUX ]]` evaluates True when $TMUX is NOT set. Hence when starting a TMUX session,
+it will evaluate false, and the `$PATH` will not be appended
+
+#### Change in order of $PATH entries
+On MacOS, every time you start a new iTerm2 or tmux session, a login-shell is invoked.
+Whenever a login-shell is invoked, `/etc/profile` is loaded. On MacOS, this also
+starts a tool called "path_helper". See the default `/etc/profile` below:
+
+```sh
+# System-wide .profile for sh(1)
+
+if [ -x /usr/libexec/path_helper ]; then
+	eval `/usr/libexec/path_helper -s`
+fi
+
+if [ "${BASH-no}" != "no" ]; then
+	[ -r /etc/bashrc ] && . /etc/bashrc
+fi
+```
+
+The edit below will ensure that path_helper only runs when
+it is NOT a tmux session
+
+```sh
+# Change to make it work with tmux
+if [ -x /usr/libexec/path_helper ]; then
+    if [ -z "$TMUX" ]; then
+        eval `/usr/libexec/path_helper -s`
+    fi
+fi
+```

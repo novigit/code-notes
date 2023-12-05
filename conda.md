@@ -28,6 +28,26 @@ conda env remove -n <my_env>
 conda remove <package>
 ```
 
+#### Environments defined in .yaml files
+```
+name: signalp6
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+dependencies:
+    - pip
+    - pip:
+        - signalp6==6.0+g
+variables:
+    FUNANNOTATE_DB: '/scratch4/db/funannotate/'
+```
+
+Hence, you can also add pip dependencies in your yaml file
+Ensure that you have both `-pip` and `-pip:` in there!
+
+The YAML file is thus also an excellent way to setup environment variables!
+
 #### Search for packages
 ```
 # search for packages
@@ -68,6 +88,10 @@ conda list
 ## package upgrades / downgrades, additions, removals etc
 conda list -n <my_env> -r 
 # -r is short for --revisions
+
+# export name, channels and all packages of a current active environment
+conda env export > environment.yaml
+mamba env export > environment.yaml
 ```
 
 #### Update packages

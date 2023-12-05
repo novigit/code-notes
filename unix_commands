@@ -155,7 +155,7 @@ break       Breaks and leaves the loop
 continue    Skip to the next iteration of the loop (definitely analogous to next of Perl)
 
 LOOP OVER RANGE OF NUMBERS
-for i in {89..97..2}; do
+for i in $(seq 89 2 97); do
     echo $i
 done
 
@@ -639,6 +639,7 @@ ln -s <source>              Automatically clips the path and only leaves the fil
 LS
 ls -S       Sorts all files in directory by size
 ls -t       Sorts all files in directory by last time modified
+ls -d */	List only directories
 
 MAN
 man -l <file>   Will open the file with man
@@ -822,6 +823,9 @@ ssh -i .ssh/root_rsa root@molev209
 and enter the passphrase for key '.ssh/root_rsa' (not the same as the root password)
 ssh -X    enable X11-forwarding
 ssh -Y    enable trusted X11-forwarding
+Once you are in the server, you can check if X11 server is active with
+echo $DISPLAY
+which should return something like 'localhost:15.0'
 
 SVN
 cd desired/directory

@@ -3,6 +3,8 @@
 cProfile is python's built-in profiling tool. 
 Profiling essentially means the act of measuring execution time for different sections of code
 
+Note also that invoking cProfile seems to double (?) the running time of your code?
+
 #### Simple example
 ```python
 def function_one():

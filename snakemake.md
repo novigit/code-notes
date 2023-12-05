@@ -77,6 +77,13 @@ rule repeatmasker:
 # // means floor division. E.g., 9 // 4 = 2
 ```
 
+#### TAB management
+Snakemake seems to be fairly sensitive to inconsistent TAB indentations
+For example if some are indented with literal TAB characters (^I), and 
+others with 4 spaces, things may fail
+
+In Vim, use `:retab` to make it all consistent
+
 
 #### local rules
 ```py
@@ -186,23 +193,61 @@ snakemake --cluster 'qsub -V -cwd -o logs/{rule}.{jobid}.o -e logs/{rule}.{jobid
 
 ## Experienced issues with snakemake on a HPC cluster
 ```sh
-# If you have rules that point to specific conda environments, e.g. conda: 'funannotate',
-# then make sure that there are no conflicting versions of softwares between 
-# the environment where you are submitting the snakemake pipeline from (e.g. 'proj-ergo', or 'snakemake')
-# and the conda environment. 
+If you have rules that point to specific conda environments, e.g. conda: 'funannotate',
+then make sure that there are no conflicting versions of softwares between 
+the environment where you are submitting the snakemake pipeline from (e.g. 'proj-ergo', or 'snakemake')
+and the conda environment. 
 
-# I had one issue where funannotate was calling the wrong version of diamond,
-# even though the 'funannotate' environment had the correct version installed,
-# because the environment that I was calling snakemake from, had an earlier version
-# of diamond, and in the jobs environment that version's path preceeded the correction version's path
-# in $PATH
+I had one issue where funannotate was calling the wrong version of diamond,
+even though the 'funannotate' environment had the correct version installed,
+because the environment that I was calling snakemake from, had an earlier version
+of diamond, and in the jobs environment that version's path preceeded the correction version's path
+in $PATH
 ```
 
 ## Using conda environments on a HPC cluster
 ```sh
-# If you have a rule with `conda: env.yaml`, snakemake will download 
-# and install the requested packages under `.snakemake/conda/<env>` 
-# where `<env>` is an MD5 hash. The rule will be run with the software installed there.
+If you have a rule with `conda: env.yaml`, snakemake will download 
+and install the requested packages under `.snakemake/conda/<env>` 
+where `<env>` is an MD5 hash. The rule will be run with the software installed there.
+
+If you put an existing conda environment in the conda: directive, and you get an 
+EnvironmentNameNotFound error, try putting the absolute path of the desired
+conda environment in the directive
+
+conda: '/scratch2/software/anaconda/envs/signalp6-fast'
+
+UPDATE: the above strategy seems to work in the sense that it now executes the code in the shell: directive.
+However, upon ending the execution of the rule, a new error occurrs
+subprocess.CalledProcessError: Command 'conda env export --name /scratch2/software/anaconda/envs/signalp6-fast returned non-zero exit status
+Because the conda env export --name does not accept, among others '/' characters...
+
+I found that the reason the workflow does not recognize the existing conda environment has to do with the fact that,
+while in the snakemake environment on Perun, the conda executable that is used is
+/scratch2/software/anaconda/envs/snakemake/bin/conda
+
+while the environment that I wish to activate is managed by a different conda installation:
+/scratch2/software/anaconda/condabin/conda
+
+To ensure that the workflow finds the existing conda environment, add this on top of the snakemake file
+shell("conda config --add envs_dirs /scratch2/software/anaconda/envs")
+This created (it didn't exist before) a .condarc file on my home, containing
+
+envs_dirs:
+  - /scratch2/software/anaconda/envs
+
+So I guess just making that file on your own would have been sufficient,
+the shell() line in the snakefile is perhaps not necessary
+
+
+Upgrading a package in a snakemake conda environment:
+1. First activate the conda environment
+source activate .snakemake/conda/880c7b2708595faf94f84838fc3802df
+
+2. Then run
+/scratch2/software/anaconda/envs/snakemake/bin/mamba install -c bioconda diamond=2.1.6
+
+NOTE: I have specifically called the mamba install from the snakemake environment!
 ```
 
 ## Other notes

@@ -115,3 +115,6 @@ fwd_introns = bamfile.find_introns( (read for read in bamfile.fetch(contig='Seq_
 ### (105680, 105715) 1
 ### (106948, 107542) 2
 
+# coordinates are 0-indexed
+# first coordinate is the first base in the intron (remember its 1-indexed in igv)
+# second coordinate is the first base of the next exon (i.e. last base of the intron + 1)

@@ -1,5 +1,7 @@
 Python
 
+# VARIABLES
+## variable assignment
 ```py
 ## assign multiple values at once
 a, b = 4, 8
@@ -29,6 +31,22 @@ red, blue, green = colors
 red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
 red, *_ = colors            # red = 'red', _ = ['blue', 'green', 'yellow']
 ```
+
+# SLICING
+Lists and strings are 0-indexed
+list[ start : stop : step ]
+start = position at which your slice starts ( 0-indexed )
+stop  = slice up to but not including the stop position ( 0-indexed )
+step  = step size (by default 1)
+
+Each position in the list has a 'positive' and 'negative' index
+['red', 'blue', 'green', 'yellow']
+[  0  ,   1   ,    2   ,    3    ]
+[ -4  ,  -3   ,   -2   ,   -1    ]
+
+Hence, list[-1] returns the last item of the list
+
+list[::-1] reverse the order of the list
 
 # IF ELSE
 ```py
