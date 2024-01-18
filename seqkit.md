@@ -23,10 +23,15 @@ seqkit seq --color <fasta> | less -R
 # extract a single entry
 seqkit grep -p <regexp> <fasta>
 
+# extract using a list of headers
+seqkit grep -f headers.list <fasta>
+# NOTE: this does not print the out FASTA in the same order as in headers.list
+
+# extract using a list of headers - in order
+for header in $(cat headers.list); do seqkit grep -rp $header <fasta>; done
+
 # select sequences that are at least x long
 seqkit seq -m 30 <fasta>
-
-
 ```
 
 #### Select parts of sequences

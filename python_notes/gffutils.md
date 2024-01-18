@@ -61,6 +61,7 @@ def id_func(x):
 db = gffutils.create_db('ST7C_to_ST7H_transfer.gff_polished', id_spec=id_func, dbfn=':memory:')
 ```
 
+Relationships between parents and children in the database are constructed using the primary id's
 
 ### Accessing the db
 ```py
@@ -376,6 +377,17 @@ for g in db.features_of_type('gene', order_by=('seqid', 'start')):
     print(g)
     for f in db.children(g, order_by='start'):
         print(f)
+```
+
+or to force gene -> mRNA -> exon, intron, CDS
+```py
+for g in db.features_of_type('gene', order_by=('seqid', 'start')):
+    print()
+    print(g)
+    for m in db.children(g, featuretype='mRNA'):
+        print(m)
+        for f in db.children(m, order_by='start'):
+            print(f)
 ```
 
 

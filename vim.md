@@ -67,6 +67,14 @@ ctrl-V + ctrl-I
 ctrl-O
 ```
 
+#### Cursor movement
+```
+While in normal mode
+
+# move to previous cursor position
+ctrl-O
+```
+
 #### Tab management
 ```
 # make all tabs consistent
@@ -117,6 +125,10 @@ to see the register, type `:register`
 :w !python
 :w !bash
 ```
+
+#### From less to vim shortcut
+Simply enter 'v' while in less to open the file for editing in vim
+
 
 #### Language Server Protocol (LSP)
 

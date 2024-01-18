@@ -14,11 +14,13 @@ a, b, c, d = 4, "geeks", 3.14, True
 name = Joran
 age = 34
 print(f'Hello, I am {name} and I am {age} years old')
+
 ### number formatting
 n = 10.1234
 print(f'{n:.2f}')           # 2f -> two digits after the dot, e.g. 10.12
 n = 12
 print(f'{n:05d}')           # 05d -> 5 digits, so 00012
+
 ### do math
 print(f"{2 * 37}")
 ```
@@ -30,6 +32,17 @@ colors = ['red', 'blue', 'green', 'yellow']
 red, blue, green = colors
 red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
 red, *_ = colors            # red = 'red', _ = ['blue', 'green', 'yellow']
+```
+
+# ZIPPING INTO A DICT
+```py
+# Two lists of equal length
+indices = ['a', 'b', 'c', 'd']
+values = [1, 2, 3, 4]
+
+# Using zip to combine the lists and dict to create a dictionary
+result_dict = dict(zip(indices, values))
+{'a': 1, 'b': 2, 'c': 3, 'd': 4}
 ```
 
 # SLICING

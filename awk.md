@@ -68,6 +68,9 @@ awk '{ if ($3 ~ /gene/)  print "\n"$0 ; else  print $0  }'
 ## awk '{ print (condition) ? if_true : if_false }'
 awk '{ print ($3 ~ /gene/) ? "\n"$0 : $0 }'
 
+# go to next record if some condition is met
+awk '{ if ($3 ~ /gene/) {next} }'
+
 # print every 10th line
 awk 'NR % 10 == 0'
 

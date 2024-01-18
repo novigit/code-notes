@@ -24,7 +24,7 @@ conda env create -n <my_env> -f <env.yml>
 # remove an environment
 conda env remove -n <my_env>
 
-# remova a package from an environment
+# remove/uninstall a package from the current environment
 conda remove <package>
 ```
 
