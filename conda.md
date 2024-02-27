@@ -89,6 +89,13 @@ conda list
 conda list -n <my_env> -r 
 # -r is short for --revisions
 
+# revert back to an older revision of the environment
+conda install --revision=REVNUM
+# where REVNUM is the revision number, for example 2
+# this will create a new revision number in the revision history,
+# so if you are in rev 3, but you would like to return to 2, doing so
+# will yield rev 4, which should be identical to rev 2
+
 # export name, channels and all packages of a current active environment
 conda env export > environment.yaml
 mamba env export > environment.yaml
@@ -124,3 +131,28 @@ conda install perl-lwp-simple
 ## so essentially replace ':' in module name with '-',
 ## lower case everything, and add 'perl-'
 ```
+
+If the above method doesn't work, because it may not be available on
+a conda channel, or you don't know the right name, try the following
+```
+## install cpanminus
+conda install perl-app-cpanminus
+
+## install the desired perl module
+cpanm Color::ANSI::Util
+
+## or
+env PERL5LIB="" PERL_LOCAL_LIB_ROOT="" PERL_MM_OPT="" PERL_MB_OPT="" $CONDA_PREFIX/bin/cpanm Color::ANSI::Util
+```
+
+If you are working on a Mac, you may need to install xcode first.
+On the command line, run
+`xcode-select --install`
+
+Check the conda environment's library to check if the modules are installed in the right place
+```sh
+l /Users/joran/miniconda3/envs/colorFastq/lib/perl5/site_perl/
+
+# should inlude Color/ANSI/Util.pm
+```
+

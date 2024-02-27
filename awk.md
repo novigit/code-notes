@@ -74,6 +74,9 @@ awk '{ if ($3 ~ /gene/) {next} }'
 # print every 10th line
 awk 'NR % 10 == 0'
 
+# only print DNA lines of FASTQ files
+awk 'NR % 4 == 2'
+
 # print with a desired number of digits or decimals
 awk '{ printf "%.3f\n", 5 / 2 }'
 # 2.500

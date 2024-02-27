@@ -122,6 +122,10 @@ gene.score
 # get the direction of the feature
 gene.strand
 
+# get the phase of the feature if its a CDS feature
+gene.frame
+## in GFF3, phase = '.' if its not a CDS feature
+
 # get the value of the Name= attribute
 ## returns a list of strings, even if its just 1 value
 gene['Name']

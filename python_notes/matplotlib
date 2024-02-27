@@ -17,6 +17,8 @@ plt.title('Histogram')
 
 # save file
 plt.savefig('histogram.png')
+# save file with a desired resolution
+plt.savefig('histogram.png', dpi=250)
 
 # show when executing python script
 plt.show()

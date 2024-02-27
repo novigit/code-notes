@@ -84,4 +84,35 @@ row_colors = species.map(lut)
 6    g
 ```
 
+### Heatmaps
 
+Seaborn can generate nice heatmaps with either the `sns.heatmap()` or `sns.clustermap()` functions.
+The `sns.clustermap()` function appears to have the added functionality of being able to cluster rows with dendrograms
+and label different types of rows with specific colors
+
+```py
+sns.clustermap(
+        df,
+        cmap="RdYlBu_r",
+        xticklabels=1,
+        yticklabels=1,
+        row_cluster=False,
+        col_cluster=False,
+        row_colors=row_colors,
+        col_colors=row_colors,
+        figsize=(20,20),
+        cbar_pos=None,
+)
+
+# where
+
+# df                            = pandas dataframe
+# cmap                          = color palette (here red-yellow-blue in reverse gradient)
+# xticklabels and yticklabels   = specify how often to print labels (here every row and every column)
+# row_cluster and col_cluster   = whether you want to cluster rows/columns or not
+# row_colors and col_colors     = a pandas Series specifying colors for categorized rows/columns
+# figsize                       = tuple of (width, height). Not sure what units are used here
+# cbar_pos                      = 'None' to suppress colorbar
+```
+
+where `df` is a Pandas DataFrame, `cmap` a color palette (here Red Yellow Blue in reverse gradient)

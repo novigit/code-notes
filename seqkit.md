@@ -28,6 +28,8 @@ seqkit grep -f headers.list <fasta>
 # NOTE: this does not print the out FASTA in the same order as in headers.list
 
 # extract using a list of headers - in order
+# -rp if patterns are regexp
+# -p  if patterns are not regexp
 for header in $(cat headers.list); do seqkit grep -rp $header <fasta>; done
 
 # select sequences that are at least x long
@@ -41,6 +43,9 @@ seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
 ```
 
 #### Search for motifs
+
+By default searches the given strand and its reverse complement
+
 ```
 seqkit locate -p AFLEADRTGQA <fasta>
 seqkit locate -rp AFLEADRTGQA.*VAPARS <fasta>  # use regexp

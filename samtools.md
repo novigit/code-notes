@@ -1,8 +1,8 @@
-## SAMTOOLS
+SAMTOOLS
 
-### samtools view
+## samtools view
 
-#### Viewing BAM files
+### Viewing BAM files
 
 ```sh
 # will print contents as SAM to the screen
@@ -27,6 +27,9 @@ samtools view -bq 1 <bam> > <q1.bam> # -b to specify output BAM
 samtools view <bam> ergo_tig00000012:1000-2000
 samtools view <bam> ergo_tig00000012:1001-1001
 
+# search for a specific read mapping by its id
+samtools view <bam> | grep 'read_id'
+
 # view all read mappings that overlap with regions specified in a BED file
 # NOTE: the keyword here is 'overlap'. Read mappings that have a start or end position outside
 # the specified coordinates in the BED file, but still partially overlap with those coordinates
@@ -35,7 +38,7 @@ samtools view -L <bed> <bam>
 # it may be slow! to speed up, specify the <bai> file with -M or --use-index <bai>
 ```
 
-#### Selecting certain read mappings
+### Selecting certain read mappings
 
 Keep mapped reads with certain FLAGs set
 
@@ -87,7 +90,7 @@ You can alternatively also simply add up the bits (4+256+512+1024 = 1796) and sp
 samtools view -f 2 -F 1796
 ```
 
-#### Subsampling read mappings
+### Subsampling read mappings
 
 This could be useful if you have memory issues with viewing your BAM files in for example IGV or Tablet
 ```sh
@@ -98,17 +101,23 @@ samtools view -s 0.25 -bh <bam> > <subsampled.bam>
 samtools view -s 0.25 -bh <bam> -S 42 > <subsampled.bam>
 ```
 
-#### Counting reads 
+### Counting reads 
 
 ```sh
-# Counting mapped reads    (because you exclude all unmapped reads with -F)
+# Counting mapped alignments    (because you exclude all unmapped reads with -F)
 samtools view -c -F 4 <bam>
+
+# Count mapped reads
+samtools view -F 4 <bam> | cut -f1 | sort -u | wc -l
+# or
+samtools view -c -F 2308 <bam>
+# 2308 = 4 (unmapped), 256 (not primary), 2048 (supplementary)
 
 # Counting unmapped reads  (because you specify all unmapped reads with -f)
 samtools view -c -f 4 <bam>
 ```
 
-#### Extracting reads that map to a certain strand
+### Extracting reads that map to a certain strand
 
 ```sh
 # From HISAT2 mappings, select those that stem from transcripts of the + strand
@@ -118,7 +127,27 @@ samtools view --tag XS:+ <bam>
 samtools view --tag XS:- <bam>
 ```
 
-### samtools mpileup
+## samtools sort
+
+```sh
+# sorts reads based on their left most coordinate
+samtools sort <bam> -o <sorted.bam>
+```
+
+## samtools index
+
+```sh
+samtools index <sorted.bam> <sorted.bam.bai>
+
+## or simply
+samtools index <sorted.bam>
+## will automatically generated <sorted.bam.bai>
+
+# multithreaded
+samtools -@ <threads> <sorted.bam> <sorted.bam.bai>
+```
+
+## samtools mpileup
 
 Piles up all reads and summarizes basecalls per read per site
 Shows contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
@@ -155,17 +184,8 @@ samtools mpilup -a <bam>
 samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
 
 
-# samtools index
-samtools index <sorted.bam> <sorted.bam.bai>
-## or simply
-samtools index <sorted.bam>
-## will automatically generated <sorted.bam.bai>
-samtools -@ <threads> <sorted.bam> <sorted.bam.bai>
 
 
-# samtools sort
-## sorts reads based on their left most coordinate
-samtools sort <bam> -o <sorted.bam>
 
 
 # samtools idxstats
@@ -268,7 +288,7 @@ distinguished by the supplementary 2048 or 0x800 bitwise FLAG.
 
 A segment = A contiguous sequence or subsequence
 
-MAPQ - Mapping Quality
+MAPs - Mapping Quality
 
 MAPQ: log(probability mapping is wrong) * -10
 so lets say probability mapping is wrong is 0.01,
