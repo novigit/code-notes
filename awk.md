@@ -25,6 +25,9 @@ awk -F ":"
 # set Output Field Separator
 ## in print statement use commas!
 awk 'OFS="\t" {print $3,$1,$2}'
+
+## or
+awk -v OFS="\t" '$11=="SNP" {print}'
 ```
 
 #### Printing fields and lines
@@ -68,6 +71,9 @@ awk '{ if ($3 ~ /gene/)  print "\n"$0 ; else  print $0  }'
 ## awk '{ print (condition) ? if_true : if_false }'
 awk '{ print ($3 ~ /gene/) ? "\n"$0 : $0 }'
 
+# setting a variable dependent on some condition
+awk '{ if ($4=="plus") {strand="+"} else {strand="-"} {print strand} }'
+
 # go to next record if some condition is met
 awk '{ if ($3 ~ /gene/) {next} }'
 
@@ -87,9 +93,15 @@ awk '{ printf "%.3f\n", 5 / 2 }'
 awk '{printf "%s\t%.2f\n", $0, ($17-$16+1)/$6}' 
 ```
 
+#### Iterating over fields
+```sh
+# iterate over all fields, NF = number of fields
+awk '{ for (i=1; i<=NF; i++) { ... do stuff with $i ... } }'
+```
+
 #### Search & Replace
 
-```
+```sh
 # sub() does a search replace in defined field
 ## replace the first space with tab in the 15th field, then print the whole edited line
 awk '{sub(" ","\t",$15); print $0}'
@@ -123,6 +135,19 @@ awk '{ sum += $1 } END { if (NR > 0) print sum / NR }'
 awk '{ sum += ($1-73)^2 } END { if (NR > 0) print sqrt(sum / NR) }'
 ## or if you don't know the mean a priori
 awk '{ sum += $1 ; sumsq += $1*$1 } END { print sqrt(sumsq/NR - (sum/NR)**2) }'
+```
+
+#### Subsetting a locus from a genbank file
+
+`f` is used here as a condition.
+When encountering the line with LOCUS and tig00000012, it will set `f` to True
+While `f` is `True` it will print all parsed lines, even those not matching LOCUS
+Then, when it encounters the next line containing LOCUS, `f` will not match `tig00000012`,
+and hence be set to `False`. Awk will then cease printing lines
+
+```sh
+# only print locus tig00000012 from the genbank file
+awk '/^LOCUS/ {f=($2=="tig00000012")} f' Ergobibamus_cyprinoides_CL.gbk > tig012.gbk
 ```
 
 #### Various snippets

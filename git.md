@@ -25,6 +25,12 @@ git reset --hard HEAD~1
 
 ```
 
+#### File Management
+```sh
+# undo all changes that were made to a file since the last commit
+git restore <file>
+```
+
 #### Branch Management
 ```sh
 # show the local branches and which branch you are on
@@ -38,6 +44,13 @@ git checkout -b <branchname>
 
 # delete <branch>
 git branch -d <branch>
+
+# check what branches are available on the remote
+git ls-remote --heads origin
+
+# fetch branch from remote
+git fetch origin <branch_name>:<branch_name>
+
 ```
 
 #### Setting up your GitHub SSH-key

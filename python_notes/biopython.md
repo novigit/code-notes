@@ -46,6 +46,24 @@ record.seq
 
 # get a subsequence from a sequence in a Seq object
 record.seq[0:300]
+
+# get sequence of a sequence substring in string format in one line
+fasta = SeqIO.index('example.fasta', 'fasta')
+region_seq = str( fasta[contig_id].seq[start-1:end] )
+```
+
+#### Iterate over a SeqIO.index() object
+```python
+## load multi FASTA into a dictionary in memory
+fasta_db = SeqIO.index('example.fasta', 'fasta')
+for record_id in fasta_db:
+    print(record_id)
+
+for record_id, record in fasta_db.items():
+    print(len(record))
+
+for record in fasta_db.values():
+    print(len(record))
 ```
 
 #### SearchIO

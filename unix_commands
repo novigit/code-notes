@@ -439,6 +439,8 @@ Example:
 convert                 filename.pdf filename.png
 convert -resize 200x100 filename.pdf filename.png   Resizes the image while converting
 convert -resize 200     filename.pdf filename.png   Resizes the image to 200px wide, but keeps aspect ratio for length
+convert -append *.png output.png    Merge images into a single file, stack images vertically
+convert +append *.png output.png    Merge images into a single file, stack images horizontally
 
 CSVKIT
 Convert xslx to csv
@@ -640,6 +642,7 @@ LS
 ls -S       Sorts all files in directory by size
 ls -t       Sorts all files in directory by last time modified
 ls -d */	List only directories
+ls -L <symbolic link>   List the file that the symbolic link is pointing to
 
 MAN
 man -l <file>   Will open the file with man

@@ -165,8 +165,14 @@ new_feature_obj = gffutils.feature.feature_from_line(line=default_feature)
 
 ### Update the attributes of a feature object
 ```py
-intron.attributes['ID'][0] = 'newID' # this update does NOT automatically update intron.id
+# assign 'newID' to overwrite the oldID
+## this update does NOT automatically update intron.id
+intron.attributes['ID'][0] = 'newID' 
+
+# assign a new ID by changing the old ID
 intron.attributes['ID'][0] = i.attributes['ID'][0].replace('exon','intron')
+
+# update the .id, which gffutils uses to access elements of the db
 intron.id = 'newID'
 
 # add an entirely new attribute to a Feature object
@@ -197,6 +203,8 @@ for s in db.seqids():
 
 db.children()
 ```py
+# db.children() traverse down the entire hierarchy from top gene feature to bottom CDS features
+
 # get all children (mRNAs, CDSs, exons, introns) from a gene
 for c in db.children('ctg012.gene0001'):
     print(c)
@@ -263,6 +271,10 @@ db.features_of_type()
 ```py
 # iterate over all features of a particular type
 for f in db.features_of_type(featuretype='exon'):
+    print(f)
+
+# iterate over all features of multiple types
+for f in db.features_of_type(featuretype=('exon','gene','rRNA')):
     print(f)
 
 # iterate over all features of a particular type - in a certain region
@@ -388,7 +400,7 @@ or to force gene -> mRNA -> exon, intron, CDS
 for g in db.features_of_type('gene', order_by=('seqid', 'start')):
     print()
     print(g)
-    for m in db.children(g, featuretype='mRNA'):
+    for m in db.children(g, featuretype=('mRNA','tRNA')):
         print(m)
         for f in db.children(m, order_by='start'):
             print(f)

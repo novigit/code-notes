@@ -1,5 +1,13 @@
 # VIM
 
+#### Lesser known vim motions
+
+`_` to move to first non-whitespace character in the line, stay in normal mode
+
+#### Fast exit of Insert mode
+
+Use Ctrl-C instead of Escape
+
 #### File handling
 ```sh
 # force refresh a buffers content
@@ -8,6 +16,14 @@
 
 # open the previously opened file
 :e#
+
+# go to next buffer
+:bnext
+:bn
+
+# go to previous buffer
+:bprevious
+:bp
 ```
 
 #### Search and Replace
@@ -49,6 +65,13 @@
 /\v\[\&.*
 # then
 :%s//
+
+# highlight all instances of a word in the file
+# press '*' while cursor is on the word
+# press 'n' and 'N' to move forwards and backwards
+
+# replace all instances of a word you found with *
+:%s//bar/g
 ```
 
 #### While in insert mode
@@ -64,7 +87,12 @@ ctrl-V + ctrl-I
 
 # enter insert-normal mode
 # enter a single normal mode command and then immediately return to insert mode
-ctrl-O
+ctrl-o
+
+# move the cursor while in insert mode, using the insert-normal mode
+ctrl-o + <motion>
+ctrl-o + a      # move the cursor one to the right
+ctrl-o + b      # move the cursor one word back
 ```
 
 #### Cursor movement
@@ -72,7 +100,15 @@ ctrl-O
 While in normal mode
 
 # move to previous cursor position
-ctrl-O
+ctrl-o
+
+# move to next cursor position
+ctrl-i
+```
+
+#### Whitespace
+```
+:set list
 ```
 
 #### Tab management
@@ -81,7 +117,37 @@ ctrl-O
 ## either 4 spaces if :set expandtab in .vimrc
 ## or ^I if :set expandtab not set in .vimrc
 :retab
+
+# highlight a paragraph of code, then press '='
 ```
+
+#### Key mapping
+
+```
+:map and :noremap:
+    :map creates a mapping that applies in all modes, including Normal, Visual, Select, and Operator-pending mode.
+    :noremap creates a mapping that is not recursive. It means that if the mapping invokes another mapping, the second mapping won't be affected by noremap. This is usually preferred unless you have a specific reason to use map.
+
+:imap and :inoremap:
+    :imap creates a mapping specific to Insert mode.
+    :inoremap creates a non-recursive mapping specific to Insert mode.
+
+:vmap and :vnoremap:
+    :vmap creates a mapping specific to Visual and Select mode.
+    :vnoremap creates a non-recursive mapping specific to Visual and Select mode.
+
+:nmap and :nnoremap:
+    :nmap creates a mapping specific to Normal mode.
+    :nnoremap creates a non-recursive mapping specific to Normal mode.
+
+:omap and :onoremap:
+    :omap creates a mapping specific to Operator-pending mode.
+    :onoremap creates a non-recursive mapping specific to Operator-pending mode.
+
+# check if any insert mode key bindings start with <Esc>
+:imap <Esc>
+```
+
 
 #### Folding
 According to vim docs, the letter 'z' sort of looks like a fold
@@ -103,6 +169,12 @@ According to vim docs, the letter 'z' sort of looks like a fold
 ```
 :set wrap
 :set nowrap
+```
+
+#### Syntax highlighting
+Useful to turn off syntax highlighting when dealing with JSON files
+```
+:syntax off
 ```
 
 #### Copying to the system-clipboard

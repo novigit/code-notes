@@ -1,4 +1,4 @@
-# SEQKIT
+ SEQKIT
 
 #### Summary Statistics
 ```
@@ -40,6 +40,9 @@ seqkit seq -m 30 <fasta>
 ```
 # report sequence for 'ergo_tig00000012' but only for region 16000-17000
 seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
+
+# extract sequences of particular regions using a BED file
+seqkit subseq --bed <bed> <fasta>
 ```
 
 #### Search for motifs
@@ -51,9 +54,15 @@ seqkit locate -p AFLEADRTGQA <fasta>
 seqkit locate -rp AFLEADRTGQA.*VAPARS <fasta>  # use regexp
 ```
 
-#### Make FASTA single line
+#### Formatting FASTA files
 ```
-seqkit seq --seq <fasta>
+# make FASTA single line
+seqkit seq -w 0 <fasta>
+
+# make FASTA multi line
+## good if you've edited a multiline fasta file and
+## the linewidths are not equal anymore for some reason
+seqkit seq -w 60 <fasta>
 ```
 
 #### Translate DNA sequences 

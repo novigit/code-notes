@@ -132,6 +132,8 @@ samtools view --tag XS:- <bam>
 ```sh
 # sorts reads based on their left most coordinate
 samtools sort <bam> -o <sorted.bam>
+
+# NOTE that the order of contigs in the <sorted.bam> remains the same as it was in the <bam> file
 ```
 
 ## samtools index
@@ -309,8 +311,8 @@ N   Only applies with mRNA-to-genome alignments. Essentially many deletions in a
 S   Soft clipping. Terminal ends of the read (5' or 3') that are not part of the alignment but are still reported in the SEQ field
 H   Hard clipping. Terminal ends of the read (5' or 3') that are not part of the alignment and are also not reported in the SEQ field
 P   Padding. A deletion in the read relative to another read which also has an insertion (but of a different length) at the same place relative to the reference
-=
-X
+=   If Alignment Match (M), specifies whether its a sequence match
+X   If Alignment Match (M), specifies whether its a sequence mismatch
 
 Some of these letters can also be called "operations". For example, the N operation of the CIGAR string
 
