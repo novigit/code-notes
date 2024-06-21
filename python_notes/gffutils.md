@@ -183,6 +183,10 @@ intron.attributes = {}
 
 # remove a particular field from the attributes
 intron.attributes.pop('Name')
+
+# check if a particular field exists in the attributes
+if 'Name' in intron.attributes:
+    ... do stuff ...
 ```
 
 ### Get the DNA sequence of a particular gene feature
@@ -231,6 +235,12 @@ cdss  = db.children(gene, featuretype='CDS')
 [ exon.id for exon in db.children('ctg012.gene0001', featuretype='exon') ]
 ## returns the IDs of the exons
 ## ['ctg012.mRNA0001.exon01', 'ctg012.mRNA0001.exon02', 'ctg012.mRNA0001.exon03']
+
+# ensure that the features are iterated over in a expected order
+introns = db.children(gene, featuretype="intron", order_by="start")
+
+# limit features to those on a certain contig
+introns = db.children(gene, featuretype="intron", order_by="start", limit='contig')
 ```
 
 db.parents()
@@ -264,6 +274,10 @@ db.region()
 ```py
 # iterate over all features of a db - on one particular contig
 for f in db.region(seqid='contig01', start=1):
+    print(f)
+
+# iterate over all gene features of contig01
+for f in db.region(seqid='contig01', start=1, featuretype='gene'):
     print(f)
 ```
 

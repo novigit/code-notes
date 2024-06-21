@@ -66,6 +66,63 @@ for record in fasta_db.values():
     print(len(record))
 ```
 
+#### AlignIO
+
+##### Load a Alignment file
+```py
+from Bio import AlignIO
+alignment = AlignIO.read('example.aln', 'fasta')
+
+# alignment is a MultipleSeqAlignment object
+```
+
+##### MultipleSeqAlignment object
+```py
+# return the length of the alignment
+alignment.get_alignment_length()
+
+# each sequence in the alignment object is a SeqRecord object
+for record in alignment:
+    print(f'record: {record.id})
+
+# alignment record id
+record.id
+
+# alignment record seq
+record.seq
+
+# merging two alignment objects vertically
+# for example same gene, same alignment length, two different sets of taxa
+
+# create a fresh, empty object
+new_alignment = MultipleSeqAlignment([])
+
+# populate it with two alignments
+new_alignment.extend(alignment1)
+new_alignment.extend(alignment2)
+
+# merging two alignment objects horizontally
+# for example concatenating two different gene alignments that have the same taxa
+new_alignment = alignment1 + alignment2
+# NOTE: for this to work the identifiers must be exactly the same and in the same order in both alignment objects
+```
+
+##### Writing a new alignment file
+```py
+from Bio.Align import MultipleSeqAlignment
+
+# creating a new object with existing records
+new_alignment = MultipleSeqAlignment(
+    [ record1, record2, record3 ]
+)
+
+
+from Bio import AlignIO
+AlignIO.write(new_alignment, 'new_alignment.fasta', 'fasta')
+```
+
+
+
 #### SearchIO
 
 ##### Load a hmmsearch --domtblout file

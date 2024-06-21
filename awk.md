@@ -51,6 +51,12 @@ awk 'if ( ($3 >= 0.3) && ($5 >= 0.3) ) {print $0}'
 # short form
 awk '$3 >= 0.3 && $5 >= 0.3 {print $0}'
 
+# print line if 1st field matches a string exactly
+awk '$1 == "scaffold_1"'
+
+# print line if 1st field matches either of two strings exactly
+awk '$1 == "scaffold_1" || $1 == "scaffold_10"'
+
 # print line if 2nd field matches a regex
 awk 'if ($2 ~ /regex/) {print $0}'
 ## short form

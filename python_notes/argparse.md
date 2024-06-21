@@ -35,7 +35,7 @@ parser.add_argument(
 `--gff3` is the long option
 
 value of option is held in `args.gff3_file`
-`type=str` defines its a string
+`type=str` tells it to store the passed argument as a string
 `required=True` defines the script needs this argument to work
 `help="..."` is the text displayed when running script with -h
 

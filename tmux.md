@@ -48,6 +48,7 @@ by default Ctrl-b               I like to set it to ctrl-space
 ```
 :kill-session                   Kill current session
 :show-environment               Shows environment variables
+:kill-window                    Kill current window
 ```
 
 #### While in copy mode

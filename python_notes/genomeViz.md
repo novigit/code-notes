@@ -85,6 +85,7 @@ feature.id
 feature.type
 feature.location.start
 feature.location.end
+feature.location.strand
 
 ```
 
@@ -187,6 +188,15 @@ we can set `arrow_shaft_ratio=1.0`
 
 Colors follow the matplotlib naming scheme
 
+If you want to draw hatching patterns on your features, use `lc` and `hatch` patterns
+
+```py
+# use /, //, or even /// for increasingly denser hatching patterns
+# backslashes need to be escaped, with other backslashes, hence the large amount of backslashes
+hatch = "///" if f.location.strand == "+" else "\\\\\\"
+segment.add_features(f, plotstyle="arrow", hatch=hatch, arrow_shaft_ratio=0.7, fc=color )
+```
+
 ```py
 # draw genes as individual, but connected exons
 # here exons can be a list of SeqFeatures that are exons,
@@ -204,9 +214,14 @@ from pygenomeviz.align import Blast, AlignCoord, MMseqs, MUMmer
 
 # run BLAST alignment & filter by user-defined threshold
 gbk_list = ['tig00000497.gbk', 'tig00000498.gbk']
+fasta_list = ['tig00000498.fasta', 'tig00000018.fasta', 'tig00000497.fasta' ]
+
+# if more than two files, Blast() will run pairwise-comparisons in order, so
+# tig498 vs tig018, tig018 vs tig497, but NOT tig498 vs tig0497
 
 # blastn
 align_coords = Blast(gbk_list, seqtype="nucleotide").run()
+align_coords = Blast(fasta_list, seqtype="nucleotide").run()
 # tblastx, but really slow
 align_coords = Blast(gbk_list, seqtype="protein").run()
 
@@ -222,7 +237,13 @@ ac = align_coords[0]
 
 ac.query_name
 
+# how much of the query was aligned
+ac.query_length
+
 ac.ref_name
+
+# how much of the reference was aligned
+ac.ref_length
 
 ac.query_link
 # tuple of (ac.query_id, ac.query_name, ac.query_start, ac.query_end)

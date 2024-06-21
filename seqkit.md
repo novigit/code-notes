@@ -23,6 +23,9 @@ seqkit seq --color <fasta> | less -R
 # extract a single entry
 seqkit grep -p <regexp> <fasta>
 
+# delete a single entry
+seqkit grep -v -p <regexp> <fasta>
+
 # extract using a list of headers
 seqkit grep -f headers.list <fasta>
 # NOTE: this does not print the out FASTA in the same order as in headers.list
@@ -39,6 +42,7 @@ seqkit seq -m 30 <fasta>
 #### Select parts of sequences
 ```
 # report sequence for 'ergo_tig00000012' but only for region 16000-17000
+# coordinates are 1-indexed
 seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
 
 # extract sequences of particular regions using a BED file
@@ -63,7 +67,14 @@ seqkit seq -w 0 <fasta>
 ## good if you've edited a multiline fasta file and
 ## the linewidths are not equal anymore for some reason
 seqkit seq -w 60 <fasta>
+
+# only print sequence, not headers
+seqkit seq -s <fasta>
+
+# force upper case
+seqkit seq -u <fasta>
 ```
+
 
 #### Translate DNA sequences 
 ```

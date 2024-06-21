@@ -75,6 +75,9 @@ none of these flags have 1, 8 or 64 set
 
 ```sh
 samtools view -F 73 <bam>
+
+# omit secondary alignments
+samtools view -F 256 <bam>
 ```
 
 Combining `-f` and `-F` is possible

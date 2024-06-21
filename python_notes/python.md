@@ -1,5 +1,17 @@
 Python
 
+
+# INTEGERS
+
+```py
+# store a large number to an int, in a readable way
+n: int = 1_000_000_000
+
+# store a large number with scientific notation
+# (this returns a float)
+n: float = 1e9
+```
+
 # VARIABLES
 ## variable assignment
 ```py
@@ -11,18 +23,94 @@ a, b, c, d = 4, "geeks", 3.14, True
 # STRINGS
 ## f-strings
 ```py
-name = Joran
-age = 34
+# print string variables within a larger string
+name: str = 'Joran'
+age: int = 34
 print(f'Hello, I am {name} and I am {age} years old')
 
-### number formatting
-n = 10.1234
-print(f'{n:.2f}')           # 2f -> two digits after the dot, e.g. 10.12
-n = 12
-print(f'{n:05d}')           # 05d -> 5 digits, so 00012
+# number formatting
 
-### do math
+# use .2f to format as (f)loat to round to (2) digits after the dot (.)
+n: float = 1000000.5678
+print(f'{n:.2f}')
+# this will print '1000000.57'
+
+# use , as a 1000 separator
+print(f'{n:,.2f}')
+# prints 1,000,000.57
+
+# control the number of digits in a number
+n: int = 12
+print(f'{n:05d}')
+# this will print '00012'
+
+# do math
 print(f"{2 * 37}")
+print(f"{2 + 37}")
+
+# print a large int with 1000 separators (here '_')
+n: int = 1000000000
+print(f'{n:_}')
+# this will print '1_000_000_000'
+
+# do the same, but with comma's as 1000 separators
+print(f'{n:,}')
+
+# string formatting
+
+var: str = 'var'
+# print a string aligned to the right of 20 spaces
+print(f'{var:>20}')
+prints '                 var'
+
+# print a string aligned to the left, followed by some other text
+print(f'{var:<20}:helloworld')
+# or
+print(f'{var:20}:helloworld')
+prints 'var                 :helloworld'
+
+# print a string aligned in the center of 20 spaces
+print(f'{var:^20}')
+prints '        var        '
+
+# do the same but with a different "fill" element
+# by default a space
+print(f'{var:_>20}')
+prints '_________________var'
+
+# time formatting
+from datetime import datetime
+now: datetime = datetime.now()
+
+# print day.month.year
+print(f'{now:%d.%m.%y %H:%M:%S})
+prints '21.06.24 10:21:43'
+
+# if you want to use AM / PM style
+print(f'{now:%I%p}')
+prints '11AM'
+
+# checking variable content
+my_var = 'some_text'
+print(f'{my_var = }')
+# prints 'my_var = some_text'
+
+
+```
+
+## raw strings
+```py
+# the \n, or other such characters, are interpreted literally and lose their special meaning
+raw_string = r"Hello\nWorld"
+
+# exception: backslash in the last position of the raw string still escapes the closing quote!!
+raw_string = r"Hello World\"
+# thus yields a SyntaxError
+```
+
+## printing to STDERR
+```py
+print(f'Checking intron {contig}:{start}-{stop} for RNAseq support', file=sys.stderr)
 ```
 
 # LISTS
@@ -96,12 +184,18 @@ Each position in the list has a 'positive' and 'negative' index
 [ -4  ,  -3   ,   -2   ,   -1    ]
 
 Hence, list[-1] returns the last item of the list
+If you have a list of length 1, the index is only 0.
+The first element won't have index 0 and -1, just 0
 
 list[::-1] reverse the order of the list
 
 # IF ELSE
 ```py
 contig_strand = '+' if contig_frame > 0 else '-'
+
+# assign multiple variables on a single line
+end, step = (len(genes), 1) if direction == 'fwd' else (-1, -1)
+
 ```
 
 
@@ -112,6 +206,12 @@ list.extend(other_list)             Concatenate list with other_list
 len(list)				            Returns the length of the list
 range(start,stop,step)              Returns a range object, only works with integers?
 int(float)                          Returns integer from float
+```
+
+# ITERATORS
+```py
+# check if an iterator is empty
+if not any(some_iterator):
 ```
 
 # API DOCUMENTATION
