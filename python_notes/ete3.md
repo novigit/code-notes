@@ -124,6 +124,11 @@ print(t)
 t = Tree('test.treefile')
 print(t.get_ascii(attributes=['support','name']))
 
+# print tree with branch length values
+print(t.get_ascii(attributes=['dist', 'name']))
+
+# attributes can be by default 'name', 'support', 'dist'
+# or custom attributes added through t.add_features()
 ```
 
 Inspect its attributes
@@ -230,6 +235,29 @@ t.set_outgroup(common_ancestor)
 # Midpoint rooting
 midpoint_node = t.get_midpoint_outgroup()
 t.set_outgroup(midpoint_node)
+
+# A general outgroup rooting function
+def reroot_tree(tree, outgroup_taxa):
+    ''' roots tree object in-place '''
+    # if outgroup is a single taxon
+    if len(outgroup_taxa) == 1:
+        tree.set_outgroup(outgroup_taxa[0])
+    # if outgroup is multiple taxa
+    outgroup_lca = tree.get_common_ancestor(*outgroup_taxa)
+    ## if lca of outgroup is the root of the tree,
+    ## the outgroup taxa are not monophyletic
+    if outgroup_lca.is_root():
+        for leaf in tree.get_leaf_names():
+            ## we do an initial reroot here,
+            ## to ensure that the ougroup taxa are monophyletic
+            if leaf not in outgroup_taxa:
+                tree.set_outgroup(leaf)
+                break
+    ## now that they are monophyletic,
+    ## we can reroot a final time with the outgroup taxa
+    new_outgroup_lca = tree.get_common_ancestor(*outgroup_taxa)
+    tree.set_outgroup(new_outgroup_lca)
+
 ```
 
 ### Search for particular nodes
@@ -552,3 +580,17 @@ fgcolor         # color of the motif outline
 bgcolor         # color of the motif body
 height          # determines the drawing height of the motif
 ```
+
+### Command line ete3
+
+```sh
+# view a tree (requires X11)
+ete3 view -t hectors_tiny_tree.treefile
+
+# view a tree (requires X11) with annotated branch lengths
+ete3 view -t hectors_tiny_tree.treefile --sbl
+
+# view a tree (in text form)
+ete3 view -t hectors_tiny_tree.treefile --text
+```
+

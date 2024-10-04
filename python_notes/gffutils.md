@@ -5,6 +5,9 @@ A python library for dealing with GFF and GTF files
 ```py
 # load the library
 import gffutils
+
+# report the version of the library
+print(gffutils.__version__)
 ```
 
 ### Loading a GFF3 file

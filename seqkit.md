@@ -1,25 +1,28 @@
- SEQKIT
+SEQKIT
 
-#### Summary Statistics
-```
+# Summary Statistics
+
+```sh
 # reports per fasta entry the name, the sequence, the length and %GC
-seqkit fx2tab -lg <fasta>		
+seqkit fx2tab -lg <fasta>
 
 # reports per fasta entry the name, length and %GC, but not the sequence
-seqkit fx2tab -nlg <fasta>		
+seqkit fx2tab -nlg <fasta>
 
 # get number of contigs, total length, min/max length, N50
 seqkit stats -a <fasta>
 ```
 
-#### Visual aid
-```
+# Visual aid
+
+```sh
 # color FASTA files
-seqkit seq --color <fasta> | less -R    
+seqkit seq --color <fasta> | less -R
 ```
 
-#### Selecting sequences
-```
+# Selecting sequences
+
+```sh
 # extract a single entry
 seqkit grep -p <regexp> <fasta>
 
@@ -39,27 +42,32 @@ for header in $(cat headers.list); do seqkit grep -rp $header <fasta>; done
 seqkit seq -m 30 <fasta>
 ```
 
-#### Select parts of sequences
-```
+# Select parts of sequences
+
+```sh
 # report sequence for 'ergo_tig00000012' but only for region 16000-17000
 # coordinates are 1-indexed
 seqkit subseq --chr ergo_tig00000012 --region 16000:17000 consensus.fasta
+
+# select the last 20000 bases of a contig
+seqkit subseq --chr ergo_tig00000012 --region -20000:-1 consensus.fasta
 
 # extract sequences of particular regions using a BED file
 seqkit subseq --bed <bed> <fasta>
 ```
 
-#### Search for motifs
+# Search for motifs
 
 By default searches the given strand and its reverse complement
 
-```
+```sh
 seqkit locate -p AFLEADRTGQA <fasta>
 seqkit locate -rp AFLEADRTGQA.*VAPARS <fasta>  # use regexp
 ```
 
-#### Formatting FASTA files
-```
+# Formatting FASTA files
+
+```sh
 # make FASTA single line
 seqkit seq -w 0 <fasta>
 
@@ -75,9 +83,13 @@ seqkit seq -s <fasta>
 seqkit seq -u <fasta>
 ```
 
-
-#### Translate DNA sequences 
+# Index the FASTA file
+```sh
+seqkit faidx <fasta>
 ```
+
+# Translate DNA sequences 
+```sh
 # translate over all six frames
 seqkit translate -f 6 <fasta>
 cat <fasta> | seqkit translate -f 6

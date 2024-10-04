@@ -2,6 +2,89 @@ GIT
 
 GIT is a decentralized versioning system.
 
+
+# File Management
+
+```sh
+# undo all changes that were made to a file since the last commit
+git restore <file>
+```
+
+# Branch Management
+
+```sh
+
+# show branches in a simple list
+git branch -l  # local
+git branch -r  # remote
+git branch -a  # all
+git branch -v  # verbose
+git branch -vv # more verbose
+
+# create new branch with <branchname>
+git branch <branchname>
+
+# create a new branch and immediately checkout to it
+git checkout -b <branchname>
+git switch -c <branchname> # since git 2.23
+
+# delete <branch>
+git branch -d <branch>
+
+# check what branches are available on the remote
+git ls-remote --heads origin
+git remote show origin
+
+# update your local repo's "knowledge" of remote branches
+git fetch origin
+
+# create and switch to new local copy of remote branch
+git switch <branchname>
+
+# fetch branch from remote
+git fetch origin <branch_name>:<branch_name>
+```
+
+## Create a new branch and push it to the remote
+
+```sh
+# on your local repo do
+git switch -c <topic_branch>
+
+# create your changes, and then do
+git add <changed_file>
+
+# commit the changes
+git commit -m "commit message"
+
+# then push to origin
+git push origin <topic_branch>
+```
+
+## Update your featurebranch with the latest changes in the main/other branch
+
+```sh
+# update our main branch with the remote main
+git checkout main
+git pull origin main
+
+# update our feature branch with the remote feature branch
+git checkout feature_branch
+git pull origin feature_branch
+
+# fix any conflicts if there are any
+
+# merge into the feature branch,
+# make sure you are in the feature branch
+# with git branch -v
+git merge main
+
+# this will create a merge commit in the feature branch,
+# but not in the main branch
+```
+
+# Various Snippets
+
 ```sh
 # check the changes in a particular commit
 git show HEAD
@@ -22,38 +105,9 @@ git reset <FILE>
 
 # delete the latest commit
 git reset --hard HEAD~1
-
 ```
 
-#### File Management
-```sh
-# undo all changes that were made to a file since the last commit
-git restore <file>
-```
-
-#### Branch Management
-```sh
-# show the local branches and which branch you are on
-git branch -v
-
-# create new branch with <branchname>
-git branch <branchname>
-
-# create a new branch and immediately checkout to it
-git checkout -b <branchname>
-
-# delete <branch>
-git branch -d <branch>
-
-# check what branches are available on the remote
-git ls-remote --heads origin
-
-# fetch branch from remote
-git fetch origin <branch_name>:<branch_name>
-
-```
-
-#### Setting up your GitHub SSH-key
+# Setting up your GitHub SSH-key
 ```
 # generate a private/public key pair
 ssh-keygen -t ed25519 -C "joranmartyn@gmail.com"

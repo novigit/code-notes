@@ -1,6 +1,6 @@
 AWK
 
-#### General
+# General
 awk 'PREDICATE {CODEBLOCK}'
 awk parses a file line by line by default
 
@@ -14,7 +14,7 @@ NF is a predefined variable whose value is the number of fields in the current r
 awk automatically updates the value of NF each time it reads a record.
 
 
-#### Field Separator
+# Field Separator
 Default FS is whitespace (space and tab characters)
 
 ```sh
@@ -30,7 +30,7 @@ awk 'OFS="\t" {print $3,$1,$2}'
 awk -v OFS="\t" '$11=="SNP" {print}'
 ```
 
-#### Printing fields and lines
+# Printing fields and lines
 ```sh
 # print the 3rd field
 awk '{print $3}'
@@ -99,13 +99,14 @@ awk '{ printf "%.3f\n", 5 / 2 }'
 awk '{printf "%s\t%.2f\n", $0, ($17-$16+1)/$6}' 
 ```
 
-#### Iterating over fields
+# Iterating over fields
+
 ```sh
 # iterate over all fields, NF = number of fields
-awk '{ for (i=1; i<=NF; i++) { ... do stuff with $i ... } }'
+awk '{ for (i=1; i<=NF; i++) { print $i } }'
 ```
 
-#### Search & Replace
+# Search & Replace
 
 ```sh
 # sub() does a search replace in defined field
@@ -121,14 +122,14 @@ awk '{ $1 = gensub( /gene([0-9]+)/, "gene\\1", "g", $1 ; print $0}'
 
 ```
 
-#### Functions
+# Functions
 ```sh
 ## length() returns the length the string held by $10 
 awk '{print length($10)}'
 
 ```
 
-#### Math operations
+# Math operations
 ```sh
 ## if $9 is an integer, add a 1000 to its value when printing
 awk '{ print $9+1000 }'
@@ -143,7 +144,7 @@ awk '{ sum += ($1-73)^2 } END { if (NR > 0) print sqrt(sum / NR) }'
 awk '{ sum += $1 ; sumsq += $1*$1 } END { print sqrt(sumsq/NR - (sum/NR)**2) }'
 ```
 
-#### Subsetting a locus from a genbank file
+# Subsetting a locus from a genbank file
 
 `f` is used here as a condition.
 When encountering the line with LOCUS and tig00000012, it will set `f` to True
@@ -156,7 +157,7 @@ and hence be set to `False`. Awk will then cease printing lines
 awk '/^LOCUS/ {f=($2=="tig00000012")} f' Ergobibamus_cyprinoides_CL.gbk > tig012.gbk
 ```
 
-#### Various snippets
+# Various snippets
 ```sh
 # BEGIN block followed by if else statement
 ## note that if else statement is within {}

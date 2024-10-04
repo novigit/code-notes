@@ -27,7 +27,8 @@ Ctrl-a       Jump to the start of the line
 Ctrl-e       Jump to the end   of the line
 Ctrl-k       Remove everything between cursor and end   of line (K is for KILL)
 Ctrl-u       Remove everything between cursor and start of line
-Ctrl-w       Remove word where cursor is currently (W is for WORD)
+Ctrl-w       Remove word backwards
+Alt-d        Remove word forwards
 Ctrl-y       Paste the last thing you removed with Ctrl-K or Ctrl-W or Ctrl-U (Y is for YANK)
 Ctrl-l       Same as 'clear'
 Ctrl-d       Same as 'exit'
@@ -287,6 +288,10 @@ echo ${i%string}    returns "test"
 echo ${i%string}var returns "testvar"
 echo ${i#test}      returns "string"
 echo ${i/string/button} returns "testbutton"
+
+OUTFMT="6 std stitle"
+If you pass $OUTFMT to some command line tool, it will evaluate to 6 std stitle as separate arguments
+If you pass "$OUTFMT" instead, it will evalute '6 std stitle' as a single argument
 
 ## SOME OTHER STRING SYNTAX ##
 
@@ -582,6 +587,8 @@ rg -f <pattern_file>        Prints all lines that have the PATTERNS listed in FI
 Other options:
 -N          Suppress line numbers
 -c          Count hits
+-z          Search compressed files
+--color=always  Ensures that color highlighting persists when for example piping to less -SR
 
 HOSTNAME
 hostname    Reveals the name of the host
@@ -829,6 +836,9 @@ ssh -Y    enable trusted X11-forwarding
 Once you are in the server, you can check if X11 server is active with
 echo $DISPLAY
 which should return something like 'localhost:15.0'
+
+add ssh key so you only need to type passphrase once per session
+ssh-add ~/.ssh/perun_rsa
 
 SVN
 cd desired/directory

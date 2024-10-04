@@ -21,7 +21,7 @@ by default Ctrl-b               I like to set it to ctrl-space
 
 <prefix> c                      Create a new window
 <prefix> ,                      Rename current window
-<prefix> &                      Close current window
+<prefix> &                      Close current window, ctrl-d also works
 <prefix> n                      Go to next window
 <prefix> p                      Go to previous window
 <prefix> <number>               Go to window <number>

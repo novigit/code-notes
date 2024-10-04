@@ -60,3 +60,13 @@ bedtools genomecov -ibam <BAM> -bg > <bedGraph>
 # depth file = seqid, pos, depth
 bedtools genomecov -ibam <BAM> -d > <depth>
 ```
+
+#### Make a GC-content bedgraph file
+
+```sh
+cat Ergobibamus_cyprinoides_CL.scaffolds.fa \
+    | seqkit sliding -W 50 -s 25 \
+    | seqkit fx2tab -n -g \
+    | sed -e "s/_sliding\:/\t/" -e "s/\-/\t/" -e "s/\s+/\t/g" \
+    > ergo_gc_content.bedgraph
+```

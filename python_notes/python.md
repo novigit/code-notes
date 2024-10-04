@@ -3,7 +3,7 @@ Python
 
 # INTEGERS
 
-```py
+```python
 # store a large number to an int, in a readable way
 n: int = 1_000_000_000
 
@@ -13,16 +13,39 @@ n: float = 1e9
 ```
 
 # VARIABLES
-## variable assignment
-```py
+
+```python
 ## assign multiple values at once
 a, b = 4, 8
 a, b, c, d = 4, "geeks", 3.14, True
 ```
 
 # STRINGS
+
+## Wrapping long strings over multiple lines
+
+```python
+# 'sequence' will simply be a very long string
+sequence = (
+    "TAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCC"
+    "TGACCCTAACGGGTCAGGATAGGGTAATGAGAACCTGAACCCAAGCATGAACCCTGACCC"
+    "TAGCCCTAACCCTGGCCCTCAACTCGAACCCTAGCCCTAACCCTGGCCCTCAACTCGAAC"
+    "CCTAGCCCTAACCCTGGCCCTCAACTCGAACCCTAGCCCTAACCCTGGCCCTCAACTCGA"
+    "ACCCTAGCCCTAACCCTGACCCTAACGGGTCAGGATAGGGTAATGAGAACCTGAACCCAA"
+    "GCATGAACCCGAACCCTAGCCCTAACCCTGGCCCTCAACTCGAACCCTAGCCCTAACCCT"
+)
+
+# if you want to print a long string with newline characters
+warning_message = (
+    f"Warning: Gene {gene.id} on {gene.seqid} has only CDS features!\n"
+    "This in principle OK but doesn't represent biology very well"
+)
+
+```
+
 ## f-strings
-```py
+
+```python
 # print string variables within a larger string
 name: str = 'Joran'
 age: int = 34
@@ -95,11 +118,20 @@ my_var = 'some_text'
 print(f'{my_var = }')
 # prints 'my_var = some_text'
 
+# what if the string contains { or } characters?
+# in f-strings, { and } have a special meaning
+# to make them literal, add another {} :
+i=10
+my_regex = rf'(?:TGTTTGTT){{s<={i}}}'
+
+# what if the string contains % characters?
+# to make them literal, add another %
+help="plots %%GC"
 
 ```
 
 ## raw strings
-```py
+```python
 # the \n, or other such characters, are interpreted literally and lose their special meaning
 raw_string = r"Hello\nWorld"
 
@@ -109,13 +141,13 @@ raw_string = r"Hello World\"
 ```
 
 ## printing to STDERR
-```py
+```python
 print(f'Checking intron {contig}:{start}-{stop} for RNAseq support', file=sys.stderr)
 ```
 
 # LISTS
 ## list unpacking
-```py
+```python
 colors = ['red', 'blue', 'green', 'yellow']
 red, blue, green = colors
 red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
@@ -124,7 +156,7 @@ red, *_ = colors            # red = 'red', _ = ['blue', 'green', 'yellow']
 
 # DICTIONARIES
 
-```py
+```python
 # Alternative ways to define a dict
 dict1 = {'A': 'Geeks', 'B': 'For', }
 # this notation may be useful when passing in a dictionary as an argument for a certain function
@@ -144,7 +176,7 @@ dict1.update(dict3)
 ```
 
 # ENUMERATE
-```py
+```python
 # by default i starts at 0
 for i, element in enumerate(iterable):
     ...process i and element...
@@ -161,7 +193,7 @@ for i, element in enumerate(iterable):
 ```
 
 # ZIPPING INTO A DICT
-```py
+```python
 # Two lists of equal length
 indices = ['a', 'b', 'c', 'd']
 values = [1, 2, 3, 4]
@@ -190,7 +222,7 @@ The first element won't have index 0 and -1, just 0
 list[::-1] reverse the order of the list
 
 # IF ELSE
-```py
+```python
 contig_strand = '+' if contig_frame > 0 else '-'
 
 # assign multiple variables on a single line
@@ -200,22 +232,23 @@ end, step = (len(genes), 1) if direction == 'fwd' else (-1, -1)
 
 
 # FUNCTIONS
-```py
+```python
 list.append('string')               Appends elements to an existing list
 list.extend(other_list)             Concatenate list with other_list
 len(list)				            Returns the length of the list
 range(start,stop,step)              Returns a range object, only works with integers?
+                                    Up to stop but not including stop
 int(float)                          Returns integer from float
 ```
 
 # ITERATORS
-```py
+```python
 # check if an iterator is empty
 if not any(some_iterator):
 ```
 
 # API DOCUMENTATION
-```py
+```python
 # the star indicates that all keyword arguments MUST be written explicitly when
 # calling the function. It won't guess the argument type by their position
 set_scale_xticks(*, ymargin: float = 1.0, labelsize: float = 15, start: int = 0) -> None
@@ -225,12 +258,12 @@ set_scale_xticks(*, ymargin: float = 1.0, labelsize: float = 15, start: int = 0)
 # OBJECTS
 
 ## DOCUMENTATION
-```py
+```python
 print(help(some_object))
 ```
 
 ## FILTER OBJECT
-```py
+```python
 some_numbers = [1, 2, 3, 8, 9]
 ## apply a function that returns True or False on some iterator
 f = filter( lambda x : x < 5, some_numbers )
@@ -241,7 +274,7 @@ f = filter( lambda x : x < 5, some_numbers )
 ```
 
 ## inspecting an object
-```py
+```python
 # get all methods and attributes of an object with dir()
 import requests
 r = requests.get('some_url')

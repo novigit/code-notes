@@ -15,8 +15,13 @@ parser = argparse.ArgumentParser(
             description=
         '''
         some description of your script
-        ''')
+        ''',
+        formatter_class=argparse.RawTextHelpFormatter
+)
 ```
+
+The `formatter_class=argparse.RawTextHelpFormatter` part ensures that formatting,
+(newlines, tabs, etc) remain respected, when executing your script with the `-h` flag.
 
 #### Passing arguments to the parser
 
@@ -65,6 +70,19 @@ parser.add_argument(
 
 If `--my-option` is called on the cmd line, `args.my_option` will be True.
 If not, it will be False
+
+##### Passing multiple arguments to a single option
+
+For example, `--slice_sites gtag gcag atac`
+
+```python
+parser.add_argument(
+    '-s', '--strings',
+    nargs='+',  # or '*' if you want to allow 0 or more arguments
+    type=str,
+    help='List of strings'
+)
+```
 
 #### Ending the parser
 

@@ -152,12 +152,21 @@ samtools index <sorted.bam>
 samtools -@ <threads> <sorted.bam> <sorted.bam.bai>
 ```
 
+## samtools cat
+
+Concatenate multiple BAM or CRAM files 
+
+```sh
+samtools cat <sorted1.bam> <sorted2.bam> ... > <merged.bam>
+samtools cat <sorted1.cram> <sorted2.cram> ... > <merged.cram>
+```
+
 ## samtools mpileup
 
 Piles up all reads and summarizes basecalls per read per site
 Shows contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
 
-#### Basic Usage
+Basic Usage
 
 ```sh
 # pileup all sites in all contigs
@@ -167,8 +176,14 @@ samtools mpileup <bam>
 # (contig:startpos-endpos) or base (startpos=endpos)
 samtools mpileup <bam> -r ergo_tig00000012:108383-108383
 
+# from pos 108383 until the last position
+samtools mpileup <bam> -r ergo_tig00000012:108383-
+
 # provide the fasta reference
 samtools mpileup -f <fasta> <bam> -r ergo_tig00000012:108383-108383
+
+# -a outputs all positions, including those with 0 depth
+samtools mpilup -a <bam>
 ```
 
 If <fasta> is not provided, the reference basecall is always N, and ACGTN refer to forward strand, acgtn to reverse strand
@@ -180,15 +195,60 @@ Samtools mpileup by default ignores
 - low quality base calls (the default setting of -Q is 13)
 - read segments that are an overlap with its read pair. This makes sense because you don't want to double count the same molecule twice when estimating coverage. To double count, use `--ignore-overlaps`
 
-## samtools mpileup does not automatically show coordinates from regions that have no reads mapped to them
-## to also show these coordinates in the output, invoke -a
-samtools mpilup -a <bam>
-# -a	 output all positions, including those with 0 depth
 
-# samtools rmdup
+# Report per-position read depth
+Returns contigid, position, read depth
+
+A lot faster than mpileup if you're solely interested in read depth
+
+```sh
+samtools depth <bam>
+
+# return depth for a certain contig
+samtools depth <bam> -r tig01
+
+# return depth for a certain region
+samtools depth <bam> -r tig01:80000-90000
+
+# return depth for a certain region, from 80k to the end
+samtools depth <bam> -r tig01:80000-
+
+# also parse positions with zero coverage
+samtools depth -a <bam>
+
+# if you have the average function, report average coverage for <contig_name>
+samtools depth -a <bam> -r <contig_name> | cut -f3 | average
+```
+
+## samtools rmdup
+```sh
 samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
+```
 
 
+## samtools tview
+View a particular region of the alignment within your terminal - pretty cool!
+This is nice if you want to check something quick visually but dont want to transfer the file so you can inspect it with Tablet
+There is also a consensus line
+
+```sh
+# view a certain region
+samtools tview <bam> <fasta> -p ergo_tig00000012:2165-2175
+
+# go directly to position 2569
+samtools tview <bam> <fasta> -p ergo_tig00000012:2569
+```
+
+```
+# while in tview, press '?' for interactive controls
+## underlined reads - orphans or secondary read mappings
+## blue reads   - mapping quality 0-9
+## green reads  - mapping quality 10-19
+## yellow reads - mapping quality 20-29
+## white reads  - mapping quality >30
+
+## ? samtools tview reports N's in the reference line where reads do not align ? also when --reference is given
+```
 
 
 
@@ -210,20 +270,6 @@ samtools flagstat <bam>
 # samtools stats
 samtools stats <bam>
 
-# samtools tview
-## view a particular region of the alignment within your terminal - pretty cool!
-## this is nice if you want to check something quick visually but dont want to transfer the file so you can inspect it with Tablet
-## there is also a consensus line
-samtools tview <bam> <fasta> -p ergo_tig00000012:2165-2175
-## go directly to position x
-samtools tview <bam> <fasta> -p ergo_tig00000012:2569
-## while in tview, press '?' for interactive controls
-### underlined reads - orphans or secondary read mappings
-### blue reads   - mapping quality 0-9
-### green reads  - mapping quality 10-19
-### yellow reads - mapping quality 20-29
-### white reads  - mapping quality >30
-## ? samtools tview reports N's in the reference line where reads do not align ? also when --reference is given
 
 # various samtools snippets
 ## standard samtools pipeline
@@ -231,8 +277,6 @@ samtools view -bS [sam] > [bam]		# -b / --bam : output in the BAM format, -S : d
 samtools sort [bam] -o [srt.bam]
 samtools index [srt.bam] [srt.bam.bai]
 
-# Report per-position read depth
-samtools depth <bam>
 
 
 SAM FORMAT

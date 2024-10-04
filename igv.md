@@ -31,3 +31,11 @@ Both reads are BLUE if the insert size is smaller than expected
 
 OTHER COLORS indicate that the reads' mate is mapped to a different contig / chromosome
 One color per contig / chromosome? 
+
+#### Read alignment loading
+If you get a message that tells you you ran out of memory while loading the alignment track,
+its likely it will only show you up to as far as it was able to load. Some regions may thus
+not have visible coverage while in fact they were covered by reads. Those reads were just
+not loaded into memory before it ran out of memory.
+
+If you suspect this from happening, restart IGV, remove irrelevant tracks and try again
