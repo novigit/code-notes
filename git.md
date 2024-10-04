@@ -2,17 +2,40 @@ GIT
 
 GIT is a decentralized versioning system.
 
+# Tracking Changes
+
+
+```bash
+
+# show changes in a file relative to last commit
+git diff <file>          # if unstaged/unadded
+git diff --staged <file> # if staged  /added
+
+# show git diff with colors in less
+git diff --color=always <file> | less -R
+
+# show the git diff of the same file in different branches
+# while in 'main'
+git diff <other_branch> <file>
+```
+
+In the output, lines marked with `+` and `-` show changed lines:
+
+`-` , typically red,   show state of that line in previous commit
+`+` , typically green, show current state of that line
+
 
 # File Management
 
-```sh
+```bash
+
 # undo all changes that were made to a file since the last commit
 git restore <file>
 ```
 
 # Branch Management
 
-```sh
+```bash
 
 # show branches in a simple list
 git branch -l  # local
@@ -43,11 +66,14 @@ git switch <branchname>
 
 # fetch branch from remote
 git fetch origin <branch_name>:<branch_name>
+
+# graphical overview of your branches
+git log --all --oneline --graph --decorate
 ```
 
 ## Create a new branch and push it to the remote
 
-```sh
+```bash
 # on your local repo do
 git switch -c <topic_branch>
 
@@ -63,7 +89,7 @@ git push origin <topic_branch>
 
 ## Update your featurebranch with the latest changes in the main/other branch
 
-```sh
+```bash
 # update our main branch with the remote main
 git checkout main
 git pull origin main
@@ -83,6 +109,33 @@ git merge main
 # but not in the main branch
 ```
 
+# Stashing Changes
+
+Stashing changes is very useful if you need to switch to another
+branch before you are ready to make a commit.
+
+Git normally doesn't allow you to switch branches if you have
+uncommitted changes, because you would lose your uncomitted
+changes if you do change branch. To save your uncomitted changes,
+you can make use of `git stash`:
+
+```bash
+
+# you are in branch 'bugfix', you've made some uncommitted changes
+# then for whatever reason you need to move to the main branch
+# git stash temporarily saves your changes
+git stash
+
+git switch main
+# you work on main
+# you are now ready to go back to 'bugfix'
+git switch bugfix
+
+# re-apply your saved uncommitted changes
+git stash pop
+```
+
+
 # Various Snippets
 
 ```sh
@@ -93,12 +146,6 @@ git show 081870e
 # change the commit message of the last commit, if you haven't pushed it to the remote yet
 git commit --amend -m "new commit message"
 
-# show git diff with colors in less
-git diff --color=always <file> | less -R
-
-# show the git diff of the same file in different branches
-# while in 'main'
-git diff <other_branch> <path/to/file>
 
 # undo an accidental git add
 git reset <FILE>
@@ -143,7 +190,6 @@ git clone https://github.com/novigit/brocode	"Clone" the repository to current d
 git status					Check what has been changed since last update
 git add <file|dir> <file|dir> <etc>		"Stage" files for commit, or "add" files to the "staging area", where files are tracked
 git add .					Adds all changed files for commit
-git diff <file>					Check the changes of a file, between when it was added and now
 git commit -m "commit message"			"Commit" the files to your repository
 git commit -a -m "commit message"		Will automatically add all tracked files with changes. Will not add untracked files
 git log	 					Check your commit log
