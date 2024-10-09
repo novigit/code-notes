@@ -232,10 +232,18 @@ end, step = (len(genes), 1) if direction == 'fwd' else (-1, -1)
 
 
 # FUNCTIONS
+
+# executes the function
+some_function()
+
+# the function object, that you can pass around to other stuff
+some_function
+
+
 ```python
 list.append('string')               Appends elements to an existing list
 list.extend(other_list)             Concatenate list with other_list
-len(list)				            Returns the length of the list
+len(list)		            Returns the length of the list
 range(start,stop,step)              Returns a range object, only works with integers?
                                     Up to stop but not including stop
 int(float)                          Returns integer from float

@@ -2,6 +2,34 @@ DASK
 
 Making use of a high performance computer cluster to parallelize tasks
 
+The DASK abstraction of distributing computation is roughly as follows:
+
+           +------------------+
+           |      CLIENT      |
+           +------------------+
+                     |
+           +------------------+
+           |     SCHEDULER    |
+           +------------------+
+          /           |         \
+  +------------+ +------------+ +------------+
+  |   WORKER   | |   WORKER   | |   WORKER   |
+  +------------+ +------------+ +------------+
+
+The `Client` is an abstraction of the entity that collects the tasks,
+and pass them to the `Scheduler` whom them passes them on the the
+`Workers` in an organized manner. The workers then compute the
+tasks in parallel to each other.
+
+The `Scheduler` looks at all the tasks, constructs a task graph,
+and assigns each worker a workload of tasks according to that graph.
+Each worker then computes each of those assigned tasks serially,
+gradually chipping away at its backlog.
+
+In a Computer Cluster environment, its the `Cluster` object that
+contains the scheduler in `cluster.scheduler` and the workers
+in `cluster.workers`.
+
 ```python
 
 # import modules
@@ -68,6 +96,8 @@ as defined in the cluster object.
 ```python
 
 # create a Dask client
+# and attach it to the scheduler
+# within the cluster
 client = Client(cluster)
 ```
 
