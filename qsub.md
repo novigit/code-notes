@@ -1,4 +1,4 @@
-#### Submitting jobs with qsub
+# Submitting jobs with qsub
 
 ```bash
 
@@ -21,7 +21,7 @@ qsub -N <job_name> -b y "iqtree -s alignment.aln -nt 10 -m LG+G"
 # it seems that to get -b y[es] "" to work, -N must be given as well
 ```
 
-#### Cancelling jobs
+# Cancelling jobs
 
 ```bash
 
@@ -30,6 +30,11 @@ qdel <job_id>
 
 # cancel all jobs submitted by a user
 qdel -u <user>
+```
+
+# Monitoring current jobs
+```bash
+qstat -j <job_id>
 ```
 
 # Monitoring finished jobs

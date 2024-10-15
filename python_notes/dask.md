@@ -4,17 +4,17 @@ Making use of a high performance computer cluster to parallelize tasks
 
 The DASK abstraction of distributing computation is roughly as follows:
 
-           +------------------+
-           |      CLIENT      |
-           +------------------+
-                     |
-           +------------------+
-           |     SCHEDULER    |
-           +------------------+
-          /           |         \
-  +------------+ +------------+ +------------+
-  |   WORKER   | |   WORKER   | |   WORKER   |
-  +------------+ +------------+ +------------+
+             +------------------+
+             |      CLIENT      |
+             +------------------+
+                       |
+             +------------------+
+             |     SCHEDULER    |
+             +------------------+
+            /          |         \
+    +------------+ +------------+ +------------+
+    |   WORKER   | |   WORKER   | |   WORKER   |
+    +------------+ +------------+ +------------+
 
 The `Client` is an abstraction of the entity that collects the tasks,
 and pass them to the `Scheduler` whom them passes them on the the
@@ -46,7 +46,7 @@ The object just stores your specifications. Nothing is actually submitted to the
 
 The number of `processes` specifies the number 'Python processes'.
 Apparently dask is able to split up the tasks in a script to individual python processes,
-to satisfy the GIL?
+to satisfy the GIL? Yes, I think so
 
 The `queue` parameter should be equal to what you would specify with
 `qsub -q`
@@ -61,28 +61,42 @@ iqtree or mafft or whatever executable you want to run.
 cluster = SGECluster(
     cores=10,
     memory="64GB",
-    processes=1,
+    walltime="99:99:99",
+    resource_spec="h_vmem=64G",
     queue='256G-batch',
     job_extra=['-cwd', '-V']
+    processes=1,
 )
 ```
 
+* In SGE clusters, iff you want a specific amount of RAM, you must specify both the `memory` parameter,
+as well as the `resource_spec` parameter. NOTE that in the resource_spec, specify 64G, not 64GB!!
+The resource_spec value is directly passed to `qsub -l` option.
+
+* On Perun, to ensure that your job finishes in time, use the `99:99:99` value for walltime.
+Its `HH:MM:SS` as format. Dask will transform this value into seconds, and pass it on to `qsub -l h_rt=`.
+
+
 # Launching dask workers
-
-This will submit an x number of jobs to the computer cluster,
-each of which will launch a python process that is a 'dask worker'.
-
-Each of those workers will have a `cores` number of cores and a `memory`
-amount of memory available to them, as specified by the `cluster` object.
-
-NOTE that it may take a moment for these workers to run on the computer cluster.
-We are still at the mercy of the computer clusters' scheduler here.
 
 ```python
 
 # launch 10 dask workers
-cluster.scale(10)
+cluster.scale(n=10)
+
+# launch 10 jobs
+cluster.scale(jobs=10)
 ```
+
+This will submit an x number of jobs to the computer cluster,
+each of which will, during job execution, launch a python process.
+If `processes=1`.
+
+Each of those processes will have a `cores` number of cores and a `memory`
+amount of memory available to them, as specified by the `cluster` object.
+
+NOTE that it may take a moment for these jobs to run on the computer cluster.
+We are still at the mercy of the computer clusters' scheduler here.
 
 Currently, for some reason, each dask_worker only occupies 1 "slot" on Perun,
 even if you specify 2 or more cores when you specify SGECluster(). However,
@@ -90,7 +104,7 @@ the job that does get run does run with multiple cores no problem.
 
 # A Client object
 
-The client allows Dask to connect to the remote workers,
+The client allows Dask to connect the to-be executed tasks to the remote workers,
 as defined in the cluster object. 
 
 ```python
@@ -114,6 +128,7 @@ def some_function(x):
 
 # generate list of Future objects with client.map()
 ## as far as I understand this doesn't yet actually start computation
+## update: maybe it does? Future objects contain information on a running process
 futures = client.map(some_function, some_input)
 ```
 
