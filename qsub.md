@@ -33,7 +33,9 @@ qdel -u <user>
 ```
 
 # Monitoring current jobs
+
 ```bash
+
 qstat -j <job_id>
 ```
 
@@ -49,4 +51,10 @@ qacct -o <userid> -j
 
 # get list ids
 qacct -o <userid> -j | grep jobnumber
+```
+
+# Checking the cluster, queue or node configuration
+
+```bash
+qconf -sq 768G-batch
 ```
