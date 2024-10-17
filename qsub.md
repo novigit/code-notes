@@ -1,3 +1,9 @@
+# Listing all the nodes on the cluster
+
+```bash
+qhost
+```
+
 # Submitting jobs with qsub
 
 ```bash
