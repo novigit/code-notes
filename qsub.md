@@ -11,6 +11,9 @@ qhost
 # submit a job to a particular queue
 qsub -q 256G-batch
 
+# submit a job to multiple queues
+qsub -q 256G-batch,768G-batch,2T-batch
+
 # use the directory from which the script is called as working directory
 qsub -cwd
 

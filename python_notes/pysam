@@ -12,6 +12,7 @@ bamfile = pysam.AlignmentFile('example.bam', mode='rb')
 
 # check if an indexed bam (.bai) file exists
 # if it doesn't, create it
+import os
 if os.path.isfile('example.bam.bai'):
 	print("BAM index present... OK!")
 else:
@@ -105,7 +106,7 @@ for read in bamfile.fetch(contig='chr1', start=100, stop=200):
 
     # read start and end 
     read.reference_start # 0-based
-    read.reference_end   # 1-based
+    read.reference_end   # 1-based # "reference_end points to one past the last aligned residue." - pysam readthedocs
 
     # you can retrieve the value of a particular 'tag' of the AlignedSegment object
     read.get_tag('XS')

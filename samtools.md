@@ -1,10 +1,11 @@
 SAMTOOLS
 
-## samtools view
+# samtools view
 
-### Viewing BAM files
+## Viewing BAM files
 
-```sh
+```bash
+
 # will print contents as SAM to the screen
 samtools view <bam>
 
@@ -38,7 +39,7 @@ samtools view -L <bed> <bam>
 # it may be slow! to speed up, specify the <bai> file with -M or --use-index <bai>
 ```
 
-### Selecting certain read mappings
+## Selecting certain read mappings
 
 Keep mapped reads with certain FLAGs set
 
@@ -48,7 +49,8 @@ Only output alignments with all bits set in FLAG present in the FLAG field
 So lets say you specify FLAG 163, which has FLAGs 1, 2, 32, 128 set
 it will select all alignments with FLAG 163, but also FLAG 419, which has FLAGs 1, 2, 32, 128 AND 256 set
 
-```sh
+```bash
+
 samtools view -f 163 <bam>
 ```
 
@@ -61,7 +63,8 @@ for example 81, which has FLAGs 1, 16, 64 set. It is selected because it has FLA
 
 new option as of 1.15 ?
 
-```sh
+```bash
+
 samtools view --rf 163 <bam>
 ```
 
@@ -73,7 +76,8 @@ it will de-select all alignments which has any of these FLAGs set
 in my case the only alignments left had FLAGs 0, 16, 256, 272
 none of these flags have 1, 8 or 64 set
 
-```sh
+```bash
+
 samtools view -F 73 <bam>
 
 # omit secondary alignments
@@ -84,19 +88,24 @@ Combining `-f` and `-F` is possible
 You can set multiple FLAGs in a comma separated list, but only with using flag-names
 This is only possible as of at least from 1.14 onwards
 
-```sh
+```bash
+
 samtools view -f 2 -F UNMAP,SECONDARY,QCFAIL,DUP
 ```
 
 You can alternatively also simply add up the bits (4+256+512+1024 = 1796) and specify that
-```sh
+
+```bash
+
 samtools view -f 2 -F 1796
 ```
 
-### Subsampling read mappings
+## Subsampling read mappings
 
 This could be useful if you have memory issues with viewing your BAM files in for example IGV or Tablet
-```sh
+
+```bash
+
 # Select 25% random mappings
 samtools view -s 0.25 -bh <bam> > <subsampled.bam>
 
@@ -104,9 +113,10 @@ samtools view -s 0.25 -bh <bam> > <subsampled.bam>
 samtools view -s 0.25 -bh <bam> -S 42 > <subsampled.bam>
 ```
 
-### Counting reads 
+## Counting reads 
 
-```sh
+```bash
+
 # Counting mapped alignments    (because you exclude all unmapped reads with -F)
 samtools view -c -F 4 <bam>
 
@@ -120,9 +130,10 @@ samtools view -c -F 2308 <bam>
 samtools view -c -f 4 <bam>
 ```
 
-### Extracting reads that map to a certain strand
+## Extracting reads that map to a certain strand
 
-```sh
+```bash
+
 # From HISAT2 mappings, select those that stem from transcripts of the + strand
 samtools view --tag XS:+ <bam>
 
@@ -130,18 +141,20 @@ samtools view --tag XS:+ <bam>
 samtools view --tag XS:- <bam>
 ```
 
-## samtools sort
+# samtools sort
 
-```sh
+```bash
+
 # sorts reads based on their left most coordinate
 samtools sort <bam> -o <sorted.bam>
 
 # NOTE that the order of contigs in the <sorted.bam> remains the same as it was in the <bam> file
 ```
 
-## samtools index
+# samtools index
 
-```sh
+```bash
+
 samtools index <sorted.bam> <sorted.bam.bai>
 
 ## or simply
@@ -152,23 +165,25 @@ samtools index <sorted.bam>
 samtools -@ <threads> <sorted.bam> <sorted.bam.bai>
 ```
 
-## samtools cat
+# samtools cat
 
 Concatenate multiple BAM or CRAM files 
 
-```sh
+```bash
+
 samtools cat <sorted1.bam> <sorted2.bam> ... > <merged.bam>
 samtools cat <sorted1.cram> <sorted2.cram> ... > <merged.cram>
 ```
 
-## samtools mpileup
+# samtools mpileup
 
 Piles up all reads and summarizes basecalls per read per site
 Shows contig_name, position, reference basecall, number of reads, mapped bases, and their phred scores
 
 Basic Usage
 
-```sh
+```bash
+
 # pileup all sites in all contigs
 samtools mpileup <bam> 
 
@@ -196,12 +211,14 @@ Samtools mpileup by default ignores
 - read segments that are an overlap with its read pair. This makes sense because you don't want to double count the same molecule twice when estimating coverage. To double count, use `--ignore-overlaps`
 
 
-# Report per-position read depth
+# samtools depth
+
 Returns contigid, position, read depth
 
 A lot faster than mpileup if you're solely interested in read depth
 
-```sh
+```bash
+
 samtools depth <bam>
 
 # return depth for a certain contig
@@ -221,17 +238,21 @@ samtools depth -a <bam> -r <contig_name> | cut -f3 | average
 ```
 
 ## samtools rmdup
-```sh
+
+```bash
+
 samtools rmdup <INPUT.SRT.BAM> <OUTPUT.SRT.RMDUP.BAM>
 ```
 
 
-## samtools tview
+# samtools tview
+
 View a particular region of the alignment within your terminal - pretty cool!
 This is nice if you want to check something quick visually but dont want to transfer the file so you can inspect it with Tablet
 There is also a consensus line
 
-```sh
+```bash
+
 # view a certain region
 samtools tview <bam> <fasta> -p ergo_tig00000012:2165-2175
 
