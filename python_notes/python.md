@@ -162,6 +162,7 @@ the data remains in the same memory location
 * Lists are useful for _homogeneous_ data
 
 ```python
+
 fruits: list[str] = ['apple','orange','kiwi']
 
 # Returns the length of the list
@@ -193,6 +194,9 @@ fruits.sort(reverse=True)
 # sort regular alphabetical order
 fruits.sort(key=str.lower)
 
+# Sort a list, but create a new list
+sorted_fruits: list[str] = sorted(fruits)
+
 # Concatenate two lists
 veggies: list[str] = ['broccoli','mushrooms']
 foods: list[str] = fruits + veggies
@@ -207,6 +211,11 @@ del fruits[1]
 
 # remove an element from a list using its value
 fruits.remove('orange')
+
+# find the index of an element in a list using its value
+fruits.index('orange')
+# NOTE: it will return only the index of the first instance
+# or 'orange' in the list
 
 ```
 
@@ -267,13 +276,46 @@ orf = (0, 99, '+', '+1', 'orf00001')
 
 # SETS
 
-Sets are mutable
+* Sets are mutable
+
+* Sets are unordered, and have no duplicate elements
+
+* The main advantage of a set over a list is that it is extremely
+computationally efficient to check whether an item is part of a set
+
+* Sets are useful for when you want to compare multiple collections,
+and find the intersect, union, 
+
+```python
+
+# initialize a set
+fruits = set('clementine', 'peach', 'pineapple')
+# or
+fruits = {'clementine', 'peach', 'pineapple'}
+```
+
+## manipulate sets
+
+```python
+
+# add a single item
+fruits.add('nectarine')
+
+# add multiple items
+# lists, tuples, strings and other hash sets are accepted
+# duplicates are purged when added to the list
+fruits.update(['nectarine','pear'])
+```
 
 # DICTIONARIES
 
-Dictionaries are mutable
+* Dictionaries are mutable and unordered
+
+Unordered-ness is associated with extremely efficient lookup.
+Just like sets?
 
 ```python
+
 # Alternative ways to define a dict
 dict1 = {'A': 'Geeks', 'B': 'For', }
 # this notation may be useful when passing in a dictionary as an argument for a certain function
@@ -287,6 +329,43 @@ dict1.update(dict2)
 dict3 = {'C': 'Jocks'}
 dict1.update(dict3)
 # dict1 = {'A': 'Geeks', 'B' : 'Geeks', 'C' : 'Jocks'}
+
+# update dict with a new key-value pair
+dict1['D'] = 'Archer'
+# update dict with new key-value pair,
+# but only if key does not yet exist in dict
+dict1.setdefault('D', 'Pam') # this would not update the dict
+# essentially short hand for
+if 'D' not in dict1:
+    dict['D'] = 'Pam'
+
+# retrieve the value of a key
+value = dict1['A']
+# if 'A' doesn't exist, assign 'nothing' to value
+value = dict1.get('A', 'nothing')
+
+# check if key exists in dict
+if 'A' in dict1:
+    print('A is in dict1')
+# equivalent to
+if 'A' in dict.keys():
+    print('A is in dict1')
+
+# applying list() on a dict returns the keys
+list(dict1) # [ 'A', 'B', 'C' ]
+# as of 3.7, it will return them in the order at which keys were
+# inserted into the dict. This means python somehow remembers
+# the insertion order. Prior to 3.7, the insertion order is not remembered
+
+# isolating the keys, values and items (key-value pairs) in
+# so-called 'dict_keys', 'dict_values' and 'dict_items' objects
+# these are iterable, but can not be appended like true lists can
+for k in dict.keys():
+    print(k)
+for v in dict.values():
+    print(v)
+for k, v in dict.items():
+    print(k, v)
 ```
 
 # VARIABLES
