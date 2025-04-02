@@ -4,12 +4,14 @@ Old stuff, but still really useful
 
 #### dotmatcher for Dotplots
 
-```sh
+```bash
+
 # show extensive help
 dotmatcher -help -verbose
 ```
 
-```sh
+```bash
+
 # basic usage
 dotmatcher \
     -asequence <input.fasta> \
@@ -26,7 +28,8 @@ dotmatcher \
 PNG is by default quite low resolution. To generate a higher
 resolution image, use `-graph ps` and then
 
-```sh
+```bash
+
 # 300 dpi
 convert \
     -density 300 \

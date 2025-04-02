@@ -1,14 +1,15 @@
 # VIM
 
-#### Lesser known vim motions
+# Lesser known vim motions
 
 `_` to move to first non-whitespace character in the line, stay in normal mode
 
-#### Fast exit of Insert mode
+# Fast exit of Insert mode
 
 Use Ctrl-C instead of Escape
 
-#### File handling
+# File handling
+
 ```sh
 # force refresh a buffers content
 # useful if an external action wrote to a file open in vim
@@ -26,8 +27,10 @@ Use Ctrl-C instead of Escape
 :bp
 ```
 
-#### Search and Replace
+# Search and Replace
+
 ```sh
+
 # convert multiple spaces in a row to tabs on a single line
 :s/\s\+/\t/g
 

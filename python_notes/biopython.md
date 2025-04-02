@@ -2,17 +2,21 @@ BIOPYTHON
 
 A python package for dealing with all sorts of molecular sequence data
 
-#### SeqIO
+# SeqIO
 
-##### Load a FASTA file
+## Load a FASTA file
+
 ```python
+
 # load package SeqIO
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
 
 # loading FASTA files
 
 # parse a multi FASTA file
 ## each 'record' is a SeqRecord object
+## SeqIO.parse() returns an iterator of SeqRecord objects
 for record in SeqIO.parse('example.fasta','fasta'):
     print(record.id)
 
@@ -26,11 +30,13 @@ first_record = next(SeqIO.parse('example.fasta', 'fasta'))
 ## load multi FASTA into a dictionary in memory
 record_dict = SeqIO.index('example.fasta', 'fasta')
 ## load desired record from dict
-desired_record = record_dict['example_seqID']
+desired_record: SeqRecord = record_dict['example_seqID']
 ```
 
-##### SeqRecord objects
+# SeqRecord objects
+
 ```python
+
 # get the id of the SeqRecord
 record.id
 

@@ -1,5 +1,4 @@
 DASK
-
 Making use of a high performance computer cluster to parallelize tasks
 
 The DASK abstraction of distributing computation is roughly as follows:
@@ -217,6 +216,18 @@ as defined in the cluster object.
 client = Client(cluster)
 ```
 
+After you're done with your tasks, you can close or shutdown the client:
+
+```python
+
+# Disconnects the Client from the cluster,
+# but leaves the cluster itself running
+client.close()
+
+# Disconnects the Client from the cluster,
+# and shuts down the cluster entirely
+client.shutdown()
+```
 # Storing tasks in a list of Future objects
 
 The list sort of contains a list of the many tasks that need to be done,
@@ -314,6 +325,13 @@ of which the input is written in the next pair of parenthese,
 here `(iqtree_command)` and `(x)`
 
 A subprocess inherits the resource limits of its parent process
+
+# Closing a cluster
+
+If you are done with dask at a point in your script, and you don't
+need it anymore, you can simply state `cluster.close()` to gracefully
+stop all dask workers. This will release any `dask-worker-space` directories,
+and/or other dask worker files, so they can be safely removed.
 
 ## What if workers are still in the job queue by the time the Dask script reaches the compute stage?
 

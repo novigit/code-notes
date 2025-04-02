@@ -17,7 +17,6 @@ n: int = 1_000_000_000
 n: float = 1e9
 ```
 
-
 # STRINGS
 
 * Strings are an immutable data type
@@ -43,7 +42,42 @@ warning_message: str = (
     f"Warning: Gene {gene.id} on {gene.seqid} has only CDS features!\n"
     "This in principle OK but doesn't represent biology very well"
 )
+```
 
+## case
+
+```python
+# show string in UPPERCASE
+string.upper()
+# in lower case
+string.lower()
+# in Title Case
+string.title()
+```
+
+## stripping whitespace and newlines
+
+```python
+
+txt = '\n   HelloWorld    \n'
+
+# removes all leading and trailing white space characters
+# and newline characters from a string:
+txt.strip()
+
+# remove only leading characters
+txt.lstrip()
+
+# remove only trailing characters
+txt.rstrip()
+```
+
+## stripping prefixes
+
+```python
+
+url = 'http://www.google.com'
+url.removeprefix('http://')
 ```
 
 ## f-strings
@@ -153,11 +187,23 @@ raw_string: str = r"Hello World\"
 print(f'Checking intron {contig}:{start}-{stop} for RNAseq support', file=sys.stderr)
 ```
 
+# CONSTANTS
+
+A constant is a variable who's value remains constant
+throughout the execution of the entire program
+
+```python
+# the convention is to name constants with ALL CAPS
+MAX_CONNECTIONS = 5000
+```
+
 # LISTS
 
-* Lists are mutable
+* Lists are _mutable_
 This means that after changing the data,
 the data remains in the same memory location
+
+* Lists are _ordered_
 
 * Lists are useful for _homogeneous_ data
 
@@ -181,6 +227,15 @@ fruits.insert(1, 'banana')
 
 # Concatenate list with other_list in-place
 fruits.extend(other_list)
+
+# Remove the last item in a list in-place and store it into a new variable
+last_fruit = fruits.pop()
+
+# Remove the first item in a list in-place and store it into a new variable
+first_fruit = fruits.pop(0)
+
+# Remove the third item in a list in-place and store it into a new variable
+third_fruit = fruits.pop(2)
 
 # Reverse the order in a list, in-place
 fruits.reverse()
@@ -211,6 +266,7 @@ del fruits[1]
 
 # remove an element from a list using its value
 fruits.remove('orange')
+# NOTE: it will only remove the first instance of 'orange' in the list 
 
 # find the index of an element in a list using its value
 fruits.index('orange')
@@ -227,8 +283,11 @@ colors: list[str] = ['red', 'blue', 'green', 'yellow']
 red, blue, green = colors
 red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
 red, *_ = colors            # red = 'red', _ = ['blue', 'green', 'yellow']
-
 ```
+
+* Above, the `*others` and `*_` pack variables into a list,
+because they take values from a list! If the input was a tuple,
+they would have been packed into a tuple
 
 ## list and string slicing
 
@@ -247,6 +306,18 @@ colors[ start : stop : step ]
 # start = position at which your slice starts ( 0-indexed )
 # stop  = slice up to but not including the stop position ( 0-indexed )
 # step  = step size (by default 1)
+
+# get the first two but not the third element
+colors[:2]
+
+# get all elements from the third onwards
+colors[2:]
+
+# get all elements from the third-to-last element onwards
+colors[-3:]
+
+# get a copy of the entire list
+new_list = colors[:]
 ```
 
 Slicing returns a new list or string in memory!
@@ -259,12 +330,13 @@ Hence, `colors[-1]` returns the last item of the list
 If you have a list of length 1, the index is only 0.
 The first element won't have index 0 and -1, just 0
 
-
 # TUPLES
 
-* Tuples are immutable
+* Tuples are _immutable_
 This means that after changing the data,
 a copy of the data is made into a new memory location
+
+* Tuples are _ordered_
 
 * Tuples are useful for _inhomogeneous_ data
 
@@ -272,19 +344,38 @@ a copy of the data is made into a new memory location
 
 # orf = start, stop, strand, frame, id
 orf = (0, 99, '+', '+1', 'orf00001')
+
+# a tuple must have at least one comma when creating
+# (they are defined by the presence of a comma)
+# so when making a tuple with a single element, do
+some_tuple = (1,)
+```
+
+## tuple packing and unpacking
+
+```python
+
+colors: set[str] = ('red', 'blue', 'green', 'yellow')
+
+# unpacks colors into red and 'others', another tuple
+# 'blue', green', and 'yellow' are packed into a new list called others
+red, *others = colors       # red = 'red', others = ['blue', 'green', 'yellow']
 ```
 
 # SETS
 
-* Sets are mutable
+* Sets are _mutable_
 
-* Sets are unordered, and have no duplicate elements
+* Sets are _unordered_, and have no duplicate elements
+
+* Set elements must be immutable, so lists and dictionaries are
+not allowed to be elements
 
 * The main advantage of a set over a list is that it is extremely
 computationally efficient to check whether an item is part of a set
 
 * Sets are useful for when you want to compare multiple collections,
-and find the intersect, union, 
+and find the intersect, union, etc
 
 ```python
 
@@ -351,21 +442,35 @@ if 'A' in dict1:
 if 'A' in dict.keys():
     print('A is in dict1')
 
-# applying list() on a dict returns the keys
+# delete a key-value pair by it's key
+del dict['A']
+
+# applying list() on a dict returns the keys as a list
 list(dict1) # [ 'A', 'B', 'C' ]
 # as of 3.7, it will return them in the order at which keys were
 # inserted into the dict. This means python somehow remembers
 # the insertion order. Prior to 3.7, the insertion order is not remembered
 
+# applying set() on a dict returns the keys as a set
+set(dict1) # { 'A', 'B', 'C' }
+
 # isolating the keys, values and items (key-value pairs) in
 # so-called 'dict_keys', 'dict_values' and 'dict_items' objects
 # these are iterable, but can not be appended like true lists can
+for k in dict:
+    print(k)
 for k in dict.keys():
     print(k)
 for v in dict.values():
     print(v)
 for k, v in dict.items():
     print(k, v)
+
+# loop over the keys after they've been sorted
+# remember, sorted() returns a copy of whatever its sorting
+for k in sorted(dict.keys()):
+    print(k)
+
 ```
 
 # VARIABLES
@@ -406,7 +511,51 @@ a, b = 4, 8
 a, b, c, d = 4, "geeks", 3.14, True
 ```
 
+# IF ELSE
+
+## Ternary notation?
+
+```python
+
+contig_strand = '+' if contig_frame > 0 else '-'
+
+# assign multiple variables on a single line
+end, step = (len(genes), 1) if direction == 'fwd' else (-1, -1)
+
+```
+
+## None
+
+`None` evaluates to False, in conditionals:
+
+```python
+
+# we will not print age here, because
+# None evaluates to False
+age = None
+if age:
+    print(age)
+```
+
 # BUILT-IN FUNCTIONS
+
+## print()
+
+```python
+
+# print a string with newline characters shown
+print(repr(some_string))
+```
+
+## range()
+
+
+```python
+
+# returns a range object, only works with integers?
+range(start,stop,step)
+# Up to stop but not including stop !
+```
 
 ## enumerate()
 
@@ -440,32 +589,74 @@ result_dict = dict(zip(indices, values))
 {'a': 1, 'b': 2, 'c': 3, 'd': 4}
 ```
 
+# CUSTOM FUNCTIONS
 
-# IF ELSE
+## parameters and arguments
+
+* Variables that are written as input in the function _definition_
+are called *parameters*
+
+* Variables that are written as input in function  _calls_
+are called *arguments*
+
+* In reality these two terms are used interchangeably,
+but this should be the proper terminology
+
+## a variable number of parameters
+
+### function defintion
 
 ```python
 
-contig_strand = '+' if contig_frame > 0 else '-'
+# pack multiple arguments into a single object
+# in the function definition
+def pizza(*toppings) -> tuple[str]:
+    return toppings
 
-# assign multiple variables on a single line
-end, step = (len(genes), 1) if direction == 'fwd' else (-1, -1)
+# these arguments are packed into the tuple 'toppings'
+pizza('anchovies', 'mozzarella', 'ananas')
 
+# also works with a single argument
+pizza('anchovies')
 ```
 
+* In this case `*toppings` packs elements into a tuple,
+because all arguments in a function call are essentially
+in a tuple itself!
 
-# FUNCTIONS
+### function call
 
-# executes the function
+```python
+
+# unpack a list or tuple directly in the function call
+args = [1, 2, 3]
+# first arg = 1, second = 2, third = 3
+my_function(*args)
+# equivalent to
+my_function(1, 2, 3)
+
+# unpack a dictionary directly into the function call
+kwargs = {'a': 1, 'b': 2, 'c': 3}
+my_function(**kwargs)
+# equivalent to 
+my_function(a=1, b=2, c=3)
+```
+
+## functions as objects
+
+```python
+
+# calling a function
 some_function()
 
 # the function object, that you can pass around to other stuff
 some_function
+```
+
 
 
 ```python
 
-range(start,stop,step)              Returns a range object, only works with integers?
-                                    Up to stop but not including stop
 ```
 
 # ITERATORS
@@ -473,7 +664,13 @@ range(start,stop,step)              Returns a range object, only works with inte
 ```python
 
 # check if an iterator is empty
+# NOTE: this consumes all elements up to the first True element!
 if not any(some_iterator):
+
+# get the last value of some iterator
+# also works if iterator has just a single element
+# in that case the single element will be captured by 'last'
+*_, last = some_iterator
 ```
 
 # GENERATORS
@@ -483,6 +680,7 @@ A Generator is secretly just a function that returns an iterator
 # API DOCUMENTATION
 
 ```python
+
 # the star indicates that all keyword arguments MUST be written explicitly when
 # calling the function. It won't guess the argument type by their position
 set_scale_xticks(*, ymargin: float = 1.0, labelsize: float = 15, start: int = 0) -> None
@@ -531,10 +729,62 @@ pprint( vars(r) )
 print( help(r) )
 ```
 
+# ERRORS
+
+## try except else block
+
+```python
+
+try:
+    # some code that could throw some error
+except SomeError:
+    # code to execute if error is caught
+else:
+    # code to execute ONLY if error was not caught
+```
+
+## Catching library exceptions
+
+In the example below, the `NewickError` class is defined in the library,
+in the 'newick.py', under the 'ete3/parser/' directory.
+
+```python
+from ete3.parser.newick import NewickError
+
+try:
+    tree = Tree('some_tree.newick')
+except NewickError:
+    sys.exit('could not read tree file')
+
+```
+
 # TIPS AND TRICKS
 
 Use `python -i script.py` to end up in interactive mode. Now you can inspect
 the state of all the variables and objects and such
 
 Even better, use `ipython -i script.py`
+
+
+# Buffered print output
+
+By default, Python _buffers_ output to STDOUT and STDERR, which may cause print statements to not show up immediately, especially if the script is running in batch mode.
+
+As far as I can tell, there are two types of buffered modes: _line-buffered_ and _fully-buffered_.
+
+If you invoke a script simply by `python script.py`, and the script is outputting to the terminal, its _line-buffered_ by default.
+The buffer containing text is flushed every time it encounters a newline.
+
+However, if you invoke the script from within let's say neovim, or on a computer cluster that writes the output to a file,
+python may choose to only flush the buffer when the buffer is full, regardless of any newline characters.
+This is done to increase performance.
+
+Solution: Use the -u (unbuffered) flag when running the Python script, which forces Python to output in real-time.
+
+python -u your_script.py
+
+Alternatively, you can add flush=True to your print statements:
+
+print("Your message here", flush=True)
+
 

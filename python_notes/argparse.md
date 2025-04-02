@@ -1,13 +1,14 @@
-# argparse
+ARGPARSE
 
-argparse is a standard module that comes with the base installation of python
+Argparse is a standard module that comes with the base installation of python
 
 ```python
+
 # load argparse
 import argparse
 ```
 
-#### Starting the parser
+# Starting the parser
 
 ```python
 # start the argument parser
@@ -23,11 +24,12 @@ parser = argparse.ArgumentParser(
 The `formatter_class=argparse.RawTextHelpFormatter` part ensures that formatting,
 (newlines, tabs, etc) remain respected, when executing your script with the `-h` flag.
 
-#### Passing arguments to the parser
+# Passing arguments to the parser
 
-##### Passing an input file 
+## Passing an input file 
 
 ```python
+
 parser.add_argument(
         "-g", "--gff3",
         dest='gff3_file',
@@ -45,7 +47,7 @@ value of option is held in `args.gff3_file`
 `help="..."` is the text displayed when running script with -h
 
 
-##### Passing an integer 
+# Passing an integer 
 
 ```python
 parser.add_argument(
@@ -60,7 +62,7 @@ parser.add_argument(
 `required=False` defines that this is an optionable argument
 if it is not stated, it will have default value 3
 
-##### Setting a on/off switch like option
+# Setting a on/off switch like option
 
 ```python
 parser.add_argument(
@@ -71,7 +73,7 @@ parser.add_argument(
 If `--my-option` is called on the cmd line, `args.my_option` will be True.
 If not, it will be False
 
-##### Passing multiple arguments to a single option
+# Passing multiple arguments to a single option
 
 For example, `--slice_sites gtag gcag atac`
 
@@ -84,7 +86,7 @@ parser.add_argument(
 )
 ```
 
-#### Ending the parser
+# Ending the parser
 
 ```python
 # collect arguments in args

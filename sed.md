@@ -10,7 +10,9 @@
     5. print pattern buffer to stdout
 
 #### Search & Replace
-```sh
+
+```bash
+
 # sed 's///' #
 sed 's/PATTERN/REPLACE/' file > outfile
 
@@ -110,7 +112,7 @@ p invokes printing of pattern buffer
 # general syntax || sed -n '/PATTERN/p'
 
 # prints line number 3
-sed -n '3'p               
+sed -n '3'p
 
 # prints lines in range 3,5
 sed -n '3,5'p
@@ -160,6 +162,7 @@ sed "/^>/! y/acgt/ACGT/"
 ```
 
 ## Other useful snippets
+
 ```sh
 # convert rna sequences to dna sequences in a FASTA file
 sed '/^>/! s/U/T/gi' rna.fasta > dna.fasta

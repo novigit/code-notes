@@ -1,8 +1,9 @@
 seaborn
 
-### Loading an example dataset
+# Loading an example dataset
 
-```py
+```python
+
 import seaborn as sns
 
 # import the iris dataset
@@ -14,7 +15,9 @@ type(iris)
 ```
 
 ### Properties of the pandas dataframe
-```py
+
+```python
+
 # show only the first 10 rows of iris
 iris.head(10)
 
@@ -31,8 +34,10 @@ iris.head(10)
 9           4.9          3.1           1.5          0.1  setosa
 ```
 
-### Changing the pandas dataframe
-```py
+# Changing the pandas dataframe
+
+```python
+
 # remove the 'species' column from iris and put it in its own datatype
 species = iris.pop('species')
 
@@ -41,11 +46,12 @@ type(species)
 # <class 'pandas.core.series.Series'>
 ```
 
-### pandas Series
+# pandas Series
 
 A pandas Series is thus essentially a single column from a pandas DataFrame
 
-```py
+```python
+
 # show first 10 rows of the Series
 species.head(10)
 
@@ -84,13 +90,46 @@ row_colors = species.map(lut)
 6    g
 ```
 
-### Heatmaps
+# Show the actual plot you're making
+
+```python
+
+import matplotlib.pyplot as plt
+# make your sns plot
+# optionally add a grid
+plt.grid()
+# then
+plt.show()
+```
+
+# Scatterplots
+
+```python
+
+# NOTE: for some versions of seaborn, you'll want to explicitly use the 'data=' keyword
+sns.scatterplot(data=df, x="PlainFundi", y="FullTree")
+plt.grid()
+plt.show()
+```
+
+# Regression plot
+
+```python
+
+# make regression line show as red
+sns.regplot(data=df, x=df.columns[0], y=df.columns[2], line_kws=dict(color="r"))
+
+# make datapoints show as black 'x' markers instead of round blue dots
+sns.regplot(data=df, x=df.columns[0], y=df.columns[2], marker='x', color='black', line_kws=dict(color="r"))
+```
+# Heatmaps
 
 Seaborn can generate nice heatmaps with either the `sns.heatmap()` or `sns.clustermap()` functions.
 The `sns.clustermap()` function appears to have the added functionality of being able to cluster rows with dendrograms
 and label different types of rows with specific colors
 
-```py
+```python
+
 sns.clustermap(
         df,
         cmap="RdYlBu_r",

@@ -6,7 +6,9 @@ awk parses a file line by line by default
 
 NR = Number of Record
 By default the line number   
-```sh
+
+```bash
+
 awk 'NR>2'
 ```
 Meaning of NF
@@ -17,7 +19,8 @@ awk automatically updates the value of NF each time it reads a record.
 # Field Separator
 Default FS is whitespace (space and tab characters)
 
-```sh
+```bash
+
 # sets only tab or colon as field separator
 awk -F "\t"
 awk -F ":"
@@ -31,7 +34,9 @@ awk -v OFS="\t" '$11=="SNP" {print}'
 ```
 
 # Printing fields and lines
-```sh
+
+```bash
+
 # print the 3rd field
 awk '{print $3}'
 
@@ -63,11 +68,14 @@ awk 'if ($2 ~ /regex/) {print $0}'
 awk '$2 ~ /regex/ {print $0}'
 awk '$2 ~ regex {print $0}'    # not sure which one is correct, with or without //
 ## case insensitive regex
-awk '$2 ~ /regex/i {print $0}'
+awk 'BEGIN {IGNORECASE=1} /pattern/ {print $0}' 
 ## search for multiple strings
 awk '$1 ~ /tig00000016|tig00000012|tig00000492/ {print $0}'
 ## search for anything except multiple strings
 awk '$1 !~ /tig00000016|tig00000012|tig00000492/ {print $0}'
+## search for a string encoded in a variable
+X='Cell membrane'
+awk -v var="$X" '$5 ~ var'
 
 # if else statement
 awk '{ if ($3 ~ /gene/) {print "\n"$0}  else {print $0} }'
@@ -101,14 +109,16 @@ awk '{printf "%s\t%.2f\n", $0, ($17-$16+1)/$6}'
 
 # Iterating over fields
 
-```sh
+```bash
+
 # iterate over all fields, NF = number of fields
 awk '{ for (i=1; i<=NF; i++) { print $i } }'
 ```
 
 # Search & Replace
 
-```sh
+```bash
+
 # sub() does a search replace in defined field
 ## replace the first space with tab in the 15th field, then print the whole edited line
 awk '{sub(" ","\t",$15); print $0}'
@@ -123,14 +133,16 @@ awk '{ $1 = gensub( /gene([0-9]+)/, "gene\\1", "g", $1 ; print $0}'
 ```
 
 # Functions
-```sh
+
+```bash
 ## length() returns the length the string held by $10 
 awk '{print length($10)}'
 
 ```
 
 # Math operations
-```sh
+
+```bash
 ## if $9 is an integer, add a 1000 to its value when printing
 awk '{ print $9+1000 }'
 

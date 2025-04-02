@@ -7,35 +7,40 @@ SAMTOOLS
 ```bash
 
 # will print contents as SAM to the screen
-samtools view <bam>
+samtools view BAM
 
 # output lines in SAM format which have these contigs
-samtools view <bam> <contig1> <contig2>
+samtools view BAM contig1 contig2
 
 # view the header of a BAM/SAM file
-samtools view -H <bam>
+samtools view -H BAM
 
 # save a new bam file with header that only contains mappings on a particular contig
 # -b to specify BAM output
+samtools view -b BAM contig1 > test.contig1.bam
+# NOTE: this still includes all the other contigs in the header of the new BAM file
+# there is no straightforward way of also updating the header to only include the desired contigs
+
+
 # -h to include SAM header in output
-samtools view -bh <bam> <contig1> > test.contig1.bam
-samtools view -bh <bam> $(cat mycontigs.list | tr '\n' ' ') > test.contigs.bam
+samtools view -bh BAM contig1 > test.contig1.bam
+samtools view -bh BAM $(cat mycontigs.list | tr '\n' ' ') > test.contigs.bam
 
 # filter out mapped reads with MAPQ quality lower than some integer
-samtools view -bq 1 <bam> > <q1.bam> # -b to specify output BAM
+samtools view -bq 1 BAM > q1.bam # -b to specify output BAM
 
 # view all reads associated with a certain region or particular position
-samtools view <bam> ergo_tig00000012:1000-2000
-samtools view <bam> ergo_tig00000012:1001-1001
+samtools view BAM ergo_tig00000012:1000-2000
+samtools view BAM ergo_tig00000012:1001-1001
 
 # search for a specific read mapping by its id
-samtools view <bam> | grep 'read_id'
+samtools view BAM | grep 'read_id'
 
 # view all read mappings that overlap with regions specified in a BED file
 # NOTE: the keyword here is 'overlap'. Read mappings that have a start or end position outside
 # the specified coordinates in the BED file, but still partially overlap with those coordinates
 # are still selected!
-samtools view -L <bed> <bam>
+samtools view -L <bed> BAM
 # it may be slow! to speed up, specify the <bai> file with -M or --use-index <bai>
 ```
 
@@ -272,14 +277,16 @@ samtools tview <bam> <fasta> -p ergo_tig00000012:2569
 ```
 
 
-
-
 # samtools idxstats
-## retrieves information from the <bai> file
-## output is tab delimited:
-## reference sequence name, sequence length, # mapped read segments, # unmapped read segments
-## Report length and number of mapped reads per contig
+
+Retrieves information from the <bai> file
+Output is tab delimited:
+Reference sequence name, sequence length, # mapped read segments, # unmapped read segments
+Report length and number of mapped reads per contig
+
+```bash
 samtools idxstats <bam>
+```
 
 # samtools flagstat
 ## count the number of read mappings for each FLAG type

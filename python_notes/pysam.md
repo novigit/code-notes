@@ -1,8 +1,17 @@
-#!/usr/bin/env python
+PYSAM
 
-# pysam - a python package for dealing with SAM/BAM/CRAM files etc
+A python package for dealing with SAM/BAM/CRAM files etc
+
+# Loading pysam
+
+```python
 
 import pysam
+```
+
+# Loading a BAM file
+
+```python
 
 # load the bam file into a AlignmentFile object
 bamfile = pysam.AlignmentFile('example.bam', mode='rb')
@@ -14,20 +23,29 @@ bamfile = pysam.AlignmentFile('example.bam', mode='rb')
 # if it doesn't, create it
 import os
 if os.path.isfile('example.bam.bai'):
-	print("BAM index present... OK!")
+    print("BAM index present... OK!")
 else:
-	print("No index available for pileup. Creating an index...")
-	pysam.index('example.bam')
+    print("No index available for pileup. Creating an index...")
+    pysam.index('example.bam')
+```
+
+# Basic attributes
+
+```python
 
 # get list of references / contigs in loaded bamfile
+# NOTE: I think it gets them from the BAM header
 bamfile.references
+```
 
-# iterate over aligned positions with .pileup()
+# .pileup()
 
-## to iterate over all positions, 
-## do not specify a stop coordinate
-## alternatively, a samtools 'region' string can be applied
-## i.e. 'ergo_tig00000012:1000-2000'
+Iterate over aligned positions with .pileup()
+
+```python
+
+## to iterate over all positions, do not specify a stop coordinate
+## alternatively, a samtools 'region' string can be applied, i.e. 'ergo_tig00000012:1000-2000'
 
 ## .pileup() returns all reads that overlap the specified region
 ## so if a read starts at pos 9995 and ends at 10095, it will be parsed
@@ -86,18 +104,30 @@ for pileupcolumn in bamfile.pileup(contig='contig1', start=0, stop=10000, trunca
 
         # get the base at the aligned position
         base = pilupread.alignment.query_sequence[pileupread.query_position]
+```
 
-# you can iterate directly over all read mappings aligned to a particular region using fetch()
-# NOTE: unmapped reads can still be assigned to a particular contig, maybe because their partner was mapped to that contig
-# .fetch() will catch these also
-# NOTE: .fetch() will also return reads that are only partially overlapping with the region. Thus the reads returned might span a region that is larger than the one queried.
-# NOTE: if you use contig=, start=, stop=, coordinates will be interpreted as 0-based, half open
-#       if you use region='chr1:15001-20000', coordinates are interpreted as 1-based, inclusive
+# .fetch()
+
+You can iterate directly over all read mappings aligned to a particular region using fetch().
+`bamfile.fetch()` returns an Iterator of AlignedSegment objects
+
+NOTE: unmapped reads can still be assigned to a particular contig, maybe because their partner was mapped to that contig
+.fetch() will catch these also
+
+NOTE: .fetch() will also return reads that are only partially overlapping with the region.
+Thus the reads returned might span a region that is larger than the one queried.
+
+NOTE: if you use contig=, start=, stop=, coordinates will be interpreted as 0-based, half open
+      if you use region='chr1:15001-20000', coordinates are interpreted as 1-based, inclusive
+
+```python
+
 for read in bamfile.fetch(contig='chr1', start=100, stop=200):
+
     print(read)
 
     # read is an AlignedSegment object
-    
+
     # return the id of the read
     read.query_name
 
@@ -132,6 +162,11 @@ for read in bamfile.fetch(contig='chr1', start=100, stop=200):
 
     # return cigarstring of the alignment
     read.cigarstring
+```
+
+# .find_introns()
+
+```python
 
 # find introns with .find_introns()
 rev_introns = bamfile.find_introns( (read for read in bamfile.fetch(contig='Seq_38') if read.is_reverse and read.is_mapped) )
@@ -152,3 +187,4 @@ fwd_introns = bamfile.find_introns( (read for read in bamfile.fetch(contig='Seq_
 # coordinates are 0-indexed
 # first coordinate is the first base in the intron (remember its 1-indexed in igv)
 # second coordinate is the first base of the next exon (i.e. last base of the intron + 1)
+```

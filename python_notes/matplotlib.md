@@ -2,13 +2,17 @@ MATPLOTLIB
 
 matplotlib - a python library for plotting stuff
 
-```py
+```python
 import matplotlib.pyplot as plt
+
+# for each independent new figure in a script,
+# initilize a new figure like so
+plt.figure()
 ```
 
-#### Draw a simple histogram
+# Histogram
 
-```py
+```python
 ## if data is a simple list of numbers...
 plt.hist(data, bins=30, edgecolor='black')
 # edgecolor = color of bar edges
@@ -20,13 +24,15 @@ plt.title('Histogram')
 ```
 
 #### Show the specified plot in an interactive window
-```py
+```python
 # show when executing python script
 plt.show()
 ```
 
 #### Save the plot to an image file
-```py
+
+```python
+
 plt.savefig('histogram.png')
 
 # adjust resolution
@@ -34,8 +40,9 @@ plt.savefig('histogram.png', dpi=250)
 ```
 
 
-#### Draw multiple subplots (or Axes)
-```py
+# Multiple subplots (or Axes)
+
+```python
 # define two subplots, one on top of another
 fig, axs = plt.subplots(ncols=2, nrows=1)
 # 2 rows, 1 column
@@ -59,8 +66,9 @@ fix, axs = plt.subplots(2,1, figsize=(3.5*px, 2.5*px))
 `axs` refers to the one or more subplots (or Axes) within the figure
 
 
-#### Subplot (or Axes) indexing
-```py
+# Subplot (or Axes) indexing
+
+```python
 # define a single subplot (default behaviour)
 fix, ax = plt.subplots()
 # no indexing required, 'ax' refers to the single subplot
@@ -87,8 +95,9 @@ fig, axs = plt.subplots(3, 2)
 fig, axs = plt.subplots(nrows=3, ncols=1, gridspec_kw={'height_ratios' : [1,1,2]})
 ```
 
-#### Annotate subplots
-```py
+# Annotate subplots
+
+```python
 # axs[0] refers to subplot 1,
 # axs[1] refers to subplot 2
 axs[0].hist(data1, bins=30)
@@ -137,8 +146,9 @@ axs[2].spines['left'].set_visible(False)
 plt.subplots_adjust(hspace=0.4)
 ```
 
-#### Add text to subplots
-```py
+# Add text to subplots
+
+```python
 # add 'text' to a certain coordinate
 axs[0].text(x_coord, y_coord, 'text',
            ha='center', va='center',
@@ -151,8 +161,9 @@ axs[0].text(x_coord, y_coord, 'text',
            fontsize=16, bbox=bbox)
 ```
 
-#### Draw a straight line
-```py
+# Draw a straight line
+
+```python
 # draw a straight horizontal line through y = 0
 plt.axhline(y = 0, color='black', linestyle = '-')
 
@@ -166,14 +177,15 @@ plt.axhline(y = 0, xmin=0, xmax=1)
 
 ```
 
-#### Drawing patches
+# Drawing patches
+
 In Matplotlib, a "patch" refers to a graphical object used to represent shapes such as rectangles, 
 circles, polygons, etc. These patches are drawn on the plot to visualize various elements like
 shapes, annotations, or regions of interest.
 
 Rectangles
 
-```py
+```python
 # adding a rectangle
 from matplotlib.patches import Rectangle
 
@@ -194,7 +206,7 @@ ax.add_patch(Rectangle(xy=(xcoord, ycoord),
 
 Polygons
 
-```py
+```python
 # adding a polygon
 from matplotlib.patches import Polygon
 

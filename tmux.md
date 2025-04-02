@@ -3,6 +3,7 @@ TMUX - Terminal MUtlipleXer
 # General
 
 ```bash
+
 tmux                                        # Start a new tmux session
 tmux a                                      # Attach to the last used existing session
 tmux a -t <my_session>                      # Attach to the desired session

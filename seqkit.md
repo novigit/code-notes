@@ -56,6 +56,14 @@ seqkit subseq --chr ergo_tig00000012 --region -20000:-1 consensus.fasta
 seqkit subseq --bed <bed> <fasta>
 ```
 
+# Splitting FASTA files
+
+Split a single multiFASTA file into many singleFASTA files
+
+```bash
+seqkit split -i <fasta>
+```
+
 # Search for motifs
 
 By default searches the given strand and its reverse complement

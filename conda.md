@@ -1,8 +1,10 @@
 CONDA and MAMBA
 
 
-#### Uninstalling miniconda
-```
+# Uninstalling miniconda
+
+```bash
+
 rm -rf ~/miniconda3/
 rm -rf ~/.conda
 rm  ~/.condarc
@@ -10,8 +12,18 @@ rm  ~/.condarc
 # remove the conda block from your ~/.profile or ~/.bashrc
 ```
 
-#### Creating and removing environments
+# Adding channels
+
+```bash
+conda config --append channels conda-forge
 ```
+
+Your `~/.condarc` should now be updated with conda-forge
+
+# Creating and removing environments
+
+```bash
+
 # creating a new environment
 conda create --name <my_env>
 
@@ -28,8 +40,10 @@ conda env remove -n <my_env>
 conda remove <package>
 ```
 
-#### Environments defined in .yaml files
-```
+# Environments defined in .yaml files
+
+```bash
+
 name: signalp6
 channels:
     - bioconda
@@ -48,8 +62,10 @@ Ensure that you have both `-pip` and `-pip:` in there!
 
 The YAML file is thus also an excellent way to setup environment variables!
 
-#### Search for packages
-```
+# Search for packages
+
+```bash
+
 # search for packages
 conda search -c bioconda <package>
 
@@ -62,22 +78,29 @@ conda search -c bioconda <package> --info
 mamba search -c bioconda <package> --info
 ```
 
-#### Install packages in pre-existing environments
-```
+# Install packages in pre-existing environments
+
+```bash
+
 # installing a packages in an environment
 conda install -c bioconda -n <my_env> <package>=<version> <package>=<version>
+
 # mamba is a lot faster at resolving environments!
 mamba install -c bioconda -n <my_env> <package>=<version> <package>=<version>
 ```
 
-#### Activate and Deactivate environments
-```
+# Activate and Deactivate environments
+
+```bash
+
 conda activate <my_env>
 conda deactivate
 ```
 
-#### Listing packages and environments
-```
+# Listing packages and environments
+
+```bash
+
 # list all environments
 conda env list
 
@@ -101,31 +124,38 @@ conda env export > environment.yaml
 mamba env export > environment.yaml
 ```
 
-#### Update packages
-```
+# Update packages
+
+```bash
+
 conda update <package>
 mamba update <package>
 ```
 
-#### Renaming a conda environment
+# Renaming a conda environment
+
 As far as I know there is not a direct rename option, but it is possible
 to copy an old environment to a new environment with a new name, and then
 delete the old environment
-```
+
+```bash
+
 conda activate old_environment_name
 conda env export > environment.yml
 ```
 Now edit the name of the environment in the YML file to the new name. Then
 
-```
+```bash
 conda env create -f environment.yml --name new_environment_name
 
 conda deactivate
 conda env remove --name old_environment_name
 ```
 
-#### Installing perl modules with conda
-```
+# Installing perl modules with conda
+
+```bash
+
 ## install the module LWP:Simple
 conda install perl-lwp-simple
 ## so essentially replace ':' in module name with '-',
@@ -134,7 +164,9 @@ conda install perl-lwp-simple
 
 If the above method doesn't work, because it may not be available on
 a conda channel, or you don't know the right name, try the following
-```
+
+```bash
+
 ## install cpanminus
 conda install perl-app-cpanminus
 
@@ -150,7 +182,9 @@ On the command line, run
 `xcode-select --install`
 
 Check the conda environment's library to check if the modules are installed in the right place
-```sh
+
+```bash
+
 l /Users/joran/miniconda3/envs/colorFastq/lib/perl5/site_perl/
 
 # should inlude Color/ANSI/Util.pm
