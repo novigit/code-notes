@@ -26,6 +26,17 @@ The `formatter_class=argparse.RawTextHelpFormatter` part ensures that formatting
 
 # Passing arguments to the parser
 
+## Passing a positional argument
+
+If any keyword arguments are also specified, then this will be the last argument or last arguments of the script
+
+```python
+parser.add_argument(
+    'fasta_file', 
+    help='Path to the input FASTA file'
+)
+
+```
 ## Passing an input file 
 
 ```python
@@ -84,6 +95,8 @@ parser.add_argument(
     type=str,
     help='List of strings'
 )
+
+strings: list = args.strings
 ```
 
 # Ending the parser

@@ -135,8 +135,12 @@ awk '{ $1 = gensub( /gene([0-9]+)/, "gene\\1", "g", $1 ; print $0}'
 # Functions
 
 ```bash
-## length() returns the length the string held by $10 
+
+# length() returns the length the string held by $10 
 awk '{print length($10)}'
+
+# check line lengths in a FASTA file
+grep -v '^>' your_file.fasta | awk '{ print length($0) }'
 
 ```
 

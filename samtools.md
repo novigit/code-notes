@@ -259,10 +259,10 @@ There is also a consensus line
 ```bash
 
 # view a certain region
-samtools tview <bam> <fasta> -p ergo_tig00000012:2165-2175
+samtools tview [bam] [fasta] -p ergo_tig00000012:2165-2175
 
 # go directly to position 2569
-samtools tview <bam> <fasta> -p ergo_tig00000012:2569
+samtools tview [bam] [fasta] -p ergo_tig00000012:2569
 ```
 
 ```

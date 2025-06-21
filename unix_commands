@@ -664,6 +664,12 @@ ls -d */	List only directories
 ls -L <symbolic link>   List the file that the symbolic link is pointing to
 ls --ignore=<pattern>     List all files except those that match <pattern>
 
+LSOF
+
+# check which process is using a particular file
+lsof | grep '.nfs00000000107c4e6200248a94'
+
+
 MAN
 man -l <file>   Will open the file with man
 man ./      Will open the file with man

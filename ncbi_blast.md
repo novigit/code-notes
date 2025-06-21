@@ -52,7 +52,9 @@ or check for headers that do not start at the beginning of the line.
 
 
 #### Do a blastn search
-```sh
+
+```bash
+
 # typical blastn search against a db
 blastn \
     -query <path to query> \

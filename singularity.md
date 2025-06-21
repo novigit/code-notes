@@ -28,10 +28,7 @@ A SIF file
 singularity shell lolcow_latest.sif
 ```
 
-The user remains the same inside and outside of the container.
-So if I do `whoami`, it will still yield `joran`. This is also
-true for if you run `hostname`, which would still yield `dolores`.
-This is apparently attractive from a security and usability point of view.
+The user remains the same inside and outside of the container. So if I do `whoami`, it will still yield `joran`. This is also true for if you run `hostname`, which would still yield `dolores`. This is apparently attractive from a security and usability point of view.
 
 
 ```bash

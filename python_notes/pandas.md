@@ -112,6 +112,9 @@ series.nlargest(10)
 
 # randomly sample 10 values
 series.sample(10)
+
+# return unique entries
+series.unique()
 ```
 
 ## Numerical Operations with a Series

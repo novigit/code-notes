@@ -1,5 +1,25 @@
 Neovim
 
+# File and buffer handling
+
+```bash
+
+# force refresh a buffers content
+# useful if an external action wrote to a file open in vim
+:e!
+
+# open the previously opened file
+:e#
+
+# go to next buffer
+:bnext
+:bn
+
+# go to previous buffer
+:bprevious
+:bp
+```
+
 # Check filetype
 Check filetype of current buffer
 
@@ -29,14 +49,23 @@ Check filetype of current buffer
 
 ```lua
 
--- Splits the window
-CTRL-W V
+-- Splits the window into two buffers
+CTRL-w v
 
--- Move focus to other window
-CTRL-W W
+-- Move focus to other window/buffer
+CTRL-w w
+-- :bnext
+-- :bn
+-- :bprevious
+-- :bp
+
+-- Move focus to buffer below
+CTRL-w j
 
 -- Close window
-CTRL-W Q
+CTRL-w q
+-- :bdelete
+-- :bd
 ```
 
 # Show differences between to files

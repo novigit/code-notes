@@ -173,6 +173,10 @@ print(t.dist)
 # .support returns the support value of the branch that 
 # connects the node to its parent
 print(t.support)
+
+# get total tree length
+tree_length = sum(node.dist for node in t.iter_descendants('postorder'))
+
 ```
 
 # Basic TreeNode methods
@@ -302,6 +306,7 @@ from ete3 import Tree
 
 # load a tree
 t = Tree('((((H,K)D,(F,I)G)B,E)A,((L,(N,Q)O)J,(P,S)M)C);', format=1)
+# NOTE: inner nodes are also labeled in this tree, but not shown in ascii below
 print(t)
 #             /-H
 #          /-|
@@ -346,7 +351,7 @@ for node in t.traverse("postorder"):
 # G
 # B
 # E
-# A
+# A _______ top half _____
 # L
 # N
 # Q
@@ -355,14 +360,15 @@ for node in t.traverse("postorder"):
 # P
 # S
 # M
-# C
+# C ________ bottom half _______
+#   ________ root node (unlabeled)________
 ```
 
 other traversal options:
 'preorder' - visit the root, then left tree nodes, then right tree nodes
 'levelorder' - default. every node is visited on a given level before dropping down one level
 
-Traverse over the tree in postorder, but skip the root node
+With `iter_descendants()`, you can traverse over the tree in postorder, but skip the root node
 the difference in output is one less empty line (this line represents the root node that did not have a name)
 
 ```python
@@ -390,6 +396,12 @@ for node in t.iter_descendants("postorder"):
 ```
 
 Traverse the tree upwards towards the root, starting from a specific node
+
+Useful if you want to calculate the tree length, w/o the branch leading from the stem to the root node
+
+```python
+tree_length = sum(node.dist for node in t.iter_descendants('postorder'))
+```
 
 ```python
 

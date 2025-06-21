@@ -10,7 +10,8 @@ Use Ctrl-C instead of Escape
 
 # File handling
 
-```sh
+```bash
+
 # force refresh a buffers content
 # useful if an external action wrote to a file open in vim
 :e!

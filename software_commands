@@ -118,6 +118,7 @@ esearch -query NC_035978.1 -db nuccore | elink -target protein | efetch -format 
 # downloading a genbank file of a particular protein
 esearch -query ABC21121.1 -db protein | efetch -format gb
 epost -input mystery_accessions.list -db protein | efetch -format gb
+epost -input mystery_accessions.list -db protein | efetch -format fasta
 
 
 

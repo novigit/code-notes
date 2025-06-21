@@ -54,8 +54,14 @@ import regex as re
 #### Finding matches with re.match()
 
 ```py
-# does the regex exist in some string?
+# does the regex exist at the START of the string?
 if re.match(r'(?:TGTTTGTT){s<=2}', some_string):
+    # match found
+else:
+    # match not found
+
+# does the regex exist at any point in the string?
+if re.search(r'(?:TGTTTGTT){s<=2}', some_string):
     # match found
 else:
     # match not found

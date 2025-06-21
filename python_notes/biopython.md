@@ -26,9 +26,18 @@ record = SeqIO.read('example.fasta','fasta')
 # load only the first sequence in a FASTA file
 first_record = next(SeqIO.parse('example.fasta', 'fasta'))
 
+# turn an iterator or list of SeqRecord objects into a dictionary of SeqRecord objects
+# SeqRecord objects are the values, and keys are extracted from records using a key_function
+# if no key_function is specified, it will take the record.id by default
+records = SeqIO.parse('example.fasta', 'fasta')
+record_dict = SeqIO.to_dict(records, key_function=lambda rec: rec.name)
+
 # load a multi FASTA file such that you can access a particular sequence later
 ## load multi FASTA into a dictionary in memory
 record_dict = SeqIO.index('example.fasta', 'fasta')
+## NOTE: this is a dictionary-like object, not a pure python dictionary,
+## as generated with SeqIO.to_dict
+
 ## load desired record from dict
 desired_record: SeqRecord = record_dict['example_seqID']
 ```
@@ -50,7 +59,7 @@ str( record.seq )
 # get the Seq object of a SeqRecord object
 record.seq
 
-# get a subsequence from a sequence in a Seq object
+# get a subsequence (as a Seq object) from a sequence in a Seq object
 record.seq[0:300]
 
 # get sequence of a sequence substring in string format in one line

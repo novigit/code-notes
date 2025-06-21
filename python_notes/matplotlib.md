@@ -48,18 +48,18 @@ fig, axs = plt.subplots(ncols=2, nrows=1)
 # 2 rows, 1 column
 
 # define a single subplot (default behaviour)
-fix, ax = plt.subplots()
+fig, ax = plt.subplots()
 
 # define six subplots, three rows of two subplots
 fig, axs = plt.subplots(3, 2)
 
 # define figure size
 # by default x and y units are inches
-fix, axs = plt.subplots(2,1, figsize=(3.5, 2.5))
+fig, axs = plt.subplots(2,1, figsize=(3.5, 2.5))
 # using cm's instead
-fix, axs = plt.subplots(2,1, figsize=(3.5*cm, 2.5*cm))
+fig, axs = plt.subplots(2,1, figsize=(3.5*cm, 2.5*cm))
 # using pixels
-fix, axs = plt.subplots(2,1, figsize=(3.5*px, 2.5*px))
+fig, axs = plt.subplots(2,1, figsize=(3.5*px, 2.5*px))
 ```
 
 `fig` here refers to the object representing the entire figure
@@ -218,4 +218,26 @@ ax.add_patch(Polygon(xy=coords,
                      edgecolor='black',
                      facecolor='blue',
                      linewidth=1))
+```
+
+Circles and Ellipses
+
+```python
+from matplotlib.patches import Circle, Ellipse
+
+# xy coordinates are the circle's center
+ax.add_patch(Circle(
+        xy=(1,1),
+        radius=5,
+        facecolor='green',
+))
+
+# xy coordinates are the ellipse center
+# width and height are diameters
+ax.add_patch(Ellipse(
+        xy=(1,1),
+        width=5,
+        height=5,
+        facecolor='green',
+))
 ```

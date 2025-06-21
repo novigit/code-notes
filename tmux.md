@@ -67,6 +67,7 @@ q                               Exit copy mode
 # While in command prompt
 ```
 swap-window -s 3 -t 2           Change order of windows by swapping window 3 with window 2
+move-window -b -t 3             Move current window to position 3
 ```
 
 # Duplicate $PATH entries
